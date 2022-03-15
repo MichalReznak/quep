@@ -10,6 +10,12 @@
 #![feature(core_intrinsics)]
 #![feature(result_flattening)]
 
+use fehler::throws;
+
+mod error;
+pub use error::Error;
+
+#[throws]
 pub fn hello() -> String {
     "Hello world!".to_string()
 }

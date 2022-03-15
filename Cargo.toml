@@ -17,6 +17,7 @@ tokio = { version = "1.16.1", features = ["full"] }
 # Crates
 quep_derive = { path = "crates/derive" }
 quep_utils = { path = "crates/utils" }
+anyhow = "1.0.56"
 
 # For future
 # futures = "0.3.21"

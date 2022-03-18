@@ -10,33 +10,52 @@
 #![feature(core_intrinsics)]
 #![feature(result_flattening)]
 
+use crate::traits::{QcProvider, CircuitGenerator, Outputer};
+use derive_more::Constructor;
 use fehler::throws;
 
 mod args;
 pub use args::ARGS;
 
+mod chooser;
 mod circuit_generators;
+mod outputers;
 mod qc_providers;
+
+pub mod traits;
 
 mod error;
 pub use error::Error;
 
-#[throws]
-pub fn hello() -> String {
-    "Hello world!".to_string()
-}
+use crate::chooser::Chooser;
 
-
+#[derive(Constructor)]
 pub struct Programm;
 
 impl Programm {
-    pub fn run() {
+    #[throws]
+    pub async fn run() {
+        println!("Hello world!");
+
         // use ARGS
-        // connect to the provider -> QcProvider
+
         // generate test suite -> CircuitGenerator
+        let generator = Chooser::get_circuit_generator()?;
+        let circuit = generator.generate().await?;
+        
+
+        // connect to the provider -> QcProvider
+        let provider = Chooser::get_provider()?;
+        provider.connect().await?;
+
+        
         // start measuring -> MeasureTool
         // run -> Executor
+        let result = provider.run(circuit).await?;
+        
         // get measured results
         // output -> Outputer
+        let outputer = Chooser::get_outputer()?;
+        outputer.output(result).await?;
     }
 }

@@ -30,9 +30,9 @@ pub use error::Error;
 use crate::chooser::Chooser;
 
 #[derive(Constructor)]
-pub struct Programm;
+pub struct Quep;
 
-impl Programm {
+impl Quep {
     #[throws]
     pub async fn run() {
         println!("Hello world!");
@@ -48,7 +48,7 @@ impl Programm {
         let provider = Chooser::get_provider()?;
         provider.connect().await?;
 
-        
+
         // start measuring -> MeasureTool
         // run -> Executor
         let result = provider.run(circuit).await?;

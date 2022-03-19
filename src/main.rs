@@ -5,5 +5,5 @@ use fehler::throws;
 async fn main() {
     env_logger::init();
 
-    quep::Programm::run().await?;
+    quep::Quep::run().await?;
 }

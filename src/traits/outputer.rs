@@ -5,6 +5,7 @@
 
 use async_trait::async_trait;
 use enum_dispatch::enum_dispatch;
+use tokio::time::Duration;
 
 use crate::outputers::TextOutputer;
 use crate::Error;
@@ -17,5 +18,5 @@ pub enum OutputerDyn {
 #[async_trait]
 #[enum_dispatch(OutputerDyn)]
 pub trait Outputer {
-    async fn output(&self, value: String) -> Result<(), Error>;
+    async fn output(&self, value: String, duration: Duration) -> Result<(), Error>;
 }

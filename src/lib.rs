@@ -9,14 +9,18 @@
 #![feature(extend_one)]
 #![feature(core_intrinsics)]
 #![feature(result_flattening)]
+#![feature(string_remove_matches)]
 
-use crate::traits::{QcProvider, CircuitGenerator, Outputer};
 use derive_more::Constructor;
 use fehler::throws;
 
-mod args;
-pub use args::ARGS;
+use crate::traits::QcProvider;
+use crate::traits::{CircuitGenerator, Outputer};
+use crate::chooser::Chooser;
 
+mod args;
+
+mod error;
 mod chooser;
 mod circuit_generators;
 mod outputers;
@@ -24,10 +28,9 @@ mod qc_providers;
 
 pub mod traits;
 
-mod error;
 pub use error::Error;
+pub use args::ARGS;
 
-use crate::chooser::Chooser;
 
 #[derive(Constructor)]
 pub struct Quep;
@@ -39,23 +42,31 @@ impl Quep {
 
         // use ARGS
 
-        // generate test suite -> CircuitGenerator
-        let generator = Chooser::get_circuit_generator()?;
-        let circuit = generator.generate().await?;
-        
+        let mut i = 0;
+        loop {
+            // generate test suite -> CircuitGenerator
+            let generator = Chooser::get_circuit_generator()?;
+            if let Some(circuit) = generator.generate(i).await? {
+                i += 1;
 
-        // connect to the provider -> QcProvider
-        let provider = Chooser::get_provider()?;
-        provider.connect().await?;
+                // connect to the provider -> QcProvider
+                let mut provider = Chooser::get_provider()?;
+                provider.connect().await?;
 
+                // start measuring -> MeasureTool
+                // run -> Executor
+                provider.start_measure();
+                let result = provider.run(circuit).await?;
+                let duration = provider.stop_measure();
 
-        // start measuring -> MeasureTool
-        // run -> Executor
-        let result = provider.run(circuit).await?;
-        
-        // get measured results
-        // output -> Outputer
-        let outputer = Chooser::get_outputer()?;
-        outputer.output(result).await?;
+                // get measured results
+                // output -> Outputer
+                let outputer = Chooser::get_outputer()?;
+                outputer.output(result, duration).await?;
+            }
+            else {
+                break;
+            }
+        }
     }
 }

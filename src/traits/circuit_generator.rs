@@ -11,12 +11,13 @@
 use async_trait::async_trait;
 use enum_dispatch::enum_dispatch;
 
-use crate::circuit_generators::BasicCircuitGenerator;
+use crate::circuit_generators::{BasicCircuitGenerator, FsCircuitGenerator};
 use crate::Error;
 
 #[enum_dispatch]
 pub enum CircuitGeneratorDyn {
     BasicCircuitGenerator,
+    FsCircuitGenerator,
 }
 
 #[async_trait]
@@ -24,5 +25,7 @@ pub enum CircuitGeneratorDyn {
 pub trait CircuitGenerator {
     // TODO
 
-    async fn generate(&self) -> Result<String, Error>;
+    async fn generate(&self, i: i32) -> Result<Option<String>, Error>;
 }
+
+// fn generate(&self, i: i32) -> Result<impl Stream<Item = String, Error>>;

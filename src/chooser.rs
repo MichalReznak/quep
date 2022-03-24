@@ -1,24 +1,39 @@
+use std::str::FromStr;
+
 use fehler::throws;
 
-use crate::circuit_generators::BasicCircuitGenerator;
-use crate::outputers::TextOutputer;
-use crate::qc_providers::IbmqQcProvider;
-use crate::traits::{CircuitGeneratorDyn, OutputerDyn, QcProviderDyn};
-use crate::{Error, ARGS};
 use crate::args::types::*;
-use std::str::FromStr;
+use crate::circuit_generators::{BasicCircuitGenerator, FsCircuitGenerator};
+use crate::outputers::TextOutputer;
+use crate::traits::QcProviderDyn;
+
+#[cfg(feature = "qiskit")]
+use crate::qc_providers::{QiskitQcProvider};
+
+use crate::qc_providers::{IbmqQcProvider};
+use crate::traits::{CircuitGeneratorDyn, OutputerDyn};
+use crate::{Error, ARGS};
 
 // Args based factory
 pub struct Chooser;
 
 impl Chooser {
+    #[cfg(feature = "qiskit")]
     #[throws]
     pub fn get_provider() -> QcProviderDyn {
-        let res = match ProviderType::from_str(&ARGS.provider)? {
-            ProviderType::Ibmq => IbmqQcProvider::new(),
-        };
+        match ProviderType::from_str(&ARGS.provider)? {
+            ProviderType::Ibmq => QcProviderDyn::from(IbmqQcProvider::new()),
+            ProviderType::Qiskit => QcProviderDyn::from(QiskitQcProvider::new()),
+        }
+    }
 
-        QcProviderDyn::from(res)
+    #[cfg(not(feature = "qiskit"))]
+    #[throws]
+    pub fn get_provider() -> QcProviderDyn {
+        match ProviderType::from_str(&ARGS.provider)? {
+            ProviderType::Ibmq => QcProviderDyn::from(IbmqQcProvider::new()),
+            ProviderType::Qiskit => unreachable!(),
+        }
     }
 
     #[throws]
@@ -32,10 +47,9 @@ impl Chooser {
 
     #[throws]
     pub fn get_circuit_generator() -> CircuitGeneratorDyn {
-        let res = match CircuitType::from_str(&ARGS.circuit)? {
-            CircuitType::Basic => BasicCircuitGenerator::new(),
-        };
-
-        CircuitGeneratorDyn::from(res)
+        match CircuitType::from_str(&ARGS.circuit)? {
+            CircuitType::Basic => CircuitGeneratorDyn::from(BasicCircuitGenerator::new()),
+            CircuitType::Fs => CircuitGeneratorDyn::from(FsCircuitGenerator::new()),
+        }
     }
 }

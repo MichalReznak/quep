@@ -1,18 +1,16 @@
-use std::intrinsics::unreachable;
 use std::str::FromStr;
 
 use fehler::throws;
 
 use crate::args::types::*;
-use crate::circuit_generators::{BasicCircuitGenerator, FsCircuitGenerator};
+use crate::circuit_generators::{
+    BasicCircuitGenerator, FsCircuitGenerator, VolumeCircuitGenerator,
+};
 use crate::outputers::TextOutputer;
-use crate::traits::QcProviderDyn;
-
+use crate::qc_providers::IbmqQcProvider;
 #[cfg(feature = "qiskit")]
-use crate::qc_providers::{QiskitQcProvider, NoisyQcProvider};
-
-use crate::qc_providers::{IbmqQcProvider};
-use crate::traits::{CircuitGeneratorDyn, OutputerDyn};
+use crate::qc_providers::{NoisyQcProvider, QiskitQcProvider};
+use crate::traits::{CircuitGeneratorDyn, OutputerDyn, QcProviderDyn};
 use crate::{Error, ARGS};
 
 // Args based factory
@@ -53,6 +51,7 @@ impl Chooser {
         match CircuitType::from_str(&ARGS.circuit)? {
             CircuitType::Basic => CircuitGeneratorDyn::from(BasicCircuitGenerator::new()),
             CircuitType::Fs => CircuitGeneratorDyn::from(FsCircuitGenerator::new()),
+            CircuitType::Volume => CircuitGeneratorDyn::from(VolumeCircuitGenerator::new()),
         }
     }
 }

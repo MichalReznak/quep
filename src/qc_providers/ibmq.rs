@@ -2,8 +2,8 @@ use async_trait::async_trait;
 use derive_more::Constructor;
 use tokio::time::Duration;
 
-use crate::Error;
 use crate::traits::QcProvider;
+use crate::Error;
 
 #[derive(Constructor)]
 pub struct IbmqQcProvider;

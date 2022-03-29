@@ -14,23 +14,21 @@
 use derive_more::Constructor;
 use fehler::throws;
 
-use crate::traits::QcProvider;
-use crate::traits::{CircuitGenerator, Outputer};
 use crate::chooser::Chooser;
+use crate::traits::{CircuitGenerator, Outputer, QcProvider};
 
 mod args;
 
-mod error;
 mod chooser;
 mod circuit_generators;
+mod error;
 mod outputers;
 mod qc_providers;
 
 pub mod traits;
 
-pub use error::Error;
 pub use args::ARGS;
-
+pub use error::Error;
 
 #[derive(Constructor)]
 pub struct Quep;

@@ -16,4 +16,5 @@ pub enum OutputType {
 pub enum CircuitType {
     Basic,
     Fs,
+    Volume,
 }

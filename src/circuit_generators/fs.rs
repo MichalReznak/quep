@@ -1,10 +1,9 @@
 use std::path::Path;
-use async_trait::async_trait;
-use walkdir::{WalkDir, DirEntry};
 
+use async_trait::async_trait;
 use openqasm as oq;
 use oq::GenericError;
-
+use walkdir::{DirEntry, WalkDir};
 
 use crate::traits::CircuitGenerator;
 use crate::Error;
@@ -21,9 +20,7 @@ impl FsCircuitGenerator {
             .filter(|e| e.file_type().is_file())
             .collect();
 
-        Self {
-            entries,
-        }
+        Self { entries }
     }
 }
 

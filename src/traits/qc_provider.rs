@@ -6,9 +6,9 @@ use async_trait::async_trait;
 use enum_dispatch::enum_dispatch;
 use tokio::time::Duration;
 
+use crate::qc_providers::IbmqQcProvider;
 #[cfg(feature = "qiskit")]
-use crate::qc_providers::{QiskitQcProvider, NoisyQcProvider};
-use crate::qc_providers::{IbmqQcProvider};
+use crate::qc_providers::{NoisyQcProvider, QiskitQcProvider};
 use crate::Error;
 
 #[cfg(feature = "qiskit")]

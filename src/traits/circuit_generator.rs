@@ -11,13 +11,16 @@
 use async_trait::async_trait;
 use enum_dispatch::enum_dispatch;
 
-use crate::circuit_generators::{BasicCircuitGenerator, FsCircuitGenerator};
+use crate::circuit_generators::{
+    BasicCircuitGenerator, FsCircuitGenerator, VolumeCircuitGenerator,
+};
 use crate::Error;
 
 #[enum_dispatch]
 pub enum CircuitGeneratorDyn {
     BasicCircuitGenerator,
     FsCircuitGenerator,
+    VolumeCircuitGenerator,
 }
 
 #[async_trait]

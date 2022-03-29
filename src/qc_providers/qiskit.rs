@@ -5,8 +5,8 @@ use pyo3::prelude::*;
 use pyo3::types::{PyString, PyTuple};
 use tokio::time::Instant;
 
-use crate::Error;
 use crate::traits::QcProvider;
+use crate::Error;
 
 pub struct QiskitQcProvider {
     dur: Option<Instant>,

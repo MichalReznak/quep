@@ -2,11 +2,11 @@ use std::time::Duration;
 
 use async_trait::async_trait;
 use pyo3::prelude::*;
-use pyo3::types::{PyDict, PyString, PyTuple};
+use pyo3::types::{PyDict, PyTuple};
 use tokio::time::Instant;
 
-use crate::Error;
 use crate::traits::QcProvider;
+use crate::Error;
 
 pub struct NoisyQcProvider {
     dur: Option<Instant>,

@@ -41,6 +41,7 @@ class Qiskit:
 
     def run(self: 'Qiskit', circuit: str) -> str:
         qc = QuantumCircuit.from_qasm_str(circuit)
+        print(qc)
 
         # Perform a noise simulation
         result = execute(

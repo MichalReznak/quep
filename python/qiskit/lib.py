@@ -14,10 +14,12 @@ from qiskit.visualization import plot_histogram
 
 
 class Qiskit:
+    def __init__(self):
+        self.backend = None
+
     def auth(self):
         self.backend = Aer.get_backend('aer_simulator')
         print('HERE')
-
 
     def run(self: 'Qiskit', circuit: str) -> str:
         print("Running")

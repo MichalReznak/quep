@@ -38,10 +38,6 @@ pub struct Quep;
 impl Quep {
     #[throws]
     pub async fn run() {
-        println!("Hello world!");
-
-        // use ARGS
-
         let mut i = 0;
         loop {
             // generate test suite -> CircuitGenerator

@@ -6,3 +6,8 @@ pub use ibmq::IbmqQcProvider;
 mod qiskit;
 #[cfg(feature = "qiskit")]
 pub use qiskit::QiskitQcProvider;
+
+#[cfg(feature = "qiskit")]
+mod noisy;
+#[cfg(feature = "qiskit")]
+pub use noisy::NoisyQcProvider;

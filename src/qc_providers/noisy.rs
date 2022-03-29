@@ -2,24 +2,24 @@ use std::time::Duration;
 
 use async_trait::async_trait;
 use pyo3::prelude::*;
-use pyo3::types::{PyString, PyTuple};
+use pyo3::types::{PyDict, PyString, PyTuple};
 use tokio::time::Instant;
 
 use crate::Error;
 use crate::traits::QcProvider;
 
-pub struct QiskitQcProvider {
+pub struct NoisyQcProvider {
     dur: Option<Instant>,
 }
 
-impl QiskitQcProvider {
+impl NoisyQcProvider {
     pub fn new() -> Self {
         Self { dur: None }
     }
 }
 
 #[async_trait]
-impl QcProvider for QiskitQcProvider {
+impl QcProvider for NoisyQcProvider {
     async fn connect(&self) -> Result<(), Error> {
         Ok(())
     }
@@ -27,7 +27,7 @@ impl QcProvider for QiskitQcProvider {
     async fn run(&self, circuit: String) -> Result<String, Error> {
         Python::with_gil(|py| -> Result<_, Error> {
             let module =
-                PyModule::from_code(py, include_str!("../../python/qiskit/lib.py"), "", "")?;
+                PyModule::from_code(py, include_str!("../../python/noisy/lib.py"), "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Qiskit")?.into();
             let qiskit = qiskit.call0(py)?;
 
@@ -35,7 +35,7 @@ impl QcProvider for QiskitQcProvider {
 
             let args = PyTuple::new(py, &[&circuit]);
             let fun = qiskit.call_method1(py, "run", args)?;
-            let res = fun.cast_as::<PyString>(py).unwrap();
+            let res = fun.cast_as::<PyDict>(py).unwrap();
             println!("{res:#?}");
             Ok(())
         })?;

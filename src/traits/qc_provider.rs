@@ -7,7 +7,7 @@ use enum_dispatch::enum_dispatch;
 use tokio::time::Duration;
 
 #[cfg(feature = "qiskit")]
-use crate::qc_providers::QiskitQcProvider;
+use crate::qc_providers::{QiskitQcProvider, NoisyQcProvider};
 use crate::qc_providers::{IbmqQcProvider};
 use crate::Error;
 
@@ -16,6 +16,7 @@ use crate::Error;
 pub enum QcProviderDyn {
     IbmqQcProvider,
     QiskitQcProvider,
+    NoisyQcProvider,
 }
 
 #[cfg(not(feature = "qiskit"))]

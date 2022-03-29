@@ -1,3 +1,4 @@
+use std::intrinsics::unreachable;
 use std::str::FromStr;
 
 use fehler::throws;
@@ -8,7 +9,7 @@ use crate::outputers::TextOutputer;
 use crate::traits::QcProviderDyn;
 
 #[cfg(feature = "qiskit")]
-use crate::qc_providers::{QiskitQcProvider};
+use crate::qc_providers::{QiskitQcProvider, NoisyQcProvider};
 
 use crate::qc_providers::{IbmqQcProvider};
 use crate::traits::{CircuitGeneratorDyn, OutputerDyn};
@@ -24,6 +25,7 @@ impl Chooser {
         match ProviderType::from_str(&ARGS.provider)? {
             ProviderType::Ibmq => QcProviderDyn::from(IbmqQcProvider::new()),
             ProviderType::Qiskit => QcProviderDyn::from(QiskitQcProvider::new()),
+            ProviderType::Noisy => QcProviderDyn::from(NoisyQcProvider::new()),
         }
     }
 
@@ -33,6 +35,7 @@ impl Chooser {
         match ProviderType::from_str(&ARGS.provider)? {
             ProviderType::Ibmq => QcProviderDyn::from(IbmqQcProvider::new()),
             ProviderType::Qiskit => unreachable!(),
+            ProviderType::Noisy => unreachable!(),
         }
     }
 

@@ -4,14 +4,14 @@ sys.path.append('./python/.venv/lib/site-packages')
 sys.path.append('./python/.venv')
 
 
-# import matplotlib.pyplot as plt
 import numpy as np
-
 from qiskit import *
 from qiskit.visualization import plot_state_city
 from qiskit.visualization import plot_histogram
+# import matplotlib.pyplot as plt
 
 # Run the quantum circuit on a statevector simulator backend
+
 
 class Qiskit:
     def auth(self):

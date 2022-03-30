@@ -18,5 +18,5 @@ pub enum OutputerDyn {
 #[async_trait]
 #[enum_dispatch(OutputerDyn)]
 pub trait Outputer {
-    async fn output(&self, value: String, duration: Duration) -> Result<(), Error>;
+    async fn output(&self, value: Vec<Vec<String>>, duration: Vec<Duration>) -> Result<(), Error>;
 }

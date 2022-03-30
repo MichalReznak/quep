@@ -26,12 +26,12 @@ impl FsCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for FsCircuitGenerator {
-    async fn generate(&self, i: i32) -> Result<Option<String>, Error> {
-        if i >= self.entries.len() as i32 {
+    async fn generate(&self, i: i32, j: i32) -> Result<Option<String>, Error> {
+        if j >= self.entries.len() as i32 || i > 0 {
             Ok(None)
         }
         else {
-            let path = self.entries[i as usize].path();
+            let path = self.entries[j as usize].path();
             let mut circuit = std::fs::read_to_string(path)?;
             circuit.remove_matches("\r\n");
 

@@ -25,7 +25,7 @@ impl QcProvider for NoisyQcProvider {
     }
 
     async fn run(&self, circuit: String) -> Result<String, Error> {
-        Python::with_gil(|py| -> Result<_, Error> {
+        let res = Python::with_gil(|py| -> Result<_, Error> {
             let module =
                 PyModule::from_code(py, include_str!("../../python/noisy/lib.py"), "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Qiskit")?.into();
@@ -36,11 +36,11 @@ impl QcProvider for NoisyQcProvider {
             let args = PyTuple::new(py, &[&circuit]);
             let fun = qiskit.call_method1(py, "run", args)?;
             let res = fun.cast_as::<PyDict>(py).unwrap();
-            println!("{res:#?}");
-            Ok(())
+            // println!("{res:#?}");
+            Ok(res.to_string())
         })?;
 
-        Ok(circuit)
+        Ok(res)
     }
 
     fn start_measure(&mut self) {

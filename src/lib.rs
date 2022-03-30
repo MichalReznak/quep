@@ -36,31 +36,38 @@ pub struct Quep;
 impl Quep {
     #[throws]
     pub async fn run() {
-        let mut i = 0;
-        loop {
-            // generate test suite -> CircuitGenerator
-            let generator = Chooser::get_circuit_generator()?;
-            if let Some(circuit) = generator.generate(i).await? {
-                i += 1;
+        let mut result = vec![];
+        let mut durations = vec![];
 
-                // connect to the provider -> QcProvider
-                let mut provider = Chooser::get_provider()?;
-                provider.connect().await?;
+        'main: for i in 0..3 {
+            let mut sr = vec![];
 
-                // start measuring -> MeasureTool
-                // run -> Executor
-                provider.start_measure();
-                let result = provider.run(circuit).await?;
-                let duration = provider.stop_measure();
+            for j in 0..3 {
+                // generate test suite -> CircuitGenerator
+                let generator = Chooser::get_circuit_generator()?;
+                if let Some(circuit) = generator.generate(i, j).await? {
 
-                // get measured results
-                // output -> Outputer
-                let outputer = Chooser::get_outputer()?;
-                outputer.output(result, duration).await?;
+                    // connect to the provider -> QcProvider
+                    let mut provider = Chooser::get_provider()?;
+                    provider.connect().await?;
+
+                    // start measuring -> MeasureTool
+                    // run -> Executor
+                    provider.start_measure();
+                    sr.push(provider.run(circuit).await?);
+                    durations.push(provider.stop_measure());
+                }
+                else {
+                    break 'main;
+                }
             }
-            else {
-                break;
-            }
+
+            result.push(sr);
         }
+
+        // get measured results
+        // output -> Outputer
+        let outputer = Chooser::get_outputer()?;
+        outputer.output(result, durations).await?;
     }
 }

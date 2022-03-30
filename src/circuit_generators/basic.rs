@@ -28,8 +28,8 @@ use oq::GenericError;
 
 #[async_trait]
 impl CircuitGenerator for BasicCircuitGenerator {
-    async fn generate(&self, i: i32) -> Result<Option<String>, Error> {
-        if i > 2 {
+    async fn generate(&self, i: i32, j: i32) -> Result<Option<String>, Error> {
+        if i > 0 || j > 2 {
             Ok(None)
         }
         else {

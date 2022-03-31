@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use derive_more::Constructor;
 use tokio::time::Duration;
-use cli_table::{format::Justify, print_stdout, Cell, Style, Table};
+use cli_table::{print_stdout, Cell, Table};
 
 use crate::traits::Outputer;
 

@@ -6,3 +6,6 @@ pub use fs::FsCircuitGenerator;
 
 mod volume;
 pub use volume::VolumeCircuitGenerator;
+
+mod mirror;
+pub use mirror::MirrorCircuitGenerator;

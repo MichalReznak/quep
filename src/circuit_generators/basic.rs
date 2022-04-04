@@ -19,6 +19,11 @@ creg c[1];
 
 reset q[0];
 x q[0];
+h q[0];
+s q[0];
+sdg q[0];
+h q[0];
+x q[0];
 
 measure q -> c;
 "#;
@@ -29,7 +34,7 @@ use oq::GenericError;
 #[async_trait]
 impl CircuitGenerator for BasicCircuitGenerator {
     async fn generate(&self, i: i32, j: i32) -> Result<Option<String>, Error> {
-        if i > 0 || j > 2 {
+        if i > 0 || j > 0 {
             Ok(None)
         }
         else {

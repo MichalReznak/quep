@@ -19,6 +19,7 @@ class Qiskit:
 
     def auth(self):
         self.backend = Aer.get_backend('aer_simulator')
+        # self.backend = Aer.get_backend('statevector_simulator')
         print('HERE')
 
     def run(self: 'Qiskit', circuit: str) -> str:
@@ -30,7 +31,9 @@ class Qiskit:
         qc = QuantumCircuit.from_qasm_str(circuit)
         print(qc)
 
-        job = self.backend.run(qc, shots=1, memory=True)
+        job = self.backend.run(qc, shots=1024, memory=True)
+        print(job.result().get_statevector())
+
         output = job.result().get_memory()[0]
         print(output)
 

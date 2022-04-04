@@ -3,9 +3,7 @@ use std::str::FromStr;
 use fehler::throws;
 
 use crate::args::types::*;
-use crate::circuit_generators::{
-    BasicCircuitGenerator, FsCircuitGenerator, VolumeCircuitGenerator,
-};
+use crate::circuit_generators::{BasicCircuitGenerator, FsCircuitGenerator, MirrorCircuitGenerator, VolumeCircuitGenerator};
 use crate::outputers::TextOutputer;
 use crate::qc_providers::IbmqQcProvider;
 #[cfg(feature = "qiskit")]
@@ -52,6 +50,7 @@ impl Chooser {
             CircuitType::Basic => CircuitGeneratorDyn::from(BasicCircuitGenerator::new()),
             CircuitType::Fs => CircuitGeneratorDyn::from(FsCircuitGenerator::new()),
             CircuitType::Volume => CircuitGeneratorDyn::from(VolumeCircuitGenerator::new()),
+            CircuitType::Mirror => CircuitGeneratorDyn::from(MirrorCircuitGenerator::new()),
         }
     }
 }

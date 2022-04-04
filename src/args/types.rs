@@ -17,4 +17,5 @@ pub enum CircuitType {
     Basic,
     Fs,
     Volume,
+    Mirror,
 }

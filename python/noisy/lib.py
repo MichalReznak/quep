@@ -16,7 +16,7 @@ from qiskit.visualization import plot_histogram
 ACCOUNT_ID = "9ee04b444ed1c767fcd01b66027a391d8df5938df51dd27e6eaaed0a45f5da67c19dcfb2f2f46dcff893c3a54d054b4b392e1a54618d8cfea9d70d9f3378ea51"
 
 # Error probabilities
-prob_1 = 0.1  # 1-qubit gate, should be around 0.01
+prob_1 = 0.01  # 1-qubit gate, should be around 0.01
 prob_2 = 0.01   # 2-qubit gate
 
 # Depolarizing quantum errors
@@ -25,7 +25,7 @@ error_2 = noise.depolarizing_error(prob_2, 2)
 
 # Add errors to noise model
 noise_model = noise.NoiseModel()
-noise_model.add_all_qubit_quantum_error(error_1, ['u1', 'u2', 'u3'])
+noise_model.add_all_qubit_quantum_error(error_1, ['sx', 'rz', 'id', 'x', 's', 'h', 'sdg'])
 noise_model.add_all_qubit_quantum_error(error_2, ['cx'])
 
 # Get basis gates from noise model

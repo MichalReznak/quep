@@ -36,6 +36,8 @@ pyo3 = { version = "0.16.2", features = ["auto-initialize"], optional = true }
 openqasm = "0.1.3"
 walkdir = "2.3.2"
 cli-table = "0.4.6"
+termcolor = "1.1.3"
+regex = "1.5.5"
 
 # For future
 # serde = "1.0.136"

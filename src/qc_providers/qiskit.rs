@@ -35,12 +35,8 @@ impl QcProvider for QiskitQcProvider {
 
             let args = PyTuple::new(py, &[&circuit]);
             let fun = qiskit.call_method1(py, "run", args)?;
-            let res = fun.cast_as::<PyString>(py).unwrap();
-            println!("{res:#?}");
-            Ok(())
-        })?;
-
-        Ok(circuit)
+            Ok(fun.cast_as::<PyString>(py).unwrap().to_string())
+        })
     }
 
     fn start_measure(&mut self) {

@@ -20,19 +20,11 @@ creg c[%WIDTH%];
 
 barrier q;
 
-%PREPARE%
-
-barrier q;
-
 %HALF_DEPTH_CIRCUIT%
 
 barrier q;
 
 %HALF_DEPTH_INVERSE_CIRCUIT%
-
-barrier q;
-
-%INVERT_PREPARE%
 
 barrier q;
 
@@ -43,6 +35,12 @@ measure q -> c;
 #[derive(Constructor)]
 pub struct MirrorCircuitGenerator;
 
+
+// Randomized mirror benchmarking with some restrictions:
+// Always the result should be all zeros
+// Second part of algorithm is always inverse to the first part in everything
+// Length is counted as 2d.
+
 #[async_trait]
 impl CircuitGenerator for MirrorCircuitGenerator {
     async fn generate(&self, i: i32, j: i32) -> Result<Option<String>, Error> {
@@ -50,110 +48,45 @@ impl CircuitGenerator for MirrorCircuitGenerator {
         //     return Ok(None);
         // }
 
-        let gates = [
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
-            "h",
+        let pauli_gates = [
+            "id",
+            "x",
+            "y",
+            "z",
         ];
 
-        let c_gates = [
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
-            "s",
+        let clifford_gates = [
+            "id",
+            "x",
+            "y",
+            "z",
+            "h",
             "s",
         ];
 
-        let c_gates_inv = [
+        let clifford_gates_inv = [
+            "id",
+            "x",
+            "y",
+            "z",
+            "h",
             "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
-            "sdg",
+        ];
+
+        let clifford_gates_2 = [
+            "cx",
+            "cz",
+            "swap",
+        ];
+
+        let clifford_gates_2_inv = [
+            "cx",
+            "cz",
+            "swap",
         ];
 
         let i = i + 1;
-        let j = j + 1;
+        let j = j + 2;
         let circuit = CIRCUIT_TEMPLATE.replace("%WIDTH%", &i.to_string());
 
 
@@ -163,39 +96,38 @@ impl CircuitGenerator for MirrorCircuitGenerator {
         }
         let circuit = circuit.replace("%RESET%", &resets);
 
+        let mut c_gates = vec![];
+        let mut p_gates = vec![];
 
-        let mut prepare = String::new();
-        for i in 0..i {
-            write!(&mut prepare, "{} q[{}];\n", gates[i as usize], i).unwrap();
-        }
-        let circuit = circuit.replace("%PREPARE%", &prepare);
-
-
+        let mut a = 0;
         let mut half_cir = String::new();
         for _ in 0..j {
             for i in 0..i {
-                write!(&mut half_cir, "{} q[{}];\n", c_gates[i as usize], i).unwrap();
+                let c_gate_index = a as usize % clifford_gates.len();
+                write!(&mut half_cir, "{} q[{}];\n", clifford_gates[c_gate_index], i).unwrap();
+                c_gates.push(c_gate_index);
+
+                let p_gate_index = (a + 1) as usize % pauli_gates.len();
+                write!(&mut half_cir, "{} q[{}];\n", pauli_gates[p_gate_index], i).unwrap();
+                p_gates.push(p_gate_index);
+                a += 1;
             }
             write!(&mut half_cir, "\n").unwrap();
         }
         let circuit = circuit.replace("%HALF_DEPTH_CIRCUIT%", &half_cir);
 
-
         let mut half_cir_inv = String::new();
         for _ in 0..j {
-            for i in 0..i {
-                write!(&mut half_cir_inv, "{} q[{}];\n", c_gates_inv[i as usize], i).unwrap();
+            for i in (0..i).rev() {
+                let c_gate_index = c_gates.pop().unwrap();
+                let p_gate_index = p_gates.pop().unwrap();
+                write!(&mut half_cir_inv, "{} q[{}];\n", pauli_gates[p_gate_index], i).unwrap();
+                write!(&mut half_cir_inv, "{} q[{}];\n", clifford_gates_inv[c_gate_index], i).unwrap();
+                a -= 1;
             }
             write!(&mut half_cir_inv, "\n").unwrap();
         }
         let circuit = circuit.replace("%HALF_DEPTH_INVERSE_CIRCUIT%", &half_cir_inv);
-
-
-        let mut prepare_inv = String::new();
-        for i in 0..i {
-            write!(&mut prepare_inv, "{} q[{}];\n", gates[i as usize], i).unwrap();
-        }
-        let circuit = circuit.replace("%INVERT_PREPARE%", &prepare_inv);
 
         println!("{circuit}");
 

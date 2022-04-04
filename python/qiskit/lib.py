@@ -32,7 +32,6 @@ class Qiskit:
         print(qc)
 
         job = self.backend.run(qc, shots=1024, memory=True)
-        print(job.result().get_statevector())
 
         output = job.result().get_memory()[0]
         print(output)

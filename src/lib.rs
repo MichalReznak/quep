@@ -39,10 +39,12 @@ impl Quep {
         let mut result = vec![];
         let mut durations = vec![];
 
-        'main: for i in 0..10 {
+        let a = 10;
+
+        'main: for i in 0..=a {
             let mut sr = vec![];
 
-            for j in 0..10 {
+            for j in 0..=a {
                 // generate test suite -> CircuitGenerator
                 let generator = Chooser::get_circuit_generator()?;
                 if let Some(circuit) = generator.generate(i, j).await? {

@@ -997,9 +997,11 @@ dependencies = [
  "pyo3",
  "quep_derive",
  "quep_utils",
+ "regex",
  "snafu",
  "strum",
  "strum_macros",
+ "termcolor",
  "tokio",
  "walkdir",
 ]

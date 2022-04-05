@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use async_trait::async_trait;
 use pyo3::prelude::*;
-use pyo3::types::{PyString, PyTuple};
+use pyo3::types::{PyDict, PyString, PyTuple};
 use tokio::time::Instant;
 
 use crate::traits::QcProvider;
@@ -35,7 +35,20 @@ impl QcProvider for QiskitQcProvider {
 
             let args = PyTuple::new(py, &[&circuit]);
             let fun = qiskit.call_method1(py, "run", args)?;
-            Ok(fun.cast_as::<PyString>(py).unwrap().to_string())
+            let res = fun.cast_as::<PyDict>(py).unwrap();
+            // Ok(fun.cast_as::<PyString>(py).unwrap().to_string())
+
+            let mut highest = ("".to_string(), 0);
+            for (key, val) in res.iter() {
+                let val: i32 = val.extract().unwrap();
+
+                if val > highest.1 {
+                    highest = (key.to_string(), val);
+                }
+            }
+
+            println!("{res:#?}");
+            Ok(format!("{}: {}", highest.0, highest.1))
         })
     }
 

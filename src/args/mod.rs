@@ -14,6 +14,9 @@ pub struct CliArgs {
 
     #[clap(long, env = "QUEP_CIRCUIT")]
     pub circuit: String,
+
+    #[clap(long, env = "QUEP_SIZE")]
+    pub size: i32,
 }
 
 lazy_static! {

@@ -33,7 +33,6 @@ class Qiskit:
 
         job = self.backend.run(qc, shots=1024, memory=True)
 
-        output = job.result().get_memory()[0]
-        print(output)
+        output = job.result().get_counts(0)
 
         return output

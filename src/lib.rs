@@ -39,7 +39,7 @@ impl Quep {
         let mut result = vec![];
         let mut durations = vec![];
 
-        let a = 10;
+        let a = ARGS.size;
 
         'main: for i in 0..=a {
             let mut sr = vec![];

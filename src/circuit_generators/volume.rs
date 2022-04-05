@@ -28,12 +28,7 @@ pub struct VolumeCircuitGenerator;
 #[async_trait]
 impl CircuitGenerator for VolumeCircuitGenerator {
     async fn generate(&self, i: i32, j: i32) -> Result<Option<String>, Error> {
-        let gates = vec![
-            "x",
-            "h",
-            "z",
-            "y",
-        ];
+        let gates = vec!["x", "h", "z", "y"];
 
         let i = i + 1;
         let j = j + 1;
@@ -48,7 +43,8 @@ impl CircuitGenerator for VolumeCircuitGenerator {
         let mut depth = String::new();
         for j in 0..j {
             for i in 0..i {
-                write!(&mut depth, "{} q[{}];\n", gates[(i + j) as usize % gates.len()], i).unwrap();
+                write!(&mut depth, "{} q[{}];\n", gates[(i + j) as usize % gates.len()], i)
+                    .unwrap();
             }
             write!(&mut depth, "\n").unwrap();
         }

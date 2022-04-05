@@ -1,10 +1,10 @@
 use async_trait::async_trait;
+use cli_table::format::Justify;
+use cli_table::{print_stdout, Cell, Style, Table};
 use derive_more::Constructor;
-use tokio::time::Duration;
-use cli_table::{print_stdout, Cell, Table, Style};
-use cli_table::format::{Align, Justify};
 use regex::Regex;
 use termcolor::Color;
+use tokio::time::Duration;
 
 use crate::traits::Outputer;
 
@@ -13,7 +13,11 @@ pub struct TextOutputer;
 
 #[async_trait]
 impl Outputer for TextOutputer {
-    async fn output(&self, values: Vec<Vec<String>>, duration: Vec<Duration>) -> Result<(), crate::Error> {
+    async fn output(
+        &self,
+        values: Vec<Vec<String>>,
+        duration: Vec<Duration>,
+    ) -> Result<(), crate::Error> {
         // let duration = duration.as_millis();
         println!("\nRuntime: {duration:#?} ns");
 

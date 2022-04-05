@@ -48,7 +48,6 @@ impl Quep {
                 // generate test suite -> CircuitGenerator
                 let generator = Chooser::get_circuit_generator()?;
                 if let Some(circuit) = generator.generate(i, j).await? {
-
                     // connect to the provider -> QcProvider
                     let mut provider = Chooser::get_provider()?;
                     provider.connect().await?;

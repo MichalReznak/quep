@@ -3,7 +3,9 @@ use std::str::FromStr;
 use fehler::throws;
 
 use crate::args::types::*;
-use crate::circuit_generators::{BasicCircuitGenerator, FsCircuitGenerator, MirrorCircuitGenerator, VolumeCircuitGenerator};
+use crate::circuit_generators::{
+    BasicCircuitGenerator, FsCircuitGenerator, MirrorCircuitGenerator, VolumeCircuitGenerator,
+};
 use crate::outputers::TextOutputer;
 use crate::qc_providers::IbmqQcProvider;
 #[cfg(feature = "qiskit")]

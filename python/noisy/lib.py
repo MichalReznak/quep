@@ -17,8 +17,13 @@ from qiskit.providers.aer.noise import NoiseModel, pauli_error
 
 ACCOUNT_ID = "9ee04b444ed1c767fcd01b66027a391d8df5938df51dd27e6eaaed0a45f5da67c19dcfb2f2f46dcff893c3a54d054b4b392e1a54618d8cfea9d70d9f3378ea51"
 
-p_reset = 0.03
-p_meas = 0.01
+# p_reset = 0.003
+# p_meas = 0.001
+# p_gate1 = 0.005
+
+
+p_reset = 0.5
+p_meas = 0.05
 p_gate1 = 0.05
 
 # QuantumError objects

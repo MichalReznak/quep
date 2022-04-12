@@ -136,7 +136,7 @@ impl CircuitGenerator for MirrorCircuitGenerator {
 
         let circuit = circuit.replace("%HALF_DEPTH_INVERSE_CIRCUIT%", &half_cir_inv);
 
-        println!("{circuit}");
+        // println!("{circuit}");
 
         Ok(Some(circuit))
     }

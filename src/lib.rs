@@ -13,6 +13,7 @@
 
 use derive_more::Constructor;
 use fehler::throws;
+use regex::Regex;
 
 use crate::chooser::Chooser;
 use crate::traits::{CircuitGenerator, Outputer, QcProvider};
@@ -40,6 +41,7 @@ impl Quep {
         let mut durations = vec![];
 
         let a = ARGS.size;
+        let re = Regex::new(r"(\d+): (?P<val>\d+)").unwrap();
 
         'main: for i in 0..=a {
             let mut sr = vec![];
@@ -55,8 +57,14 @@ impl Quep {
                     // start measuring -> MeasureTool
                     // run -> Executor
                     provider.start_measure();
-                    sr.push(provider.run(circuit).await?);
+                    let res = provider.run(circuit).await?;
+                    sr.push(res.clone());
                     durations.push(provider.stop_measure());
+
+                    let c = re.captures(&res).unwrap();
+                    if c["val"].parse::<f64>().unwrap() <= 1024.0 * (2.0 / 3.0) {
+                        break;
+                    }
                 }
                 else {
                     break 'main;
@@ -64,6 +72,7 @@ impl Quep {
             }
 
             result.push(sr);
+            // TODO stop earlier
         }
 
         // get measured results

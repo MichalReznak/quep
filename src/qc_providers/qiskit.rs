@@ -27,7 +27,7 @@ impl QcProvider for QiskitQcProvider {
     async fn run(&self, circuit: String) -> Result<String, Error> {
         Python::with_gil(|py| -> Result<_, Error> {
             let module =
-                PyModule::from_code(py, include_str!("../../python/qiskit/lib.py"), "", "")?;
+                PyModule::from_code(py, include_str!("../../python/qiskit.py"), "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Qiskit")?.into();
             let qiskit = qiskit.call0(py)?;
 

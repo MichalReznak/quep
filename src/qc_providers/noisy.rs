@@ -25,9 +25,10 @@ impl QcProvider for NoisyQcProvider {
     }
 
     async fn run(&self, circuit: String) -> Result<String, Error> {
+        // TODO custom interpreter will enable to remove os.add from .py files .\python\.venv\Scripts\python
         let res = Python::with_gil(|py| -> Result<_, Error> {
             let module =
-                PyModule::from_code(py, include_str!("../../python/noisy/lib.py"), "", "")?;
+                PyModule::from_code(py, include_str!("../../python/noisy.py"), "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Qiskit")?.into();
             let qiskit = qiskit.call0(py)?;
 

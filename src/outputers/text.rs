@@ -25,7 +25,7 @@ impl Outputer for TextOutputer {
         let re = Regex::new(r"(\d+): (?P<val>\d+)").unwrap();
 
         let mut row = vec![];
-        for i in 0..values.len() {
+        for i in 0..=values.get(0).unwrap().len() {
             row.push(i.cell().justify(Justify::Center).bold(true));
         }
         table.push(row);

@@ -43,10 +43,10 @@ impl Quep {
         let a = ARGS.size;
         let re = Regex::new(r"(\d+): (?P<val>\d+)").unwrap();
 
-        'main: for i in 0..=a {
+        'main: for i in 0..a {
             let mut sr = vec![];
 
-            for j in 0..=a {
+            for j in 0..a {
                 // generate test suite -> CircuitGenerator
                 let generator = Chooser::get_circuit_generator()?;
                 if let Some(circuit) = generator.generate(i, j).await? {
@@ -71,8 +71,11 @@ impl Quep {
                 }
             }
 
-            result.push(sr);
-            // TODO stop earlier
+            result.push(sr.clone());
+            let c = re.captures(&sr.get(0).unwrap()).unwrap();
+            if c["val"].parse::<f64>().unwrap() <= 1024.0 * (2.0 / 3.0) && sr.len() == 1 {
+                break;
+            }
         }
 
         // get measured results

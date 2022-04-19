@@ -1,7 +1,6 @@
-use std::fs;
-use std::path::{Path, PathBuf};
 use clap::Parser;
 use lazy_static::lazy_static;
+
 use crate::args::types::{CircuitType, OutputType, ProviderType};
 
 pub mod types;

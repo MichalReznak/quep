@@ -11,14 +11,14 @@
 #![feature(result_flattening)]
 #![feature(string_remove_matches)]
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
+
 use fehler::throws;
+use pyo3::prelude::*;
 use regex::Regex;
 
 use crate::chooser::Chooser;
 use crate::traits::{CircuitGenerator, Outputer, QcProvider};
-
-use pyo3::prelude::*;
 
 mod args;
 mod chooser;
@@ -50,7 +50,9 @@ impl Quep {
                 .args(["-m", "venv", &venv_dir])
                 .spawn()
                 .unwrap()
-                .wait().await.unwrap();
+                .wait()
+                .await
+                .unwrap();
         }
 
         if !Path::new(&format!("{}/cmake", &venv_dir)).exists() {
@@ -60,16 +62,27 @@ impl Quep {
             Command::new(&pip)
                 .args(["install", "-r", &req])
                 .spawn()
-                .unwrap().wait().await.unwrap();
+                .unwrap()
+                .wait()
+                .await
+                .unwrap();
         }
 
         // set correct paths
         Python::with_gil(|py| {
-            Python::run(py, &unindent::unindent(r#"
+            Python::run(
+                py,
+                &unindent::unindent(
+                    r#"
                 import sys
                 sys.path.append('./python/.venv/lib/site-packages')
                 sys.path.append('./python/.venv')
-            "#), None, None).unwrap();
+            "#,
+                ),
+                None,
+                None,
+            )
+            .unwrap();
         });
 
         println!("Done");
@@ -80,7 +93,6 @@ impl Quep {
     pub fn new() {
         unimplemented!();
     }
-
 
     #[throws]
     pub async fn run(self) {

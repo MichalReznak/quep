@@ -20,7 +20,8 @@ pub struct CliArgs {
     #[clap(long, env = "QUEP_SIZE")]
     pub size: i32,
 
-    #[clap(long, env = "QUEP_PYTHON_DIR", parse(try_from_str = parse_python_dir), default_value = "./python")]
+    // TODO default_value does not work
+    #[clap(long, env = "QUEP_PYTHON_DIR", parse(try_from_str = parse_python_dir))]
     pub python_dir: String,
 }
 

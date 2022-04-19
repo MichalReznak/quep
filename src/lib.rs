@@ -72,13 +72,14 @@ impl Quep {
         Python::with_gil(|py| {
             Python::run(
                 py,
-                &unindent::unindent(
+                &unindent::unindent(&format!(
                     r#"
-                import sys
-                sys.path.append('./python/.venv/lib/site-packages')
-                sys.path.append('./python/.venv')
-            "#,
-                ),
+                        import sys
+                        sys.path.append('{}/.venv/lib/site-packages')
+                        sys.path.append('{}/.venv')
+                    "#,
+                    &ARGS.python_dir, &ARGS.python_dir
+                )),
                 None,
                 None,
             )

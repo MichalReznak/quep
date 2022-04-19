@@ -7,6 +7,8 @@ use tokio::time::Instant;
 
 use crate::traits::QcProvider;
 use crate::Error;
+use load_file::load_str;
+use crate::ARGS;
 
 pub struct QiskitQcProvider {
     dur: Option<Instant>,
@@ -27,7 +29,7 @@ impl QcProvider for QiskitQcProvider {
     async fn run(&self, circuit: String) -> Result<String, Error> {
         Python::with_gil(|py| -> Result<_, Error> {
             let module =
-                PyModule::from_code(py, include_str!("../../python/qiskit.py"), "", "")?;
+                PyModule::from_code(py, load_str!(&format!("{}/qiskit.py", &ARGS.python_dir)), "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Qiskit")?.into();
             let qiskit = qiskit.call0(py)?;
 

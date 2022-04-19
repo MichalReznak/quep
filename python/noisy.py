@@ -1,8 +1,3 @@
-import sys
-
-sys.path.append('./python/.venv/lib/site-packages')
-sys.path.append('./python/.venv')
-
 from qiskit import QuantumCircuit, execute, Aer
 import qiskit.providers.aer.noise as noise
 import numpy as np

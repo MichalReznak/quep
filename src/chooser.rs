@@ -20,7 +20,7 @@ impl Chooser {
     #[cfg(feature = "qiskit")]
     #[throws]
     pub fn get_provider() -> QcProviderDyn {
-        match ProviderType::from_str(&ARGS.provider)? {
+        match ARGS.provider {
             ProviderType::Ibmq => QcProviderDyn::from(IbmqQcProvider::new()),
             ProviderType::Qiskit => QcProviderDyn::from(QiskitQcProvider::new()),
             ProviderType::Noisy => QcProviderDyn::from(NoisyQcProvider::new()),
@@ -30,7 +30,7 @@ impl Chooser {
     #[cfg(not(feature = "qiskit"))]
     #[throws]
     pub fn get_provider() -> QcProviderDyn {
-        match ProviderType::from_str(&ARGS.provider)? {
+        match ARGS.provider {
             ProviderType::Ibmq => QcProviderDyn::from(IbmqQcProvider::new()),
             ProviderType::Qiskit => unreachable!(),
             ProviderType::Noisy => unreachable!(),
@@ -39,7 +39,7 @@ impl Chooser {
 
     #[throws]
     pub fn get_outputer() -> OutputerDyn {
-        let res = match OutputType::from_str(&ARGS.output)? {
+        let res = match ARGS.output {
             OutputType::Text => TextOutputer::new(),
         };
 
@@ -48,7 +48,7 @@ impl Chooser {
 
     #[throws]
     pub fn get_circuit_generator() -> CircuitGeneratorDyn {
-        match CircuitType::from_str(&ARGS.circuit)? {
+        match ARGS.circuit {
             CircuitType::Basic => CircuitGeneratorDyn::from(BasicCircuitGenerator::new()),
             CircuitType::Fs => CircuitGeneratorDyn::from(FsCircuitGenerator::new()),
             CircuitType::Volume => CircuitGeneratorDyn::from(VolumeCircuitGenerator::new()),

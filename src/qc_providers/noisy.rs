@@ -4,9 +4,11 @@ use async_trait::async_trait;
 use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyTuple};
 use tokio::time::Instant;
+use load_file::load_str;
 
 use crate::traits::QcProvider;
 use crate::Error;
+use crate::ARGS;
 
 pub struct NoisyQcProvider {
     dur: Option<Instant>,
@@ -28,7 +30,7 @@ impl QcProvider for NoisyQcProvider {
         // TODO custom interpreter will enable to remove os.add from .py files .\python\.venv\Scripts\python
         let res = Python::with_gil(|py| -> Result<_, Error> {
             let module =
-                PyModule::from_code(py, include_str!("../../python/noisy.py"), "", "")?;
+                PyModule::from_code(py, load_str!(&format!("{}/noisy.py", ARGS.python_dir)), "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Qiskit")?.into();
             let qiskit = qiskit.call0(py)?;
 

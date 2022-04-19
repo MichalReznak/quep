@@ -11,15 +11,16 @@
 #![feature(result_flattening)]
 #![feature(string_remove_matches)]
 
-use derive_more::Constructor;
+use std::path::{Path, PathBuf};
 use fehler::throws;
 use regex::Regex;
 
 use crate::chooser::Chooser;
 use crate::traits::{CircuitGenerator, Outputer, QcProvider};
 
-mod args;
+use pyo3::prelude::*;
 
+mod args;
 mod chooser;
 mod circuit_generators;
 mod error;
@@ -30,13 +31,59 @@ pub mod traits;
 
 pub use args::ARGS;
 pub use error::Error;
+use tokio::process::Command;
 
-#[derive(Constructor)]
 pub struct Quep;
 
 impl Quep {
+    #[cfg(feature = "qiskit")]
+    pub async fn new() -> Self {
+        // check if python dir is available
+        let venv_dir = format!("{}/.venv", ARGS.python_dir);
+        let pip = format!("{}/.venv/Scripts/pip", ARGS.python_dir);
+        let req = format!("{}/requirements.txt", ARGS.python_dir);
+
+        if !Path::new(&venv_dir).exists() {
+            // install .venv
+            println!("Installing virtualenv...");
+            Command::new("python")
+                .args(["-m", "venv", &venv_dir])
+                .spawn()
+                .unwrap()
+                .wait().await.unwrap();
+        }
+
+        if !Path::new(&format!("{}/cmake", &venv_dir)).exists() {
+            // Check if qiskit exists
+            // run in venv pip install
+            println!("Installing qiskit...");
+            Command::new(&pip)
+                .args(["install", "-r", &req])
+                .spawn()
+                .unwrap().wait().await.unwrap();
+        }
+
+        // set correct paths
+        Python::with_gil(|py| {
+            Python::run(py, &unindent::unindent(r#"
+                import sys
+                sys.path.append('./python/.venv/lib/site-packages')
+                sys.path.append('./python/.venv')
+            "#), None, None).unwrap();
+        });
+
+        println!("Done");
+        Self
+    }
+
+    #[cfg(not(feature = "qiskit"))]
+    pub fn new() {
+        unimplemented!();
+    }
+
+
     #[throws]
-    pub async fn run() {
+    pub async fn run(self) {
         let mut result = vec![];
         let mut durations = vec![];
 

@@ -1,9 +1,3 @@
-import sys
-
-sys.path.append('./python/.venv/lib/site-packages')
-sys.path.append('./python/.venv')
-
-
 import numpy as np
 from qiskit import *
 from qiskit.visualization import plot_state_city

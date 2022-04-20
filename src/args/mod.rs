@@ -5,7 +5,7 @@ use fehler::throws;
 use lazy_static::lazy_static;
 use snafu::OptionExt;
 
-use crate::args::types::{CircuitType, OutputType, ProviderType};
+use crate::args::types::{CircuitType, OutputSerType, OutputType, ProviderType};
 use crate::error::Utf16;
 use crate::Error;
 
@@ -19,6 +19,9 @@ pub struct CliArgs {
 
     #[clap(long, env = "QUEP_OUTPUT")]
     pub output: OutputType,
+
+    #[clap(long, env = "QUEP_OUTPUT_SER")]
+    pub output_ser: OutputSerType,
 
     #[clap(long, env = "QUEP_CIRCUIT")]
     pub circuit: CircuitType,

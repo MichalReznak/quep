@@ -10,6 +10,7 @@ pub enum ProviderType {
 #[derive(Debug, EnumString)]
 pub enum OutputType {
     Text,
+    Serial,
 }
 
 #[derive(Debug, EnumString)]
@@ -18,4 +19,13 @@ pub enum CircuitType {
     Fs,
     Volume,
     Mirror,
+}
+
+#[derive(Debug, EnumString)]
+pub enum OutputSerType {
+    Json,
+    Xml,
+    Yaml,
+    Toml,
+    Ron,
 }

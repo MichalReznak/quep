@@ -4,7 +4,7 @@ use crate::args::types::*;
 use crate::circuit_generators::{
     BasicCircuitGenerator, FsCircuitGenerator, MirrorCircuitGenerator, VolumeCircuitGenerator,
 };
-use crate::outputers::TextOutputer;
+use crate::outputers::{SerialOutputer, TextOutputer};
 use crate::qc_providers::IbmqQcProvider;
 #[cfg(feature = "qiskit")]
 use crate::qc_providers::{NoisyQcProvider, QiskitQcProvider};
@@ -41,6 +41,7 @@ impl Chooser {
         use OutputType::*;
         match ARGS.output {
             Text => OutputerDyn::from(TextOutputer::new()),
+            Serial => OutputerDyn::from(SerialOutputer::new()),
         }
     }
 

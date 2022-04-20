@@ -7,12 +7,13 @@ use async_trait::async_trait;
 use enum_dispatch::enum_dispatch;
 use tokio::time::Duration;
 
-use crate::outputers::TextOutputer;
+use crate::outputers::{SerialOutputer, TextOutputer};
 use crate::Error;
 
 #[enum_dispatch]
 pub enum OutputerDyn {
     TextOutputer,
+    SerialOutputer,
 }
 
 #[async_trait]

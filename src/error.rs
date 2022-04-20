@@ -2,6 +2,7 @@ use std::num::ParseFloatError;
 
 #[cfg(feature = "qiskit")]
 use pyo3::PyErr;
+use quick_xml::DeError;
 use snafu::prelude::*;
 use strum::ParseError;
 
@@ -29,6 +30,21 @@ pub enum Error {
 
     #[snafu(display("{}", source), context(false))]
     FmtError { source: std::fmt::Error },
+
+    #[snafu(display("{}", source), context(false))]
+    SerdeJsonError { source: serde_json::Error },
+
+    #[snafu(display("{}", source), context(false))]
+    SerdeXmlError { source: DeError },
+
+    #[snafu(display("{}", source), context(false))]
+    SerdeYamlError { source: serde_yaml::Error },
+
+    #[snafu(display("{}", source), context(false))]
+    SerdeTomlError { source: toml::ser::Error },
+
+    #[snafu(display("{}", source), context(false))]
+    SerdeRonError { source: ron::Error },
 
     #[snafu(display("Py downcast error has lifetime"))]
     PyDowncastError,

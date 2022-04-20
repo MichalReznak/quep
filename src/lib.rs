@@ -11,11 +11,8 @@
 #![feature(result_flattening)]
 #![feature(string_remove_matches)]
 
-use std::path::Path;
-
 use fehler::throws;
 use log::info;
-use pyo3::prelude::*;
 use regex::Regex;
 use snafu::OptionExt;
 
@@ -29,11 +26,11 @@ mod error;
 mod outputers;
 mod qc_providers;
 
+pub mod pyvenv;
 pub mod traits;
 
 pub use args::ARGS;
 pub use error::Error;
-use tokio::process::Command;
 
 pub struct Quep;
 
@@ -41,41 +38,7 @@ impl Quep {
     #[cfg(feature = "qiskit")]
     #[throws]
     pub async fn new() -> Self {
-        // check if python dir is available
-        let venv_dir = format!("{}/.venv", ARGS.python_dir);
-        let pip = format!("{}/.venv/Scripts/pip", ARGS.python_dir);
-        let req = format!("{}/requirements.txt", ARGS.python_dir);
-
-        if !Path::new(&venv_dir).exists() {
-            // install .venv
-            info!("Installing virtualenv...");
-            Command::new("python").args(["-m", "venv", &venv_dir]).spawn()?.wait().await?;
-        }
-
-        // Check if qiskit exists
-        if !Path::new(&format!("{}/cmake", &venv_dir)).exists() {
-            // run in venv pip install
-            info!("Installing qiskit...");
-            Command::new(&pip).args(["install", "-r", &req]).spawn()?.wait().await?;
-        }
-
-        // set correct paths
-        Python::with_gil(|py| -> Result<_, Error> {
-            Ok(Python::run(
-                py,
-                &unindent::unindent(&format!(
-                    r#"
-                        import sys
-                        sys.path.append('{}/.venv/lib/site-packages')
-                        sys.path.append('{}/.venv')
-                    "#,
-                    &ARGS.python_dir, &ARGS.python_dir
-                )),
-                None,
-                None,
-            )?)
-        })?;
-
+        pyvenv::PyVenv::init().await?;
         info!("Done");
         Self
     }
@@ -90,13 +53,12 @@ impl Quep {
         let mut result = vec![];
         let mut durations = vec![];
 
-        let a = ARGS.size;
         let re = Regex::new(r"(\d+): (?P<val>\d+)")?;
 
-        'main: for i in 0..a {
+        'main: for i in 0..ARGS.size {
             let mut sr = vec![];
 
-            for j in 0..a {
+            for j in 0..ARGS.size {
                 // generate test suite -> CircuitGenerator
                 let generator = Chooser::get_circuit_generator()?;
                 if let Some(circuit) = generator.generate(i, j).await? {

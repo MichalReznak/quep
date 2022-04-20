@@ -42,9 +42,9 @@ impl CircuitGenerator for MirrorCircuitGenerator {
     async fn generate(&self, i: i32, j: i32) -> Result<Option<String>, Error> {
         let pauli_gates = ["id", "x", "y", "z"];
 
-        let clifford_gates = ["id", "x", "y", "z", "h", "s"];
+        let clifford_gates = ["h", "s", "id", "x", "y", "z"];
 
-        let clifford_gates_inv = ["id", "x", "y", "z", "h", "sdg"];
+        let clifford_gates_inv = ["h", "sdg", "id", "x", "y", "z"];
 
         let clifford_gates_2 = ["cx", "cz", "swap"];
 

@@ -1,21 +1,11 @@
-from qiskit import QuantumCircuit, execute, Aer
-import qiskit.providers.aer.noise as noise
-import numpy as np
 from qiskit import *
-from qiskit.visualization import plot_state_city
-from qiskit.visualization import plot_histogram
 from qiskit.providers.aer import AerSimulator
 from qiskit.providers.aer.noise import NoiseModel, pauli_error
-# import matplotlib.pyplot as plt
 
-# Run the quantum circuit on a statevector simulator backend
-
-ACCOUNT_ID = "9ee04b444ed1c767fcd01b66027a391d8df5938df51dd27e6eaaed0a45f5da67c19dcfb2f2f46dcff893c3a54d054b4b392e1a54618d8cfea9d70d9f3378ea51"
-
+# TODO
 # p_reset = 0.003
 # p_meas = 0.001
 # p_gate1 = 0.005
-
 
 p_reset = 0.5
 p_meas = 0.05
@@ -36,11 +26,8 @@ noise_bit_flip.add_all_qubit_quantum_error(error_gate2, ["cx"])
 
 
 class Noisy:
-    def __init__(self):
-        self.backend = None
-
     def auth(self):
-        self.backend = Aer.get_backend('aer_simulator')
+        pass
 
     def run(self: 'Qiskit', circuit: str) -> str:
         qc = QuantumCircuit.from_qasm_str(circuit)

@@ -1,7 +1,4 @@
-import numpy as np
 from qiskit import *
-from qiskit.visualization import plot_state_city
-from qiskit.visualization import plot_histogram
 
 
 class Qiskit:
@@ -14,7 +11,7 @@ class Qiskit:
 
     def run(self: 'Qiskit', circuit: str) -> str:
         qc = QuantumCircuit.from_qasm_str(circuit)
-        print(qc)
+        print(qc)  # TODO only on debug
 
         job = self.backend.run(qc, shots=1024, memory=True)
         output = job.result().get_counts(0)

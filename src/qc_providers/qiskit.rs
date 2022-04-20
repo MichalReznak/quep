@@ -2,11 +2,13 @@ use std::time::Duration;
 
 use async_trait::async_trait;
 use load_file::load_str;
+use log::debug;
 use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyTuple};
 use tokio::time::Instant;
 
 use crate::traits::QcProvider;
+use crate::Error::PyDowncastError;
 use crate::{Error, ARGS};
 
 pub struct QiskitQcProvider {
@@ -27,12 +29,8 @@ impl QcProvider for QiskitQcProvider {
 
     async fn run(&self, circuit: String) -> Result<String, Error> {
         Python::with_gil(|py| -> Result<_, Error> {
-            let module = PyModule::from_code(
-                py,
-                load_str!(&format!("{}/qiskit.py", &ARGS.python_dir)),
-                "",
-                "",
-            )?;
+            let code = load_str!(&format!("{}/qiskit.py", &ARGS.python_dir));
+            let module = PyModule::from_code(py, code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Qiskit")?.into();
             let qiskit = qiskit.call0(py)?;
 
@@ -40,19 +38,18 @@ impl QcProvider for QiskitQcProvider {
 
             let args = PyTuple::new(py, &[&circuit]);
             let fun = qiskit.call_method1(py, "run", args)?;
-            let res = fun.cast_as::<PyDict>(py).unwrap();
-            // Ok(fun.cast_as::<PyString>(py).unwrap().to_string())
+            let res = fun.cast_as::<PyDict>(py).map_err(|_| PyDowncastError)?;
 
             let mut highest = ("".to_string(), 0);
             for (key, val) in res.iter() {
-                let val: i32 = val.extract().unwrap();
+                let val: i32 = val.extract()?;
 
                 if val > highest.1 {
                     highest = (key.to_string(), val);
                 }
             }
 
-            println!("{res:#?}");
+            debug!("{res:#?}");
             Ok(format!("{}: {}", highest.0, highest.1))
         })
     }

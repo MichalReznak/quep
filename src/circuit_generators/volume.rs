@@ -36,17 +36,16 @@ impl CircuitGenerator for VolumeCircuitGenerator {
 
         let mut resets = String::new();
         for i in 0..i {
-            write!(&mut resets, "reset q[{}];\n", i).unwrap();
+            write!(&mut resets, "reset q[{}];\n", i)?;
         }
         let circuit = circuit.replace("%RESET%", &resets);
 
         let mut depth = String::new();
         for j in 0..j {
             for i in 0..i {
-                write!(&mut depth, "{} q[{}];\n", gates[(i + j) as usize % gates.len()], i)
-                    .unwrap();
+                write!(&mut depth, "{} q[{}];\n", gates[(i + j) as usize % gates.len()], i)?;
             }
-            write!(&mut depth, "\n").unwrap();
+            write!(&mut depth, "\n")?;
         }
         let circuit = circuit.replace("%DEPTH%", &depth);
 

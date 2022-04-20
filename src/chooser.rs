@@ -11,46 +11,47 @@ use crate::qc_providers::{NoisyQcProvider, QiskitQcProvider};
 use crate::traits::{CircuitGeneratorDyn, OutputerDyn, QcProviderDyn};
 use crate::{Error, ARGS};
 
-// Args based factory
+/// Args based factory
 pub struct Chooser;
 
 impl Chooser {
     #[cfg(feature = "qiskit")]
     #[throws]
     pub fn get_provider() -> QcProviderDyn {
+        use ProviderType::*;
         match ARGS.provider {
-            ProviderType::Ibmq => QcProviderDyn::from(IbmqQcProvider::new()),
-            ProviderType::Qiskit => QcProviderDyn::from(QiskitQcProvider::new()),
-            ProviderType::Noisy => QcProviderDyn::from(NoisyQcProvider::new()),
+            Ibmq => QcProviderDyn::from(IbmqQcProvider::new()),
+            Qiskit => QcProviderDyn::from(QiskitQcProvider::new()),
+            Noisy => QcProviderDyn::from(NoisyQcProvider::new()),
         }
     }
 
     #[cfg(not(feature = "qiskit"))]
     #[throws]
     pub fn get_provider() -> QcProviderDyn {
+        use ProviderType::*;
         match ARGS.provider {
-            ProviderType::Ibmq => QcProviderDyn::from(IbmqQcProvider::new()),
-            ProviderType::Qiskit => unreachable!(),
-            ProviderType::Noisy => unreachable!(),
+            Ibmq => QcProviderDyn::from(IbmqQcProvider::new()),
+            _ => unreachable!(),
         }
     }
 
     #[throws]
     pub fn get_outputer() -> OutputerDyn {
-        let res = match ARGS.output {
-            OutputType::Text => TextOutputer::new(),
-        };
-
-        OutputerDyn::from(res)
+        use OutputType::*;
+        match ARGS.output {
+            Text => OutputerDyn::from(TextOutputer::new()),
+        }
     }
 
     #[throws]
     pub fn get_circuit_generator() -> CircuitGeneratorDyn {
+        use CircuitType::*;
         match ARGS.circuit {
-            CircuitType::Basic => CircuitGeneratorDyn::from(BasicCircuitGenerator::new()),
-            CircuitType::Fs => CircuitGeneratorDyn::from(FsCircuitGenerator::new()),
-            CircuitType::Volume => CircuitGeneratorDyn::from(VolumeCircuitGenerator::new()),
-            CircuitType::Mirror => CircuitGeneratorDyn::from(MirrorCircuitGenerator::new()),
+            Basic => CircuitGeneratorDyn::from(BasicCircuitGenerator::new()),
+            Fs => CircuitGeneratorDyn::from(FsCircuitGenerator::new()),
+            Volume => CircuitGeneratorDyn::from(VolumeCircuitGenerator::new()),
+            Mirror => CircuitGeneratorDyn::from(MirrorCircuitGenerator::new()),
         }
     }
 }

@@ -14,12 +14,14 @@
 use std::path::Path;
 
 use fehler::throws;
+use log::info;
 use pyo3::prelude::*;
 use regex::Regex;
+use snafu::OptionExt;
 
 use crate::chooser::Chooser;
+use crate::error::{OutOfBounds, RegexCapture};
 use crate::traits::{CircuitGenerator, Outputer, QcProvider};
-
 mod args;
 mod chooser;
 mod circuit_generators;
@@ -37,6 +39,7 @@ pub struct Quep;
 
 impl Quep {
     #[cfg(feature = "qiskit")]
+    #[throws]
     pub async fn new() -> Self {
         // check if python dir is available
         let venv_dir = format!("{}/.venv", ARGS.python_dir);
@@ -45,32 +48,20 @@ impl Quep {
 
         if !Path::new(&venv_dir).exists() {
             // install .venv
-            println!("Installing virtualenv...");
-            Command::new("python")
-                .args(["-m", "venv", &venv_dir])
-                .spawn()
-                .unwrap()
-                .wait()
-                .await
-                .unwrap();
+            info!("Installing virtualenv...");
+            Command::new("python").args(["-m", "venv", &venv_dir]).spawn()?.wait().await?;
         }
 
+        // Check if qiskit exists
         if !Path::new(&format!("{}/cmake", &venv_dir)).exists() {
-            // Check if qiskit exists
             // run in venv pip install
-            println!("Installing qiskit...");
-            Command::new(&pip)
-                .args(["install", "-r", &req])
-                .spawn()
-                .unwrap()
-                .wait()
-                .await
-                .unwrap();
+            info!("Installing qiskit...");
+            Command::new(&pip).args(["install", "-r", &req]).spawn()?.wait().await?;
         }
 
         // set correct paths
-        Python::with_gil(|py| {
-            Python::run(
+        Python::with_gil(|py| -> Result<_, Error> {
+            Ok(Python::run(
                 py,
                 &unindent::unindent(&format!(
                     r#"
@@ -82,11 +73,10 @@ impl Quep {
                 )),
                 None,
                 None,
-            )
-            .unwrap();
-        });
+            )?)
+        })?;
 
-        println!("Done");
+        info!("Done");
         Self
     }
 
@@ -101,7 +91,7 @@ impl Quep {
         let mut durations = vec![];
 
         let a = ARGS.size;
-        let re = Regex::new(r"(\d+): (?P<val>\d+)").unwrap();
+        let re = Regex::new(r"(\d+): (?P<val>\d+)")?;
 
         'main: for i in 0..a {
             let mut sr = vec![];
@@ -121,8 +111,8 @@ impl Quep {
                     sr.push(res.clone());
                     durations.push(provider.stop_measure());
 
-                    let c = re.captures(&res).unwrap();
-                    if c["val"].parse::<f64>().unwrap() <= 1024.0 * (2.0 / 3.0) {
+                    let c = re.captures(&res).context(RegexCapture)?;
+                    if c["val"].parse::<f64>()? <= 1024.0 * (2.0 / 3.0) {
                         break;
                     }
                 }
@@ -132,8 +122,8 @@ impl Quep {
             }
 
             result.push(sr.clone());
-            let c = re.captures(&sr.get(0).unwrap()).unwrap();
-            if c["val"].parse::<f64>().unwrap() <= 1024.0 * (2.0 / 3.0) && sr.len() == 1 {
+            let c = re.captures(&sr.get(0).context(OutOfBounds)?).context(RegexCapture)?;
+            if c["val"].parse::<f64>()? <= 1024.0 * (2.0 / 3.0) && sr.len() == 1 {
                 break;
             }
         }

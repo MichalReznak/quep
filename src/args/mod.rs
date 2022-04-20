@@ -1,7 +1,13 @@
+use std::ffi::OsStr;
+
 use clap::Parser;
+use fehler::throws;
 use lazy_static::lazy_static;
+use snafu::OptionExt;
 
 use crate::args::types::{CircuitType, OutputType, ProviderType};
+use crate::error::Utf16;
+use crate::Error;
 
 pub mod types;
 
@@ -21,13 +27,13 @@ pub struct CliArgs {
     pub size: i32,
 
     // TODO default_value does not work
-    #[clap(long, env = "QUEP_PYTHON_DIR", parse(try_from_str = parse_python_dir))]
+    #[clap(long, env = "QUEP_PYTHON_DIR", parse(try_from_os_str = parse_python_dir))]
     pub python_dir: String,
 }
 
-// TODO use try_from_os_str
-fn parse_python_dir(val: &str) -> Result<String, String> {
-    Ok(dunce::canonicalize(val).unwrap().to_str().unwrap().to_owned())
+#[throws]
+fn parse_python_dir(val: &OsStr) -> String {
+    dunce::canonicalize(val)?.to_str().context(Utf16)?.to_owned()
 }
 
 lazy_static! {

@@ -35,7 +35,7 @@ noise_bit_flip.add_all_qubit_quantum_error(error_gate1, ["u1", "u2", "u3"])
 noise_bit_flip.add_all_qubit_quantum_error(error_gate2, ["cx"])
 
 
-class Qiskit:
+class Noisy:
     def __init__(self):
         self.backend = None
 

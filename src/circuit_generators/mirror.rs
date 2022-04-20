@@ -2,6 +2,7 @@ use std::fmt::Write;
 
 use async_trait::async_trait;
 use derive_more::Constructor;
+use log::debug;
 
 use crate::traits::CircuitGenerator;
 use crate::Error;
@@ -53,7 +54,7 @@ impl CircuitGenerator for MirrorCircuitGenerator {
 
         let mut resets = String::new();
         for i in 0..i {
-            write!(&mut resets, "reset q[{}];\n", i).unwrap();
+            write!(&mut resets, "reset q[{}];\n", i)?;
         }
         let circuit = circuit.replace("%RESET%", &resets);
 
@@ -78,10 +79,8 @@ impl CircuitGenerator for MirrorCircuitGenerator {
                 else {
                     let mut s = String::new();
                     if c_gate_index < c_len {
-                        write!(&mut half_cir, "{} q[{}];\n", clifford_gates[c_gate_index], ii)
-                            .unwrap();
-                        write!(&mut s, "{} q[{}];\n", clifford_gates_inv[c_gate_index], ii)
-                            .unwrap();
+                        write!(&mut half_cir, "{} q[{}];\n", clifford_gates[c_gate_index], ii)?;
+                        write!(&mut s, "{} q[{}];\n", clifford_gates_inv[c_gate_index], ii)?;
                         a += 1;
                     }
                     // NO space for double gate
@@ -91,10 +90,13 @@ impl CircuitGenerator for MirrorCircuitGenerator {
                             "{} q[{}];\n",
                             clifford_gates[c_gate_index - c_len],
                             ii
-                        )
-                        .unwrap();
-                        write!(&mut s, "{} q[{}];\n", clifford_gates_inv[c_gate_index - c_len], ii)
-                            .unwrap();
+                        )?;
+                        write!(
+                            &mut s,
+                            "{} q[{}];\n",
+                            clifford_gates_inv[c_gate_index - c_len],
+                            ii
+                        )?;
                     }
                     else {
                         write!(
@@ -103,16 +105,14 @@ impl CircuitGenerator for MirrorCircuitGenerator {
                             clifford_gates_2[c_gate_index - c_len],
                             ii,
                             ii + 1
-                        )
-                        .unwrap();
+                        )?;
                         write!(
                             &mut s,
                             "{} q[{}], q[{}];\n",
                             clifford_gates_2[c_gate_index - c_len],
                             ii,
                             ii + 1
-                        )
-                        .unwrap();
+                        )?;
                         a += 1;
                         skip = true;
                     }
@@ -120,23 +120,23 @@ impl CircuitGenerator for MirrorCircuitGenerator {
                 }
 
                 let mut s = String::new();
-                write!(&mut half_cir, "{} q[{}];\n", pauli_gates[p_gate_index], ii).unwrap();
-                write!(&mut s, "{} q[{}];\n", pauli_gates[p_gate_index], ii).unwrap();
+                write!(&mut half_cir, "{} q[{}];\n", pauli_gates[p_gate_index], ii)?;
+                write!(&mut s, "{} q[{}];\n", pauli_gates[p_gate_index], ii)?;
                 inv_gates.push(s);
             }
-            write!(&mut half_cir, "\n").unwrap();
+            write!(&mut half_cir, "\n")?;
         }
         let circuit = circuit.replace("%HALF_DEPTH_CIRCUIT%", &half_cir);
 
         let mut half_cir_inv = String::new();
         inv_gates.reverse();
         for ss in inv_gates {
-            write!(&mut half_cir_inv, "{}", ss).unwrap();
+            write!(&mut half_cir_inv, "{}", ss)?;
         }
 
         let circuit = circuit.replace("%HALF_DEPTH_INVERSE_CIRCUIT%", &half_cir_inv);
 
-        // println!("{circuit}");
+        debug!("{circuit}");
 
         Ok(Some(circuit))
     }

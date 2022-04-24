@@ -3,6 +3,7 @@ use std::fmt::Write;
 use async_trait::async_trait;
 use derive_more::Constructor;
 use log::debug;
+use rand::distributions::{Distribution, Uniform};
 
 use crate::traits::CircuitGenerator;
 use crate::Error;
@@ -30,15 +31,16 @@ measure q -> c;
 "#;
 
 #[derive(Constructor)]
-pub struct MirrorCircuitGenerator;
+pub struct RandMirrorCircuitGenerator;
 
-// Structured mirror benchmarking with some restrictions:
+// Randomized mirror benchmarking with some restrictions:
 // Always the result should be all zeros
 // Second part of algorithm is always inverse to the first part in everything
 // Length is counted as 2d.
+// It is using **uniform sampling**
 
 #[async_trait]
-impl CircuitGenerator for MirrorCircuitGenerator {
+impl CircuitGenerator for RandMirrorCircuitGenerator {
     async fn generate(&self, i: i32, j: i32) -> Result<Option<String>, Error> {
         let pauli_gates = ["id", "x", "y", "z"];
 
@@ -47,6 +49,10 @@ impl CircuitGenerator for MirrorCircuitGenerator {
         let clifford_gates_inv = ["h", "sdg", "id", "x", "y", "z"];
 
         let clifford_gates_2 = ["cx", "cz", "swap"];
+
+        let mut rng = rand::thread_rng();
+        let p_rand: Uniform<usize> = Uniform::from(0..4);
+        let c_rand: Uniform<usize> = Uniform::from(0..9);
 
         let i = i + 1;
         let j = j + 1;
@@ -61,17 +67,13 @@ impl CircuitGenerator for MirrorCircuitGenerator {
         let mut inv_gates = vec![];
 
         let c_len = clifford_gates.len();
-        let c_len2 = c_len + clifford_gates_2.len();
 
-        let mut b = 0;
-        let mut a = 0;
         let mut half_cir = String::new();
         let mut skip = false;
         for _ in 0..j {
             for ii in 0..i {
-                let p_gate_index = b as usize % pauli_gates.len();
-                let c_gate_index = a as usize % c_len2;
-                b += 1;
+                let p_gate_index = p_rand.sample(&mut rng);
+                let c_gate_index = c_rand.sample(&mut rng);
 
                 if skip {
                     skip = false;
@@ -81,7 +83,6 @@ impl CircuitGenerator for MirrorCircuitGenerator {
                     if c_gate_index < c_len {
                         write!(&mut half_cir, "{} q[{}];\n", clifford_gates[c_gate_index], ii)?;
                         write!(&mut s, "{} q[{}];\n", clifford_gates_inv[c_gate_index], ii)?;
-                        a += 1;
                     }
                     // NO space for double gate
                     else if ii == i - 1 {
@@ -113,7 +114,6 @@ impl CircuitGenerator for MirrorCircuitGenerator {
                             ii,
                             ii + 1
                         )?;
-                        a += 1;
                         skip = true;
                     }
                     inv_gates.push(s);

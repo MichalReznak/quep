@@ -1,4 +1,6 @@
 from qiskit import *
+from qiskit.visualization import plot_histogram
+import matplotlib
 
 
 class Qiskit:
@@ -15,4 +17,9 @@ class Qiskit:
 
         job = self.backend.run(qc, shots=1024, memory=True)
         output = job.result().get_counts(0)
+
+        # TODO plot
+        # plot_histogram(output)
+        # matplotlib.pyplot.show(block=True)  # To show the graph
+
         return output

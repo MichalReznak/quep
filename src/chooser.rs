@@ -2,7 +2,8 @@ use fehler::throws;
 
 use crate::args::types::*;
 use crate::circuit_generators::{
-    BasicCircuitGenerator, FsCircuitGenerator, MirrorCircuitGenerator, VolumeCircuitGenerator,
+    BasicCircuitGenerator, FsCircuitGenerator, MirrorCircuitGenerator, RandMirrorCircuitGenerator,
+    VolumeCircuitGenerator,
 };
 use crate::outputers::{SerialOutputer, TextOutputer};
 use crate::qc_providers::IbmqQcProvider;
@@ -53,6 +54,7 @@ impl Chooser {
             Fs => CircuitGeneratorDyn::from(FsCircuitGenerator::new()),
             Volume => CircuitGeneratorDyn::from(VolumeCircuitGenerator::new()),
             Mirror => CircuitGeneratorDyn::from(MirrorCircuitGenerator::new()),
+            RandMirror => CircuitGeneratorDyn::from(RandMirrorCircuitGenerator::new()),
         }
     }
 }

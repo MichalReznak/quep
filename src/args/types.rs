@@ -19,6 +19,7 @@ pub enum CircuitType {
     Fs,
     Volume,
     Mirror,
+    RandMirror,
 }
 
 #[derive(Debug, EnumString)]

@@ -59,14 +59,4 @@ class Noisy:
         result_bit_flip = sim_noise.run(circ_tnoise).result()
         counts_bit_flip = result_bit_flip.get_counts(0)
 
-
-        # Perform a noise simulation
-        # result = execute(
-        #     qc,
-        #     self.backend,
-        #     basis_gates=basis_gates,
-        #     noise_model=noise_model
-        # ).result()
-        # counts = result.get_counts(0)
-
         return counts_bit_flip

@@ -9,3 +9,6 @@ pub use volume::VolumeCircuitGenerator;
 
 mod mirror;
 pub use mirror::MirrorCircuitGenerator;
+
+mod rand_mirror;
+pub use rand_mirror::RandMirrorCircuitGenerator;

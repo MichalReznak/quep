@@ -51,6 +51,7 @@ quick-xml = { version = "0.22.0", features = ["serialize"] }
 toml = "0.5.9"
 ron = "0.7.0"
 serde_yaml = "0.8.23"
+rand = "0.8.5"
 
 # For future
 # chrono = { version = "0.4.19", features = ["serde"] }

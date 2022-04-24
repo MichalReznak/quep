@@ -25,6 +25,8 @@ measure q -> c;
 #[derive(Constructor)]
 pub struct VolumeCircuitGenerator;
 
+// TODO does nothing
+
 #[async_trait]
 impl CircuitGenerator for VolumeCircuitGenerator {
     async fn generate(&self, i: i32, j: i32) -> Result<Option<String>, Error> {
@@ -49,7 +51,6 @@ impl CircuitGenerator for VolumeCircuitGenerator {
         }
         let circuit = circuit.replace("%DEPTH%", &depth);
 
-        // println!("{circuit}");
         let check: Result<_, oq::Errors> = try {
             let mut cache = oq::SourceCache::new();
             let mut parser = oq::Parser::new(&mut cache);

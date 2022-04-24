@@ -2,7 +2,6 @@ use std::path::Path;
 
 use async_trait::async_trait;
 use derive_more::Constructor;
-use futures_async_stream::try_stream;
 
 use crate::traits::CircuitGenerator;
 use crate::Error;
@@ -54,19 +53,3 @@ impl CircuitGenerator for BasicCircuitGenerator {
         }
     }
 }
-
-impl BasicCircuitGenerator {
-    #[try_stream(ok = String, error = Error)]
-    pub async fn generate_stream() {
-        for value in ["a", "b", "c"] {
-            yield value.to_string();
-        }
-    }
-}
-
-// impl BasicCircuitGenerator {
-//     #[throws]
-//     pub async fn generate_i(width: i32, height: i32) -> String {
-//         unimplemented!();
-//     }
-// }

@@ -55,17 +55,19 @@ impl Quep {
 
         let re = Regex::new(r"(\d+): (?P<val>\d+)")?;
 
+        // generate test suite -> CircuitGenerator
+        let generator = Chooser::get_circuit_generator()?;
+        let outputer = Chooser::get_outputer()?;
+
+        // connect to the provider -> QcProvider
+        let mut provider = Chooser::get_provider()?;
+        provider.connect().await?;
+
         'main: for i in 0..ARGS.size {
             let mut sr = vec![];
 
             for j in 0..ARGS.size {
-                // generate test suite -> CircuitGenerator
-                let generator = Chooser::get_circuit_generator()?;
                 if let Some(circuit) = generator.generate(i, j).await? {
-                    // connect to the provider -> QcProvider
-                    let mut provider = Chooser::get_provider()?;
-                    provider.connect().await?;
-
                     // start measuring -> MeasureTool
                     // run -> Executor
                     provider.start_measure();
@@ -79,6 +81,7 @@ impl Quep {
                     }
                 }
                 else {
+                    result.push(sr.clone());
                     break 'main;
                 }
             }
@@ -92,7 +95,6 @@ impl Quep {
 
         // get measured results
         // output -> Outputer
-        let outputer = Chooser::get_outputer()?;
         outputer.output(result, durations).await?;
     }
 }

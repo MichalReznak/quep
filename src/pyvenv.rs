@@ -13,6 +13,7 @@ impl PyVenv {
     #[throws]
     pub async fn init() -> Self {
         // check if python dir is available
+        println!("{}", ARGS.python_dir);
         let venv_dir = format!("{}/.venv", ARGS.python_dir);
         let pip = format!("{}/.venv/Scripts/pip", ARGS.python_dir);
         let req = format!("{}/requirements.txt", ARGS.python_dir);

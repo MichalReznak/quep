@@ -23,6 +23,14 @@ pub enum CircuitType {
 }
 
 #[derive(Debug, EnumString)]
+pub enum OrchestratorType {
+    Lattice,
+    Linear, // For FS
+    Single, // Basic
+    Volume, // QuantumVolume
+}
+
+#[derive(Debug, EnumString)]
 pub enum OutputSerType {
     Json,
     Xml,

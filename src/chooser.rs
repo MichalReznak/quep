@@ -5,11 +5,14 @@ use crate::circuit_generators::{
     BasicCircuitGenerator, FsCircuitGenerator, MirrorCircuitGenerator, RandMirrorCircuitGenerator,
     VolumeCircuitGenerator,
 };
+use crate::orchestrators::{
+    LatticeOrchestrator, LinearOrchestrator, SingleOrchestrator, VolumeOrchestrator,
+};
 use crate::outputers::{SerialOutputer, TextOutputer};
 use crate::qc_providers::IbmqQcProvider;
 #[cfg(feature = "qiskit")]
 use crate::qc_providers::{NoisyQcProvider, QiskitQcProvider};
-use crate::traits::{CircuitGeneratorDyn, OutputerDyn, QcProviderDyn};
+use crate::traits::{CircuitGeneratorDyn, OrchestratorDyn, OutputerDyn, QcProviderDyn};
 use crate::{Error, ARGS};
 
 /// Args based factory
@@ -43,6 +46,17 @@ impl Chooser {
         match ARGS.output {
             Text => OutputerDyn::from(TextOutputer::new()),
             Serial => OutputerDyn::from(SerialOutputer::new()),
+        }
+    }
+
+    #[throws]
+    pub fn get_orchestrator() -> OrchestratorDyn {
+        use OrchestratorType::*;
+        match ARGS.orch {
+            Lattice => OrchestratorDyn::from(LatticeOrchestrator::new()),
+            Linear => OrchestratorDyn::from(LinearOrchestrator::new()),
+            Single => OrchestratorDyn::from(SingleOrchestrator::new()),
+            Volume => OrchestratorDyn::from(VolumeOrchestrator::new()),
         }
     }
 

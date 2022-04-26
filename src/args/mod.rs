@@ -5,7 +5,7 @@ use fehler::throws;
 use lazy_static::lazy_static;
 use snafu::OptionExt;
 
-use crate::args::types::{CircuitType, OutputSerType, OutputType, ProviderType};
+use crate::args::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
 use crate::error::Utf16;
 use crate::Error;
 
@@ -26,8 +26,17 @@ pub struct CliArgs {
     #[clap(long, env = "QUEP_CIRCUIT")]
     pub circuit: CircuitType,
 
-    #[clap(long, env = "QUEP_SIZE")]
-    pub size: i32,
+    #[clap(long, env = "QUEP_ORCH")]
+    pub orch: OrchestratorType,
+
+    // TODO better default
+    #[clap(long, env = "QUEP_ORCH_SIZE", default_value = "2147483647")]
+    pub orch_size: i32,
+
+    // TODO make it better
+    // This is to define width and depth separately in some orchestrators
+    #[clap(long, env = "QUEP_ORCH_SIZE_2")]
+    pub orch_size_2: i32,
 
     // TODO default_value does not work
     #[clap(long, env = "QUEP_PYTHON_DIR", parse(try_from_os_str = parse_python_dir))]

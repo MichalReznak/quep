@@ -11,13 +11,12 @@
 #![feature(result_flattening)]
 #![feature(string_remove_matches)]
 
+use chooser::Chooser;
 use clap::Parser;
 use fehler::throws;
 use log::info;
+use traits::Orchestrator;
 
-use crate::chooser::Chooser;
-
-mod args;
 mod chooser;
 mod circuit_generators;
 mod error;
@@ -25,13 +24,12 @@ mod orchestrators;
 mod outputers;
 mod qc_providers;
 
+pub mod args;
 pub mod pyvenv;
 pub mod traits;
 
+pub use args::CliArgs;
 pub use error::Error;
-
-use crate::args::CliArgs;
-use crate::traits::Orchestrator;
 
 pub struct Quep {
     args: CliArgs,

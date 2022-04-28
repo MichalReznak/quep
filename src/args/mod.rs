@@ -3,6 +3,7 @@ use std::ffi::OsStr;
 use clap::Parser;
 use fehler::throws;
 use snafu::OptionExt;
+use typed_builder::TypedBuilder;
 
 use crate::args::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
 use crate::error::Utf16;
@@ -10,7 +11,7 @@ use crate::Error;
 
 pub mod types;
 
-#[derive(Parser, Debug, Clone)]
+#[derive(Parser, Debug, Clone, TypedBuilder)]
 #[clap(author, version, about, long_about = None)]
 pub struct CliArgs {
     #[clap(long, env = "QUEP_PROVIDER")]

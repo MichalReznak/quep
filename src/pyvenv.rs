@@ -5,18 +5,18 @@ use log::info;
 use pyo3::prelude::*;
 use tokio::process::Command;
 
-use crate::{Error, ARGS};
+use crate::Error;
 
 pub struct PyVenv;
 
 impl PyVenv {
     #[throws]
-    pub async fn init() -> Self {
+    pub async fn init(dir: &str) -> Self {
         // check if python dir is available
-        println!("{}", ARGS.python_dir);
-        let venv_dir = format!("{}/.venv", ARGS.python_dir);
-        let pip = format!("{}/.venv/Scripts/pip", ARGS.python_dir);
-        let req = format!("{}/requirements.txt", ARGS.python_dir);
+        println!("{}", dir);
+        let venv_dir = format!("{}/.venv", dir);
+        let pip = format!("{}/.venv/Scripts/pip", dir);
+        let req = format!("{}/requirements.txt", dir);
 
         if !Path::new(&venv_dir).exists() {
             // install .venv
@@ -41,7 +41,7 @@ impl PyVenv {
                         sys.path.append('{}/.venv/lib/site-packages')
                         sys.path.append('{}/.venv')
                     "#,
-                    &ARGS.python_dir, &ARGS.python_dir
+                    &dir, &dir
                 )),
                 None,
                 None,

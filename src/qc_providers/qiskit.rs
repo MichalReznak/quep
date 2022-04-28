@@ -8,16 +8,20 @@ use pyo3::types::{PyDict, PyTuple};
 use tokio::time::Instant;
 
 use crate::traits::QcProvider;
+use crate::Error;
 use crate::Error::PyDowncastError;
-use crate::{Error, ARGS};
 
 pub struct QiskitQcProvider {
     dur: Option<Instant>,
+    dir: String,
 }
 
 impl QiskitQcProvider {
-    pub fn new() -> Self {
-        Self { dur: None }
+    pub fn new(dir: &str) -> Self {
+        Self {
+            dur: None,
+            dir: dir.to_string(),
+        }
     }
 }
 
@@ -29,7 +33,7 @@ impl QcProvider for QiskitQcProvider {
 
     async fn run(&self, circuit: String) -> Result<String, Error> {
         Python::with_gil(|py| -> Result<_, Error> {
-            let code = load_str!(&format!("{}/qiskit.py", &ARGS.python_dir));
+            let code = load_str!(&format!("{}/qiskit.py", &self.dir));
             let module = PyModule::from_code(py, code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Qiskit")?.into();
             let qiskit = qiskit.call0(py)?;

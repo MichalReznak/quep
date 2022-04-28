@@ -7,16 +7,20 @@ use pyo3::Python;
 use tokio::time::{Duration, Instant};
 
 use crate::traits::QcProvider;
+use crate::Error;
 use crate::Error::PyDowncastError;
-use crate::{Error, ARGS};
 
 pub struct IbmqQcProvider {
     dur: Option<Instant>,
+    dir: String,
 }
 
 impl IbmqQcProvider {
-    pub fn new() -> Self {
-        Self { dur: None }
+    pub fn new(dir: &str) -> Self {
+        Self {
+            dur: None,
+            dir: dir.to_string(),
+        }
     }
 }
 
@@ -28,7 +32,7 @@ impl QcProvider for IbmqQcProvider {
 
     async fn run(&self, circuit: String) -> Result<String, Error> {
         let res = Python::with_gil(|py| -> Result<_, Error> {
-            let code = load_str!(&format!("{}/ibmq.py", ARGS.python_dir));
+            let code = load_str!(&format!("{}/ibmq.py", self.dir));
             let module = PyModule::from_code(py, code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Ibmq")?.into();
             let qiskit = qiskit.call0(py)?;

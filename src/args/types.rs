@@ -1,19 +1,19 @@
 use strum_macros::EnumString;
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Clone, Copy)]
 pub enum ProviderType {
     Ibmq,
     Qiskit,
     Noisy,
 }
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Clone, Copy)]
 pub enum OutputType {
     Text,
     Serial,
 }
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Clone, Copy)]
 pub enum CircuitType {
     Basic,
     Fs,
@@ -22,7 +22,7 @@ pub enum CircuitType {
     RandMirror,
 }
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Clone, Copy)]
 pub enum OrchestratorType {
     Lattice,
     Linear, // For FS
@@ -30,7 +30,7 @@ pub enum OrchestratorType {
     Volume, // QuantumVolume
 }
 
-#[derive(Debug, EnumString)]
+#[derive(Debug, EnumString, Clone, Copy)]
 pub enum OutputSerType {
     Json,
     Xml,

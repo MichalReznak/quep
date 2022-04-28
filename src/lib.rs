@@ -11,6 +11,7 @@
 #![feature(result_flattening)]
 #![feature(string_remove_matches)]
 
+use clap::Parser;
 use fehler::throws;
 use log::info;
 
@@ -27,12 +28,14 @@ mod qc_providers;
 pub mod pyvenv;
 pub mod traits;
 
-pub use args::ARGS;
 pub use error::Error;
 
+use crate::args::CliArgs;
 use crate::traits::Orchestrator;
 
-pub struct Quep;
+pub struct Quep {
+    args: CliArgs,
+}
 
 // TODO check if set combination is correct or not
 
@@ -40,9 +43,20 @@ impl Quep {
     #[cfg(feature = "qiskit")]
     #[throws]
     pub async fn new() -> Self {
-        pyvenv::PyVenv::init().await?;
+        dotenv::dotenv().ok();
+        let args = CliArgs::parse();
+
+        pyvenv::PyVenv::init(&args.python_dir).await?;
+
         info!("Done");
-        Self
+        Self { args }
+    }
+
+    #[throws]
+    pub async fn with_args(args: CliArgs) -> Self {
+        pyvenv::PyVenv::init(&args.python_dir).await?;
+        info!("Done");
+        Self { args }
     }
 
     #[cfg(not(feature = "qiskit"))]
@@ -52,7 +66,8 @@ impl Quep {
 
     #[throws]
     pub async fn run(self) {
-        let orch = Chooser::get_orchestrator()?;
-        orch.run().await?;
+        let chooser = Chooser::new(self.args.clone());
+        let orch = chooser.get_orchestrator()?;
+        orch.run(&chooser, self.args.orch_size, self.args.orch_size_2).await?;
     }
 }

@@ -8,16 +8,20 @@ use pyo3::types::{PyDict, PyTuple};
 use tokio::time::Instant;
 
 use crate::traits::QcProvider;
+use crate::Error;
 use crate::Error::PyDowncastError;
-use crate::{Error, ARGS};
 
 pub struct NoisyQcProvider {
     dur: Option<Instant>,
+    dir: String,
 }
 
 impl NoisyQcProvider {
-    pub fn new() -> Self {
-        Self { dur: None }
+    pub fn new(dir: &str) -> Self {
+        Self {
+            dur: None,
+            dir: dir.to_string(),
+        }
     }
 }
 
@@ -29,7 +33,7 @@ impl QcProvider for NoisyQcProvider {
 
     async fn run(&self, circuit: String) -> Result<String, Error> {
         let res = Python::with_gil(|py| -> Result<_, Error> {
-            let code = load_str!(&format!("{}/noisy.py", ARGS.python_dir));
+            let code = load_str!(&format!("{}/noisy.py", self.dir));
             let module = PyModule::from_code(py, code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Noisy")?.into();
             let qiskit = qiskit.call0(py)?;

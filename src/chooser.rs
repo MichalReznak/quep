@@ -13,46 +13,41 @@ use crate::qc_providers::IbmqQcProvider;
 #[cfg(feature = "qiskit")]
 use crate::qc_providers::{NoisyQcProvider, QiskitQcProvider};
 use crate::traits::{CircuitGeneratorDyn, OrchestratorDyn, OutputerDyn, QcProviderDyn};
-use crate::{Error, ARGS};
+use crate::{CliArgs, Error};
 
 /// Args based factory
-pub struct Chooser;
+pub struct Chooser {
+    args: CliArgs,
+}
 
 impl Chooser {
-    #[cfg(feature = "qiskit")]
-    #[throws]
-    pub fn get_provider() -> QcProviderDyn {
-        use ProviderType::*;
-        match ARGS.provider {
-            Ibmq => QcProviderDyn::from(IbmqQcProvider::new()),
-            Qiskit => QcProviderDyn::from(QiskitQcProvider::new()),
-            Noisy => QcProviderDyn::from(NoisyQcProvider::new()),
-        }
+    pub fn new(args: CliArgs) -> Self {
+        Self { args }
     }
 
-    #[cfg(not(feature = "qiskit"))]
     #[throws]
-    pub fn get_provider() -> QcProviderDyn {
+    pub fn get_provider(&self) -> QcProviderDyn {
         use ProviderType::*;
-        match ARGS.provider {
-            Ibmq => QcProviderDyn::from(IbmqQcProvider::new()),
-            _ => unreachable!(),
+        match self.args.provider {
+            Ibmq => QcProviderDyn::from(IbmqQcProvider::new(&self.args.python_dir)),
+            Qiskit => QcProviderDyn::from(QiskitQcProvider::new(&self.args.python_dir)),
+            Noisy => QcProviderDyn::from(NoisyQcProvider::new(&self.args.python_dir)),
         }
     }
 
     #[throws]
-    pub fn get_outputer() -> OutputerDyn {
+    pub fn get_outputer(&self) -> OutputerDyn {
         use OutputType::*;
-        match ARGS.output {
+        match self.args.output {
             Text => OutputerDyn::from(TextOutputer::new()),
-            Serial => OutputerDyn::from(SerialOutputer::new()),
+            Serial => OutputerDyn::from(SerialOutputer::new(self.args.output_ser)),
         }
     }
 
     #[throws]
-    pub fn get_orchestrator() -> OrchestratorDyn {
+    pub fn get_orchestrator(&self) -> OrchestratorDyn {
         use OrchestratorType::*;
-        match ARGS.orch {
+        match self.args.orch {
             Lattice => OrchestratorDyn::from(LatticeOrchestrator::new()),
             Linear => OrchestratorDyn::from(LinearOrchestrator::new()),
             Single => OrchestratorDyn::from(SingleOrchestrator::new()),
@@ -61,9 +56,9 @@ impl Chooser {
     }
 
     #[throws]
-    pub fn get_circuit_generator() -> CircuitGeneratorDyn {
+    pub fn get_circuit_generator(&self) -> CircuitGeneratorDyn {
         use CircuitType::*;
-        match ARGS.circuit {
+        match self.args.circuit {
             Basic => CircuitGeneratorDyn::from(BasicCircuitGenerator::new()),
             Fs => CircuitGeneratorDyn::from(FsCircuitGenerator::new()),
             Volume => CircuitGeneratorDyn::from(VolumeCircuitGenerator::new()),

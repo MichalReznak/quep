@@ -2,7 +2,6 @@ use std::ffi::OsStr;
 
 use clap::Parser;
 use fehler::throws;
-use lazy_static::lazy_static;
 use snafu::OptionExt;
 
 use crate::args::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
@@ -11,7 +10,7 @@ use crate::Error;
 
 pub mod types;
 
-#[derive(Parser, Debug)]
+#[derive(Parser, Debug, Clone)]
 #[clap(author, version, about, long_about = None)]
 pub struct CliArgs {
     #[clap(long, env = "QUEP_PROVIDER")]
@@ -46,11 +45,4 @@ pub struct CliArgs {
 #[throws]
 fn parse_python_dir(val: &OsStr) -> String {
     dunce::canonicalize(val)?.to_str().context(Utf16)?.to_owned()
-}
-
-lazy_static! {
-    pub static ref ARGS: CliArgs = {
-        dotenv::dotenv().ok();
-        CliArgs::parse()
-    };
 }

@@ -6,7 +6,6 @@ use snafu::OptionExt;
 use crate::chooser::Chooser;
 use crate::error::{OutOfBounds, RegexCapture};
 use crate::traits::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
-use crate::ARGS;
 
 /// Always increase depth and width by one in each iteration
 #[derive(Constructor)]
@@ -14,25 +13,25 @@ pub struct VolumeOrchestrator;
 
 #[async_trait]
 impl Orchestrator for VolumeOrchestrator {
-    async fn run(&self) -> Result<(), crate::Error> {
+    async fn run(&self, chooser: &Chooser, width: i32, _: i32) -> Result<(), crate::Error> {
         let mut result = vec![];
         let mut durations = vec![];
 
         let re = Regex::new(r"(\d+): (?P<val>\d+)")?;
 
         // generate test suite -> CircuitGenerator
-        let generator = Chooser::get_circuit_generator()?;
-        let outputer = Chooser::get_outputer()?;
+        let generator = chooser.get_circuit_generator()?;
+        let outputer = chooser.get_outputer()?;
 
         // connect to the provider -> QcProvider
-        let mut provider = Chooser::get_provider()?;
+        let mut provider = chooser.get_provider()?;
         provider.connect().await?;
 
         // TODO for now it generates empty for not computed ones
-        'main: for i in 0..ARGS.orch_size {
+        'main: for i in 0..width {
             let mut sr = vec![];
 
-            for j in 0..ARGS.orch_size {
+            for j in 0..width {
                 if i != j {
                     sr.push("0: 0".to_string());
                     continue;

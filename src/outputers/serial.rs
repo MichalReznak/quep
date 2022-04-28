@@ -11,7 +11,6 @@ use unwrap_infallible::UnwrapInfallible;
 use crate::args::types::OutputSerType;
 use crate::error::{OutOfBounds, RegexCapture};
 use crate::traits::Outputer;
-use crate::ARGS;
 
 #[derive(Serialize, Deserialize, TypedBuilder, Debug)]
 struct Output {
@@ -29,7 +28,9 @@ struct Record {
 }
 
 #[derive(Constructor)]
-pub struct SerialOutputer;
+pub struct SerialOutputer {
+    out: OutputSerType,
+}
 
 // TODO can be any serialized format
 
@@ -66,7 +67,7 @@ impl Outputer for SerialOutputer {
         let table = Output::builder().records(table).build();
 
         use OutputSerType::*;
-        let res = match ARGS.output_ser {
+        let res = match self.out {
             Json => serde_json::to_string(&table)?,
             Xml => quick_xml::se::to_string(&table)?,
             Yaml => serde_yaml::to_string(&table)?,

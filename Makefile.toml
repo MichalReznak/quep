@@ -9,36 +9,18 @@ TOOLCHAIN_V = "nightly-2022-01-20"
 script_runner = "@shell"
 script = ['''
     rustup override set ${TOOLCHAIN_V}
-    git config core.hooksPath .githooks
-''']
-
-[tasks.db-fill]
-command = "cargo"
-args = ["r", "--", "--db-fill"]
-
-[tasks.dev-env]
-command = "cargo"
-args = ["r", "--", "--dev-env"]
-
-[tasks.test]
-clear = true
-script_runner = "@shell"
-env = { CAVIA_UNSECURE = "true" }
-script = ['''
-    cargo make db-fill
-    cargo test --release -- --test-threads=1
 ''']
 
 [tasks.start]
 clear = true
 command = "cargo"
-args = ["watch", "-x", "run"]
+args = ["watch", "-cx", "run"]
 
 
 [tasks.watch]
 clear = true
 command = "cargo"
-args = ["watch", "-x", "clippy"]
+args = ["watch", "-cx", "clippy"]
 
 [tasks.check]
 clear = true
@@ -48,20 +30,9 @@ script = ['''
     cargo fmt -- --check
 ''']
 
-[tasks.build-docker]
+[tasks.test]
 clear = true
 script_runner = "@shell"
 script = ['''
-    docker run --rm -it -v %cd%:/app registry.lxdevelop.cz/bimteam/cavia/build:0.1.1 cargo build --release
-    docker build . -f ./docker/runtime/Dockerfile -t cavia:pre
-''']
-
-[tasks.db-snapshot]
-clear = true
-script_runner = "@shell"
-script = ['''
-    rm -rf data_dummy
-    mkdir data_dummy
-    cp -R data data_dummy
-    mongodump --username="root" --password=m3hSLI3UC2oeVTSi --host=localhost:27017 --authenticationDatabase=admin --readPreference="primary" --gzip --archive="./data_dummy/db.bson.gz"
+    cargo test -- --test-threads=1
 ''']

@@ -18,7 +18,7 @@ async fn mirror() {
         .orch_size_2(4)
         .python_dir(common::get_dir()?)
         .build();
-    quep::Quep::with_args(args).await?.run().await?;
+    quep::Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -34,7 +34,7 @@ async fn mirror_serial_json() {
         .orch_size_2(4)
         .python_dir(common::get_dir()?)
         .build();
-    quep::Quep::with_args(args).await?.run().await?;
+    quep::Quep::new(args).await?.run().await?;
 }
 
 // TODO all serials
@@ -52,7 +52,7 @@ async fn rand_mirror() {
         .orch_size_2(4)
         .python_dir(common::get_dir()?)
         .build();
-    quep::Quep::with_args(args).await?.run().await?;
+    quep::Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -68,7 +68,7 @@ async fn fs() {
         .orch_size_2(4)
         .python_dir(common::get_dir()?)
         .build();
-    quep::Quep::with_args(args).await?.run().await?;
+    quep::Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -84,7 +84,7 @@ async fn basic() {
         .orch_size_2(4)
         .python_dir(common::get_dir()?)
         .build();
-    quep::Quep::with_args(args).await?.run().await?;
+    quep::Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -100,5 +100,5 @@ async fn volume() {
         .orch_size_2(4)
         .python_dir(common::get_dir()?)
         .build();
-    quep::Quep::with_args(args).await?.run().await?;
+    quep::Quep::new(args).await?.run().await?;
 }

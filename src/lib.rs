@@ -38,21 +38,20 @@ pub struct Quep {
 // TODO check if set combination is correct or not
 
 impl Quep {
-    #[cfg(feature = "qiskit")]
     #[throws]
-    pub async fn new() -> Self {
-        dotenv::dotenv().ok();
-        let args = CliArgs::parse();
-
+    pub async fn new(args: CliArgs) -> Self {
         pyvenv::PyVenv::init(&args.python_dir).await?;
-
         info!("Done");
         Self { args }
     }
 
     #[throws]
-    pub async fn with_args(args: CliArgs) -> Self {
+    pub async fn from_env() -> Self {
+        dotenv::dotenv().ok();
+        let args = CliArgs::parse();
+
         pyvenv::PyVenv::init(&args.python_dir).await?;
+
         info!("Done");
         Self { args }
     }

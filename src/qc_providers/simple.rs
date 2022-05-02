@@ -33,9 +33,9 @@ impl QcProvider for SimpleQcProvider {
 
     async fn run(&self, circuit: String) -> Result<String, Error> {
         Python::with_gil(|py| -> Result<_, Error> {
-            let code = load_str!(&format!("{}/qiskit.py", &self.dir));
+            let code = load_str!(&format!("{}/simple.py", &self.dir));
             let module = PyModule::from_code(py, code, "", "")?;
-            let qiskit: Py<PyAny> = module.getattr("Qiskit")?.into();
+            let qiskit: Py<PyAny> = module.getattr("Simple")?.into();
             let qiskit = qiskit.call0(py)?;
 
             qiskit.call_method0(py, "auth")?;

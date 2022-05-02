@@ -1,6 +1,5 @@
 use async_trait::async_trait;
 use cli_table::format::Justify;
-use cli_table::format::Justify::Center;
 use cli_table::{print_stdout, Cell, Style, Table};
 use derive_more::Constructor;
 use regex::Regex;

@@ -23,6 +23,8 @@ struct Record {
     depth: i32,
     #[builder(setter(into))]
     output: String,
+    #[builder(setter(into))]
+    time_ms: u128,
     result: i32,
     correct: bool,
 }
@@ -41,9 +43,6 @@ impl Outputer for SerialOutputer {
         values: Vec<Vec<String>>,
         duration: Vec<Duration>,
     ) -> Result<(), crate::Error> {
-        // let duration = duration.as_millis();
-        println!("\nRuntime: {duration:#?} ns");
-
         let mut table = Vec::new();
         let re = Regex::new(r"(?P<out>\d+): (?P<val>\d+)")?;
 
@@ -58,6 +57,7 @@ impl Outputer for SerialOutputer {
                     .output(&c["out"].parse::<String>().unwrap_infallible())
                     .result(cast(val).context(OutOfBounds)?)
                     .correct(val > 1024.0 * (2.0 / 3.0))
+                    .time_ms(duration.get(j).context(OutOfBounds)?.as_millis())
                     .build();
 
                 table.push(record);
@@ -76,7 +76,6 @@ impl Outputer for SerialOutputer {
         };
 
         println!("{res}");
-
         Ok(())
     }
 }

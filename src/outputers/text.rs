@@ -1,5 +1,6 @@
 use async_trait::async_trait;
 use cli_table::format::Justify;
+use cli_table::format::Justify::Center;
 use cli_table::{print_stdout, Cell, Style, Table};
 use derive_more::Constructor;
 use regex::Regex;
@@ -20,23 +21,49 @@ impl Outputer for TextOutputer {
         values: Vec<Vec<String>>,
         duration: Vec<Duration>,
     ) -> Result<(), crate::Error> {
-        // let duration = duration.as_millis();
-        println!("\nRuntime: {duration:#?} ns");
+        let mut table_dur = vec![];
+        let mut table = vec![];
 
-        let mut table = Vec::new();
         let re = Regex::new(r"(\d+): (?P<val>\d+)")?;
 
         let mut row = vec![];
+        let mut row_dur = vec![];
         for i in 0..=values.get(0).context(OutOfBounds)?.len() {
-            row.push(i.cell().justify(Justify::Center).bold(true));
+            row.push(
+                i.cell()
+                    .justify(Justify::Center)
+                    .bold(true)
+                    .background_color(Some(Color::Magenta)),
+            );
+            row_dur.push(
+                i.cell()
+                    .justify(Justify::Center)
+                    .bold(true)
+                    .background_color(Some(Color::Magenta)),
+            );
         }
         table.push(row);
+        table_dur.push(row_dur);
 
         for (i, value) in values.iter().enumerate() {
-            let mut row = Vec::new();
-            row.push((i + 1).cell().justify(Justify::Center).bold(true));
+            let mut row = vec![];
+            let mut row_dur = vec![];
+            row.push(
+                (i + 1)
+                    .cell()
+                    .justify(Justify::Center)
+                    .bold(true)
+                    .background_color(Some(Color::Magenta)),
+            );
+            row_dur.push(
+                (i + 1)
+                    .cell()
+                    .justify(Justify::Center)
+                    .bold(true)
+                    .background_color(Some(Color::Magenta)),
+            );
 
-            for col in value {
+            for (j, col) in value.iter().enumerate() {
                 let c = re.captures(&col).context(RegexCapture)?;
 
                 let res = if c["val"].parse::<f64>()? > 1024.0 * (2.0 / 3.0) {
@@ -46,15 +73,23 @@ impl Outputer for TextOutputer {
                     col.cell().foreground_color(Some(Color::Red))
                 };
 
+                row_dur.push(
+                    format!("{} ms", duration.get(i + j).context(OutOfBounds)?.as_millis())
+                        .cell()
+                        .justify(Justify::Right),
+                );
                 row.push(res);
             }
 
+            table_dur.push(row_dur);
             table.push(row);
         }
 
-        let table = table.table();
-        print_stdout(table)?;
+        println!("\nResult:");
+        print_stdout(table.table())?;
 
+        println!("\nRuntime:");
+        print_stdout(table_dur.table())?;
         Ok(())
     }
 }

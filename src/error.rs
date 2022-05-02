@@ -1,6 +1,5 @@
 use std::num::ParseFloatError;
 
-#[cfg(feature = "qiskit")]
 use pyo3::PyErr;
 use quick_xml::DeError;
 use snafu::prelude::*;
@@ -18,7 +17,6 @@ pub enum Error {
     #[snafu(display("{}", source), context(false))]
     IoError { source: std::io::Error },
 
-    #[cfg(feature = "qiskit")]
     #[snafu(display("{}", source), context(false))]
     Pyo3Error { source: PyErr },
 

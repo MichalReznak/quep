@@ -6,23 +6,14 @@ use async_trait::async_trait;
 use enum_dispatch::enum_dispatch;
 use tokio::time::Duration;
 
-use crate::qc_providers::IbmqQcProvider;
-#[cfg(feature = "qiskit")]
-use crate::qc_providers::{NoisyQcProvider, QiskitQcProvider};
+use crate::qc_providers::{IbmqQcProvider, NoisyQcProvider, SimpleQcProvider};
 use crate::Error;
 
-#[cfg(feature = "qiskit")]
 #[enum_dispatch]
 pub enum QcProviderDyn {
     IbmqQcProvider,
-    QiskitQcProvider,
+    SimpleQcProvider,
     NoisyQcProvider,
-}
-
-#[cfg(not(feature = "qiskit"))]
-#[enum_dispatch]
-pub enum QcProviderDyn {
-    IbmqQcProvider,
 }
 
 #[async_trait]

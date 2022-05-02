@@ -3,7 +3,7 @@ use strum_macros::EnumString;
 #[derive(Debug, EnumString, Clone, Copy)]
 pub enum ProviderType {
     Ibmq,
-    Qiskit,
+    Simple,
     Noisy,
 }
 

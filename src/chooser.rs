@@ -9,9 +9,7 @@ use crate::orchestrators::{
     LatticeOrchestrator, LinearOrchestrator, SingleOrchestrator, VolumeOrchestrator,
 };
 use crate::outputers::{SerialOutputer, TextOutputer};
-use crate::qc_providers::IbmqQcProvider;
-#[cfg(feature = "qiskit")]
-use crate::qc_providers::{NoisyQcProvider, QiskitQcProvider};
+use crate::qc_providers::{IbmqQcProvider, NoisyQcProvider, SimpleQcProvider};
 use crate::traits::{CircuitGeneratorDyn, OrchestratorDyn, OutputerDyn, QcProviderDyn};
 use crate::{CliArgs, Error};
 
@@ -30,7 +28,7 @@ impl Chooser {
         use ProviderType::*;
         match self.args.provider {
             Ibmq => QcProviderDyn::from(IbmqQcProvider::new(&self.args.python_dir)),
-            Qiskit => QcProviderDyn::from(QiskitQcProvider::new(&self.args.python_dir)),
+            Simple => QcProviderDyn::from(SimpleQcProvider::new(&self.args.python_dir)),
             Noisy => QcProviderDyn::from(NoisyQcProvider::new(&self.args.python_dir)),
         }
     }

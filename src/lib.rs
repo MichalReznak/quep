@@ -56,11 +56,6 @@ impl Quep {
         Self { args }
     }
 
-    #[cfg(not(feature = "qiskit"))]
-    pub fn new() {
-        unimplemented!();
-    }
-
     #[throws]
     pub async fn run(self) {
         let chooser = Chooser::new(self.args.clone());

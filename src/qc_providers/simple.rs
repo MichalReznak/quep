@@ -11,12 +11,12 @@ use crate::traits::QcProvider;
 use crate::Error;
 use crate::Error::PyDowncastError;
 
-pub struct QiskitQcProvider {
+pub struct SimpleQcProvider {
     dur: Option<Instant>,
     dir: String,
 }
 
-impl QiskitQcProvider {
+impl SimpleQcProvider {
     pub fn new(dir: &str) -> Self {
         Self {
             dur: None,
@@ -26,7 +26,7 @@ impl QiskitQcProvider {
 }
 
 #[async_trait]
-impl QcProvider for QiskitQcProvider {
+impl QcProvider for SimpleQcProvider {
     async fn connect(&self) -> Result<(), Error> {
         Ok(())
     }

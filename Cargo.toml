@@ -6,10 +6,6 @@ name = "quep"
 version = "0.1.0"
 edition = "2021"
 
-[features]
-default = ["qiskit"]
-qiskit = ["pyo3"]
-
 [dependencies]
 # Crates
 quep_derive = { path = "crates/derive" }
@@ -32,7 +28,7 @@ strum = "0.24.0"
 strum_macros = "0.24.0"
 futures = "0.3.21"
 futures-async-stream = "0.2.5"
-pyo3 = { version = "0.16.2", features = ["auto-initialize"], optional = true }
+pyo3 = { version = "0.16.2", features = ["auto-initialize"] }
 openqasm = "0.1.3"
 walkdir = "2.3.2"
 cli-table = "0.4.6"

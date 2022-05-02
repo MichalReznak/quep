@@ -1,11 +1,9 @@
 use anyhow::Error;
 use fehler::throws;
-use tokio::main;
+use tokio::test;
 
 #[throws]
-#[main]
-async fn main() {
-    env_logger::try_init()?;
-
+#[test]
+async fn new() {
     quep::Quep::from_env().await?.run().await?;
 }

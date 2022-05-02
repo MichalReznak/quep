@@ -2,7 +2,7 @@
 default_to_workspace = false
 
 [env]
-TOOLCHAIN_V = "nightly-2022-01-20"
+TOOLCHAIN_V = "nightly-2022-05-01"
 
 
 [tasks.env]
@@ -35,4 +35,12 @@ clear = true
 script_runner = "@shell"
 script = ['''
     cargo test -- --test-threads=1
+''']
+
+[tasks.clean]
+clear = true
+script_runner = "@shell"
+script = ['''
+    cargo clean
+    rm -rf ./python/.venv
 ''']

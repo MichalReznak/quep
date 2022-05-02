@@ -29,6 +29,9 @@ pub struct CliArgs {
     #[clap(long, env = "QUEP_ORCH")]
     pub orch: OrchestratorType,
 
+    #[clap(long, env = "QUEP_ORCH_DATA", parse(try_from_os_str = parse_from_os_str))]
+    pub orch_data: String,
+
     // TODO better default
     #[clap(long, env = "QUEP_ORCH_SIZE", default_value = "2147483647")]
     pub orch_size: i32,
@@ -39,11 +42,11 @@ pub struct CliArgs {
     pub orch_size_2: i32,
 
     // TODO default_value does not work
-    #[clap(long, env = "QUEP_PYTHON_DIR", parse(try_from_os_str = parse_python_dir))]
+    #[clap(long, env = "QUEP_PYTHON_DIR", parse(try_from_os_str = parse_from_os_str))]
     pub python_dir: String,
 }
 
 #[throws]
-fn parse_python_dir(val: &OsStr) -> String {
+fn parse_from_os_str(val: &OsStr) -> String {
     dunce::canonicalize(val)?.to_str().context(Utf16)?.to_owned()
 }

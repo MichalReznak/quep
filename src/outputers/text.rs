@@ -20,6 +20,10 @@ impl Outputer for TextOutputer {
         values: Vec<Vec<String>>,
         duration: Vec<Duration>,
     ) -> Result<(), crate::Error> {
+        // TODO fix crash when Volume is used
+        let values = dbg!(values);
+        let duration = dbg!(duration);
+
         let mut table_dur = vec![];
         let mut table = vec![];
 

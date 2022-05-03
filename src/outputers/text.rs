@@ -9,17 +9,18 @@ use tokio::time::Duration;
 
 use crate::error::{OutOfBounds, RegexCapture};
 use crate::traits::Outputer;
+use crate::Error;
 
 #[derive(Constructor)]
 pub struct TextOutputer;
 
 #[async_trait]
 impl Outputer for TextOutputer {
-    async fn output(
+    async fn output_table(
         &self,
         values: Vec<Vec<String>>,
         duration: Vec<Duration>,
-    ) -> Result<(), crate::Error> {
+    ) -> Result<(), Error> {
         // TODO fix crash when Volume is used
         let values = dbg!(values);
         let duration = dbg!(duration);
@@ -93,6 +94,52 @@ impl Outputer for TextOutputer {
 
         println!("\nRuntime:");
         print_stdout(table_dur.table())?;
+        Ok(())
+    }
+
+    async fn output_volume(
+        &self,
+        values: Vec<String>,
+        duration: Vec<Duration>,
+    ) -> Result<(), Error> {
+        let len = values.len();
+        let mut table = vec![];
+        for (i, (val, dur)) in values.into_iter().zip(duration).enumerate() {
+            let mut row = vec![];
+            let i = i + 1;
+            row.push(format!("{i} x {i}").cell().background_color(Some(Color::Magenta)));
+            row.push(val.cell());
+            row.push(format!("{} ms", dur.as_millis()).cell());
+            table.push(row);
+        }
+
+        println!("\nResult:");
+        print_stdout(table.table())?;
+
+        println!("\nQuantum Volume: {}", len);
+
+        Ok(())
+    }
+
+    async fn output_linear(
+        &self,
+        values: Vec<String>,
+        duration: Vec<Duration>,
+        width: i32,
+    ) -> Result<(), Error> {
+        let _len = values.len();
+        let mut table = vec![];
+        for (i, (val, dur)) in values.into_iter().zip(duration).enumerate() {
+            let mut row = vec![];
+            row.push(format!("{} x {width}", i + 1).cell().background_color(Some(Color::Magenta)));
+            row.push(val.cell());
+            row.push(format!("{} ms", dur.as_millis()).cell());
+            table.push(row);
+        }
+
+        println!("\nResult:");
+        print_stdout(table.table())?;
+
         Ok(())
     }
 }

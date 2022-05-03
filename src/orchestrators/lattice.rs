@@ -59,7 +59,7 @@ impl Orchestrator for LatticeOrchestrator {
 
         // get measured results
         // output -> Outputer
-        outputer.output(result, durations).await?;
+        outputer.output_table(result, durations).await?;
 
         Ok(())
     }

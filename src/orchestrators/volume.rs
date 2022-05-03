@@ -4,7 +4,7 @@ use regex::Regex;
 use snafu::OptionExt;
 
 use crate::chooser::Chooser;
-use crate::error::{OutOfBounds, RegexCapture};
+use crate::error::RegexCapture;
 use crate::traits::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
 
 /// Always increase depth and width by one in each iteration
@@ -28,44 +28,28 @@ impl Orchestrator for VolumeOrchestrator {
         provider.connect().await?;
 
         // TODO for now it generates empty for not computed ones
-        'main: for i in 0..width {
-            let mut sr = vec![];
+        for i in 0..width {
+            if let Some(circuit) = generator.generate(i, i).await? {
+                // start measuring -> MeasureTool
+                // run -> Executor
+                provider.start_measure();
+                let res = provider.run(circuit).await?;
+                durations.push(provider.stop_measure());
+                result.push(res.clone());
 
-            for j in 0..width {
-                if i != j {
-                    sr.push("0: 0".to_string());
-                    continue;
-                }
-
-                if let Some(circuit) = generator.generate(i, j).await? {
-                    // start measuring -> MeasureTool
-                    // run -> Executor
-                    provider.start_measure();
-                    let res = provider.run(circuit).await?;
-                    sr.push(res.clone());
-                    durations.push(provider.stop_measure());
-
-                    let c = re.captures(&res).context(RegexCapture)?;
-                    if c["val"].parse::<f64>()? <= 1024.0 * (2.0 / 3.0) {
-                        break;
-                    }
-                }
-                else {
-                    result.push(sr.clone());
-                    break 'main;
+                let c = re.captures(&res).context(RegexCapture)?;
+                if c["val"].parse::<f64>()? <= 1024.0 * (2.0 / 3.0) {
+                    break;
                 }
             }
-
-            result.push(sr.clone());
-            let c = re.captures(&sr.get(0).context(OutOfBounds)?).context(RegexCapture)?;
-            if c["val"].parse::<f64>()? <= 1024.0 * (2.0 / 3.0) && sr.len() == 1 {
+            else {
                 break;
             }
         }
 
         // get measured results
         // output -> Outputer
-        outputer.output(result, durations).await?;
+        outputer.output_volume(result, durations).await?;
 
         Ok(())
     }

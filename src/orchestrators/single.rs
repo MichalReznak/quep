@@ -36,7 +36,7 @@ impl Orchestrator for SingleOrchestrator {
 
         // get measured results
         // output -> Outputer
-        outputer.output(result, durations).await?;
+        outputer.output_table(result, durations).await?;
 
         Ok(())
     }

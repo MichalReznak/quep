@@ -14,7 +14,7 @@ pub struct LinearOrchestrator;
 
 #[async_trait]
 impl Orchestrator for LinearOrchestrator {
-    async fn run(&self, chooser: &Chooser, _: i32, depth: i32) -> Result<(), crate::Error> {
+    async fn run(&self, chooser: &Chooser, i: i32, depth: i32) -> Result<(), crate::Error> {
         let mut result = vec![];
         let mut durations = vec![];
 
@@ -28,18 +28,17 @@ impl Orchestrator for LinearOrchestrator {
         let mut provider = chooser.get_provider()?;
         provider.connect().await?;
 
-        let mut sr = vec![];
-
-        for j in 0..depth {
+        for j in 0..i {
             // TODO somehow better allow to define circuit width
             // (or if it should increase width instead of depth?)
-            if let Some(circuit) = generator.generate(depth, j).await? {
+            if let Some(circuit) = generator.generate(depth - 1, j).await? {
                 // start measuring -> MeasureTool
                 // run -> Executor
                 provider.start_measure();
                 let res = provider.run(circuit).await?;
-                sr.push(res.clone());
                 durations.push(provider.stop_measure());
+
+                result.push(res.clone());
 
                 let c = re.captures(&res).context(RegexCapture)?;
                 if c["val"].parse::<f64>()? <= 1024.0 * (2.0 / 3.0) {
@@ -51,11 +50,9 @@ impl Orchestrator for LinearOrchestrator {
             }
         }
 
-        result.push(sr.clone());
-
         // get measured results
         // output -> Outputer
-        outputer.output(result, durations).await?;
+        outputer.output_linear(result, durations, depth).await?;
 
         Ok(())
     }

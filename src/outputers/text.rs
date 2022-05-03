@@ -127,7 +127,6 @@ impl Outputer for TextOutputer {
         duration: Vec<Duration>,
         width: i32,
     ) -> Result<(), Error> {
-        let _len = values.len();
         let mut table = vec![];
         for (i, (val, dur)) in values.into_iter().zip(duration).enumerate() {
             let mut row = vec![];
@@ -139,7 +138,6 @@ impl Outputer for TextOutputer {
 
         println!("\nResult:");
         print_stdout(table.table())?;
-
         Ok(())
     }
 }

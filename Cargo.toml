@@ -6,6 +6,10 @@ name = "quep"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+name = "app"
+crate-type = ["cdylib", "rlib"]
+
 [dependencies]
 # Crates
 quep_derive = { path = "crates/derive" }

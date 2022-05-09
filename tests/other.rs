@@ -1,9 +1,10 @@
 use anyhow::Error;
 use fehler::throws;
 use tokio::test;
+use app::Quep;
 
 #[throws]
 #[test]
 async fn new() {
-    quep::Quep::from_env().await?.run().await?;
+    Quep::from_env().await?.run().await?;
 }

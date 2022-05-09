@@ -29,9 +29,5 @@ pub enum CircuitGeneratorDyn {
 #[async_trait]
 #[enum_dispatch(CircuitGeneratorDyn)]
 pub trait CircuitGenerator {
-    // TODO
-
     async fn generate(&self, i: i32, j: i32) -> Result<Option<String>, Error>;
 }
-
-// fn generate(&self, i: i32) -> Result<impl Stream<Item = String, Error>>;

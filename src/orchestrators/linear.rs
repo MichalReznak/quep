@@ -8,7 +8,6 @@ use crate::error::RegexCapture;
 use crate::traits::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
 
 /// Linear iteration from 0 to MAX
-/// TODO somehow allow to iterator with no limit
 #[derive(Constructor)]
 pub struct LinearOrchestrator;
 

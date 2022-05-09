@@ -25,8 +25,6 @@ measure q -> c;
 #[derive(Constructor)]
 pub struct VolumeCircuitGenerator;
 
-// TODO does nothing
-
 #[async_trait]
 impl CircuitGenerator for VolumeCircuitGenerator {
     async fn generate(&self, i: i32, j: i32) -> Result<Option<String>, Error> {

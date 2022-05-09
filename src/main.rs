@@ -7,5 +7,5 @@ use tokio::main;
 async fn main() {
     env_logger::try_init()?;
 
-    quep::Quep::from_env().await?.run().await?;
+    app::Quep::from_env().await?.run().await?;
 }

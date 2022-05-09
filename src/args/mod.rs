@@ -44,6 +44,15 @@ pub struct CliArgs {
     // TODO default_value does not work
     #[clap(long, env = "QUEP_PYTHON_DIR", parse(try_from_os_str = parse_from_os_str))]
     pub python_dir: String,
+
+    // TODO just for testing only
+    #[clap(long, default_value = "1")]
+    #[builder(default = 1)]
+    pub test_threads: i32,
+
+    #[clap(short, takes_value = false)]
+    #[builder(default = true)]
+    pub q: bool,
 }
 
 #[throws]

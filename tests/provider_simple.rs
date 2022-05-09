@@ -1,7 +1,8 @@
 use anyhow::Error;
 use fehler::throws;
-use quep::args::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
-use quep::CliArgs;
+use app::args::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
+use app::CliArgs;
+use app::Quep;
 
 mod common;
 
@@ -20,7 +21,7 @@ async fn a() {
         .circuit(CircuitType::Volume)
         .orch(OrchestratorType::Volume)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -37,7 +38,7 @@ async fn b() {
         .circuit(CircuitType::Volume)
         .orch(OrchestratorType::Volume)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -54,7 +55,7 @@ async fn c() {
         .circuit(CircuitType::Fs)
         .orch(OrchestratorType::Volume)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -71,7 +72,7 @@ async fn d() {
         .circuit(CircuitType::Fs)
         .orch(OrchestratorType::Volume)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -88,7 +89,7 @@ async fn e() {
         .circuit(CircuitType::Basic)
         .orch(OrchestratorType::Volume)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -105,7 +106,7 @@ async fn f() {
         .circuit(CircuitType::Basic)
         .orch(OrchestratorType::Volume)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -122,7 +123,7 @@ async fn g() {
         .circuit(CircuitType::Mirror)
         .orch(OrchestratorType::Volume)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -139,7 +140,7 @@ async fn h() {
         .circuit(CircuitType::Mirror)
         .orch(OrchestratorType::Volume)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -156,7 +157,7 @@ async fn i() {
         .circuit(CircuitType::RandMirror)
         .orch(OrchestratorType::Volume)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -173,7 +174,7 @@ async fn j() {
         .circuit(CircuitType::RandMirror)
         .orch(OrchestratorType::Volume)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 // Orch: Single
@@ -191,7 +192,7 @@ async fn aa() {
         .circuit(CircuitType::Volume)
         .orch(OrchestratorType::Single)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -208,7 +209,7 @@ async fn ab() {
         .circuit(CircuitType::Volume)
         .orch(OrchestratorType::Single)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -225,7 +226,7 @@ async fn ac() {
         .circuit(CircuitType::Fs)
         .orch(OrchestratorType::Single)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -242,7 +243,7 @@ async fn ad() {
         .circuit(CircuitType::Fs)
         .orch(OrchestratorType::Single)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -259,7 +260,7 @@ async fn ae() {
         .circuit(CircuitType::Basic)
         .orch(OrchestratorType::Single)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -276,7 +277,7 @@ async fn af() {
         .circuit(CircuitType::Basic)
         .orch(OrchestratorType::Single)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -293,7 +294,7 @@ async fn ag() {
         .circuit(CircuitType::Mirror)
         .orch(OrchestratorType::Single)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -310,7 +311,7 @@ async fn ah() {
         .circuit(CircuitType::Mirror)
         .orch(OrchestratorType::Single)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -327,7 +328,7 @@ async fn ai() {
         .circuit(CircuitType::RandMirror)
         .orch(OrchestratorType::Single)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -344,7 +345,7 @@ async fn aj() {
         .circuit(CircuitType::RandMirror)
         .orch(OrchestratorType::Single)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 // Orch: Lattice
@@ -362,7 +363,7 @@ async fn ba() {
         .circuit(CircuitType::Volume)
         .orch(OrchestratorType::Lattice)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -379,7 +380,7 @@ async fn bb() {
         .circuit(CircuitType::Volume)
         .orch(OrchestratorType::Lattice)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -396,7 +397,7 @@ async fn bc() {
         .circuit(CircuitType::Fs)
         .orch(OrchestratorType::Lattice)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -413,7 +414,7 @@ async fn bd() {
         .circuit(CircuitType::Fs)
         .orch(OrchestratorType::Lattice)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -430,7 +431,7 @@ async fn be() {
         .circuit(CircuitType::Basic)
         .orch(OrchestratorType::Lattice)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -447,7 +448,7 @@ async fn bf() {
         .circuit(CircuitType::Basic)
         .orch(OrchestratorType::Lattice)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -464,7 +465,7 @@ async fn bg() {
         .circuit(CircuitType::Mirror)
         .orch(OrchestratorType::Lattice)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -481,7 +482,7 @@ async fn bh() {
         .circuit(CircuitType::Mirror)
         .orch(OrchestratorType::Lattice)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -498,7 +499,7 @@ async fn bi() {
         .circuit(CircuitType::RandMirror)
         .orch(OrchestratorType::Lattice)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -515,7 +516,7 @@ async fn bj() {
         .circuit(CircuitType::RandMirror)
         .orch(OrchestratorType::Lattice)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 // Orch: Linear
@@ -533,7 +534,7 @@ async fn ca() {
         .circuit(CircuitType::Volume)
         .orch(OrchestratorType::Linear)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -550,7 +551,7 @@ async fn cb() {
         .circuit(CircuitType::Volume)
         .orch(OrchestratorType::Linear)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -567,7 +568,7 @@ async fn cc() {
         .circuit(CircuitType::Fs)
         .orch(OrchestratorType::Linear)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -584,7 +585,7 @@ async fn cd() {
         .circuit(CircuitType::Fs)
         .orch(OrchestratorType::Linear)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -601,7 +602,7 @@ async fn ce() {
         .circuit(CircuitType::Basic)
         .orch(OrchestratorType::Linear)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -618,7 +619,7 @@ async fn cf() {
         .circuit(CircuitType::Basic)
         .orch(OrchestratorType::Linear)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -635,7 +636,7 @@ async fn cg() {
         .circuit(CircuitType::Mirror)
         .orch(OrchestratorType::Linear)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -652,7 +653,7 @@ async fn ch() {
         .circuit(CircuitType::Mirror)
         .orch(OrchestratorType::Linear)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -669,7 +670,7 @@ async fn ci() {
         .circuit(CircuitType::RandMirror)
         .orch(OrchestratorType::Linear)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }
 
 #[throws]
@@ -686,5 +687,5 @@ async fn cj() {
         .circuit(CircuitType::RandMirror)
         .orch(OrchestratorType::Linear)
         .build();
-    quep::Quep::new(args).await?.run().await?;
+    Quep::new(args).await?.run().await?;
 }

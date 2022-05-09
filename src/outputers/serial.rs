@@ -16,7 +16,7 @@ use crate::Error;
 
 #[derive(Serialize, Deserialize, TypedBuilder, Debug)]
 struct Output {
-    records: Vec<Record>, // TODO linearize or not?
+    records: Vec<Record>,
 }
 
 #[derive(Serialize, Deserialize, TypedBuilder, Debug)]

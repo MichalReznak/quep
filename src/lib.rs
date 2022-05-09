@@ -35,8 +35,6 @@ pub struct Quep {
     args: CliArgs,
 }
 
-// TODO check if set combination is correct or not
-
 impl Quep {
     #[throws]
     pub async fn new(args: CliArgs) -> Self {

@@ -2,7 +2,7 @@
 default_to_workspace = false
 
 [env]
-TOOLCHAIN_V = "nightly-2022-05-01"
+TOOLCHAIN_V = "nightly-2022-05-09"
 
 
 [tasks.env]

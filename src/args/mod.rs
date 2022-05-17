@@ -32,6 +32,9 @@ pub struct CliArgs {
     #[clap(long, env = "QUEP_ORCH_DATA", parse(try_from_os_str = parse_from_os_str))]
     pub orch_data: String,
 
+    #[clap(long, env = "QUEP_ORCH_ITER")]
+    pub orch_iter: i32,
+
     // TODO better default
     #[clap(long, env = "QUEP_ORCH_SIZE", default_value = "2147483647")]
     pub orch_size: i32,

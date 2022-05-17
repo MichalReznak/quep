@@ -1,4 +1,4 @@
-use std::num::ParseFloatError;
+use std::num::{ParseFloatError, ParseIntError};
 
 use pyo3::PyErr;
 use quick_xml::DeError;
@@ -25,6 +25,9 @@ pub enum Error {
 
     #[snafu(display("{}", source), context(false))]
     ParseFloatError { source: ParseFloatError },
+
+    #[snafu(display("{}", source), context(false))]
+    ParseIntError { source: ParseIntError },
 
     #[snafu(display("{}", source), context(false))]
     FmtError { source: std::fmt::Error },

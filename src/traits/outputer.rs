@@ -6,6 +6,7 @@
 use async_trait::async_trait;
 use enum_dispatch::enum_dispatch;
 use tokio::time::Duration;
+use typed_builder::TypedBuilder;
 
 use crate::outputers::{SerialOutputer, TextOutputer};
 use crate::Error;
@@ -16,12 +17,19 @@ pub enum OutputerDyn {
     SerialOutputer,
 }
 
+// TODO rename
+#[derive(Debug, Clone, TypedBuilder)]
+pub struct Value {
+    pub result: String,
+    pub correct: i32,
+}
+
 #[async_trait]
 #[enum_dispatch(OutputerDyn)]
 pub trait Outputer {
     async fn output_table(
         &self,
-        value: Vec<Vec<String>>,
+        value: Vec<Vec<Value>>,
         duration: Vec<Duration>,
     ) -> Result<(), Error>;
 

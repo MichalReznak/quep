@@ -13,7 +13,13 @@ pub struct LinearOrchestrator;
 
 #[async_trait]
 impl Orchestrator for LinearOrchestrator {
-    async fn run(&self, chooser: &Chooser, i: i32, depth: i32) -> Result<(), crate::Error> {
+    async fn run(
+        &self,
+        chooser: &Chooser,
+        i: i32,
+        depth: i32,
+        iter: i32,
+    ) -> Result<(), crate::Error> {
         let mut result = vec![];
         let mut durations = vec![];
 
@@ -38,6 +44,8 @@ impl Orchestrator for LinearOrchestrator {
                 durations.push(provider.stop_measure());
 
                 result.push(res.clone());
+
+                // TODO orch_iter
 
                 let c = re.captures(&res).context(RegexCapture)?;
                 if c["val"].parse::<f64>()? <= 1024.0 * (2.0 / 3.0) {

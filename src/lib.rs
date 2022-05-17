@@ -58,6 +58,7 @@ impl Quep {
     pub async fn run(self) {
         let chooser = Chooser::new(self.args.clone());
         let orch = chooser.get_orchestrator()?;
-        orch.run(&chooser, self.args.orch_size, self.args.orch_size_2).await?;
+        orch.run(&chooser, self.args.orch_size, self.args.orch_size_2, self.args.orch_iter)
+            .await?;
     }
 }

@@ -1,10 +1,15 @@
+use std::time::Duration;
+
 use async_trait::async_trait;
 use derive_more::Constructor;
 use regex::Regex;
 use snafu::OptionExt;
+use toml::value::Time;
+use unwrap_infallible::UnwrapInfallible;
 
 use crate::chooser::Chooser;
 use crate::error::{OutOfBounds, RegexCapture};
+use crate::traits::outputer::Value;
 use crate::traits::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
 
 /// Iterates in all combination for 2D array
@@ -13,11 +18,11 @@ pub struct LatticeOrchestrator;
 
 #[async_trait]
 impl Orchestrator for LatticeOrchestrator {
-    async fn run(&self, chooser: &Chooser, i: i32, j: i32) -> Result<(), crate::Error> {
+    async fn run(&self, chooser: &Chooser, i: i32, j: i32, iter: i32) -> Result<(), crate::Error> {
         let mut result = vec![];
         let mut durations = vec![];
 
-        let re = Regex::new(r"(\d+): (?P<val>\d+)")?;
+        let re = Regex::new(r"(?P<result>\d+): (?P<val>\d+)")?;
 
         // generate test suite -> CircuitGenerator
         let generator = chooser.get_circuit_generator()?;
@@ -34,12 +39,24 @@ impl Orchestrator for LatticeOrchestrator {
                 if let Some(circuit) = generator.generate(i, j).await? {
                     // start measuring -> MeasureTool
                     // run -> Executor
+
+                    let mut time = Duration::from_micros(0);
+                    // for _ in 0..iter {
                     provider.start_measure();
-                    let res = provider.run(circuit).await?;
-                    sr.push(res.clone());
-                    durations.push(provider.stop_measure());
+                    let res = provider.run(circuit.clone()).await?;
 
                     let c = re.captures(&res).context(RegexCapture)?;
+                    sr.push(
+                        Value::builder()
+                            .result(c["result"].parse::<String>().unwrap_infallible())
+                            .correct(c["val"].parse::<i32>()?)
+                            .build(),
+                    );
+                    time += provider.stop_measure();
+                    // }
+                    durations
+                        .push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO
+
                     if c["val"].parse::<f64>()? <= 1024.0 * (2.0 / 3.0) {
                         break;
                     }
@@ -51,8 +68,8 @@ impl Orchestrator for LatticeOrchestrator {
             }
 
             result.push(sr.clone());
-            let c = re.captures(&sr.get(0).context(OutOfBounds)?).context(RegexCapture)?;
-            if c["val"].parse::<f64>()? <= 1024.0 * (2.0 / 3.0) && sr.len() == 1 {
+            let c = sr.get(0).context(OutOfBounds)?.correct;
+            if (c as f64) <= 1024.0 * (2.0 / 3.0) && sr.len() == 1 {
                 break;
             }
         }

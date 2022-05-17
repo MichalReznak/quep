@@ -8,6 +8,7 @@ use termcolor::Color;
 use tokio::time::Duration;
 
 use crate::error::{OutOfBounds, RegexCapture};
+use crate::traits::outputer::Value;
 use crate::traits::Outputer;
 use crate::Error;
 
@@ -18,7 +19,7 @@ pub struct TextOutputer;
 impl Outputer for TextOutputer {
     async fn output_table(
         &self,
-        values: Vec<Vec<String>>,
+        values: Vec<Vec<Value>>,
         duration: Vec<Duration>,
     ) -> Result<(), Error> {
         // TODO fix crash when Volume is used
@@ -27,8 +28,6 @@ impl Outputer for TextOutputer {
 
         let mut table_dur = vec![];
         let mut table = vec![];
-
-        let re = Regex::new(r"(\d+): (?P<val>\d+)")?;
 
         let mut row = vec![];
         let mut row_dur = vec![];
@@ -68,13 +67,15 @@ impl Outputer for TextOutputer {
             );
 
             for (j, col) in value.iter().enumerate() {
-                let c = re.captures(&col).context(RegexCapture)?;
-
-                let res = if c["val"].parse::<f64>()? > 1024.0 * (2.0 / 3.0) {
-                    col.cell().foreground_color(Some(Color::Green))
+                let res = if (col.correct as f64) > 1024.0 * (2.0 / 3.0) {
+                    format!("{}: {}", col.result, col.correct)
+                        .cell()
+                        .foreground_color(Some(Color::Green))
                 }
                 else {
-                    col.cell().foreground_color(Some(Color::Red))
+                    format!("{}: {}", col.result, col.correct)
+                        .cell()
+                        .foreground_color(Some(Color::Red))
                 };
 
                 row_dur.push(

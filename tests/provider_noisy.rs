@@ -1,8 +1,7 @@
 use anyhow::Error;
-use fehler::throws;
 use app::args::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
-use app::CliArgs;
-use app::Quep;
+use app::{CliArgs, Quep};
+use fehler::throws;
 
 mod common;
 

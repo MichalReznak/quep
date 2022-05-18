@@ -14,6 +14,7 @@
 use chooser::Chooser;
 use clap::Parser;
 use fehler::throws;
+use load_file::load_str;
 use log::info;
 use traits::Orchestrator;
 
@@ -27,9 +28,14 @@ mod qc_providers;
 pub mod args;
 pub mod pyvenv;
 pub mod traits;
+pub mod utils;
 
 pub use args::CliArgs;
 pub use error::Error;
+
+use crate::args::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
+use crate::args::{config, CliArgsConfig, CliArgsEnv};
+use crate::utils::dir;
 
 pub struct Quep {
     args: CliArgs,
@@ -46,7 +52,41 @@ impl Quep {
     #[throws]
     pub async fn from_env() -> Self {
         dotenv::dotenv().ok();
-        let args = CliArgs::parse();
+        let clap = CliArgsEnv::parse();
+
+        // TODO define correct combinations
+        // parse config file, json for now
+        let config = load_str!("../quep.json5"); // TODO panics on error, relative dir
+        let config = json5::from_str::<CliArgsConfig>(config)?;
+
+        // TODO better?
+        // if not set use it
+        let args = CliArgs::builder()
+            .provider(clap.provider.unwrap_or_else(|| ProviderType::Simple))
+            .output(clap.output.or_else(|| config.output.t).unwrap_or_else(|| OutputType::Text))
+            .output_ser(
+                clap.output_ser
+                    .or_else(|| config.output.ser)
+                    .unwrap_or_else(|| OutputSerType::Json),
+            )
+            .circuit(clap.circuit.or_else(|| config.circuit).unwrap_or_else(|| CircuitType::Basic))
+            .orch(clap.orch.or_else(|| config.orch.t).unwrap_or_else(|| OrchestratorType::Single))
+            .orch_data(
+                clap.orch_data
+                    .or_else(|| config.orch.data)
+                    .unwrap_or_else(|| dir("./data").unwrap()),
+            )
+            .orch_iter(clap.orch_iter.or_else(|| config.orch.iter).unwrap_or_else(|| 1))
+            .orch_size(clap.orch_size.or_else(|| config.orch.size).unwrap_or_else(|| 1))
+            .orch_size_2(clap.orch_size_2.or_else(|| config.orch.size_2).unwrap_or_else(|| 1))
+            .python_dir(
+                clap.python_dir
+                    .or_else(|| config.python_dir)
+                    .unwrap_or_else(|| dir("./python").unwrap()),
+            )
+            .build();
+
+        println!("{args:#?}");
 
         pyvenv::PyVenv::init(&args.python_dir).await?;
 

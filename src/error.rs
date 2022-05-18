@@ -33,6 +33,9 @@ pub enum Error {
     FmtError { source: std::fmt::Error },
 
     #[snafu(display("{}", source), context(false))]
+    SerdeJson5Error { source: json5::Error },
+
+    #[snafu(display("{}", source), context(false))]
     SerdeJsonError { source: serde_json::Error },
 
     #[snafu(display("{}", source), context(false))]

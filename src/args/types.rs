@@ -1,19 +1,20 @@
+use serde::{Deserialize, Serialize};
 use strum_macros::EnumString;
 
-#[derive(Debug, EnumString, Clone, Copy)]
+#[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize)]
 pub enum ProviderType {
     Ibmq,
     Simple,
     Noisy,
 }
 
-#[derive(Debug, EnumString, Clone, Copy)]
+#[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize)]
 pub enum OutputType {
     Text,
     Serial,
 }
 
-#[derive(Debug, EnumString, Clone, Copy)]
+#[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize)]
 pub enum CircuitType {
     Basic,
     Fs,
@@ -22,7 +23,7 @@ pub enum CircuitType {
     RandMirror,
 }
 
-#[derive(Debug, EnumString, Clone, Copy)]
+#[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize)]
 pub enum OrchestratorType {
     Lattice,
     Linear, // For FS
@@ -30,7 +31,7 @@ pub enum OrchestratorType {
     Volume, // QuantumVolume
 }
 
-#[derive(Debug, EnumString, Clone, Copy)]
+#[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize)]
 pub enum OutputSerType {
     Json,
     Xml,

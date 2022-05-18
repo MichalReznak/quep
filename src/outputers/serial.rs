@@ -27,7 +27,7 @@ struct Record {
     #[builder(setter(into))]
     output: String,
     #[builder(setter(into))]
-    time_ms: u128, // TODO issue for toml (not implemented)
+    time_ms: i32, // TODO issue for toml, json5 (not implemented) should be u128
     result: i32,
     correct: bool,
 }
@@ -68,7 +68,7 @@ impl Outputer for SerialOutputer {
                     .output(&col.result)
                     .result(col.correct)
                     .correct((col.correct as f64) > 1024.0 * (2.0 / 3.0))
-                    .time_ms(duration.get(j).context(OutOfBounds)?.as_millis())
+                    .time_ms(duration.get(j).context(OutOfBounds)?.as_millis() as i32)
                     .build();
 
                 table.push(record);
@@ -103,7 +103,7 @@ impl Outputer for SerialOutputer {
                 .result(cast(val).context(OutOfBounds)?)
                 .output(&out)
                 .correct(val > 1024.0 * (2.0 / 3.0))
-                .time_ms(dur.as_millis())
+                .time_ms(dur.as_millis() as i32)
                 .build();
             table.push(record);
         }
@@ -138,7 +138,7 @@ impl Outputer for SerialOutputer {
                 .result(cast(val).context(OutOfBounds)?)
                 .output(&out)
                 .correct(val > 1024.0 * (2.0 / 3.0))
-                .time_ms(dur.as_millis())
+                .time_ms(dur.as_millis() as i32)
                 .build();
             table.push(record);
         }

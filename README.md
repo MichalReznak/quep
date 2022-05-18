@@ -26,3 +26,7 @@ grcov . `
     --ignore-not-existing -o ./target/debug/coverage/ `
     --ignore "target/debug/*"
 ```
+
+# TODOs:
+* TODO run on real hardware
+* TODO use thermal relaxation example to create a better noisy simulator

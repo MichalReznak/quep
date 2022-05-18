@@ -4,7 +4,6 @@ use async_trait::async_trait;
 use derive_more::Constructor;
 use regex::Regex;
 use snafu::OptionExt;
-
 use unwrap_infallible::UnwrapInfallible;
 
 use crate::chooser::Chooser;

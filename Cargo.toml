@@ -53,6 +53,7 @@ ron = "0.7.0"
 serde_yaml = "0.8.23"
 rand = "0.8.5"
 lazy_mut = "0.1.0"
+json5 = "0.4.1"
 
 [dev-dependencies]
 pretty_assertions = "1.2.1"

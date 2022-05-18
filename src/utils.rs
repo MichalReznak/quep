@@ -6,5 +6,5 @@ use crate::Error;
 
 #[throws]
 pub fn dir(s: &str) -> String {
-    dunce::canonicalize(s).unwrap().to_str().context(Utf16).unwrap().to_owned()
+    dunce::canonicalize(s)?.to_str().context(Utf16)?.to_owned()
 }

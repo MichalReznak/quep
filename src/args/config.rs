@@ -1,3 +1,4 @@
+use fehler::throws;
 use serde::{Deserialize, Deserializer, Serialize};
 
 use crate::args::types::{CircuitType, OrchestratorType, OutputSerType};
@@ -44,13 +45,10 @@ pub struct OrchConfig {
     pub data: Option<String>,
 }
 
-// #[throws]
-fn parse_from_os_str<'de, D>(d: D) -> Result<Option<String>, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    Ok(match String::deserialize(d) {
+#[throws(D::Error)]
+fn parse_from_os_str<'de, D: Deserializer<'de>>(d: D) -> Option<String> {
+    match String::deserialize(d) {
         Ok(buf) => Some(dir(&buf).unwrap()),
         Err(_) => None,
-    })
+    }
 }

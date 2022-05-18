@@ -2,12 +2,12 @@ use async_trait::async_trait;
 use cli_table::format::Justify;
 use cli_table::{print_stdout, Cell, Style, Table};
 use derive_more::Constructor;
-use regex::Regex;
+
 use snafu::OptionExt;
 use termcolor::Color;
 use tokio::time::Duration;
 
-use crate::error::{OutOfBounds, RegexCapture};
+use crate::error::{OutOfBounds};
 use crate::traits::outputer::Value;
 use crate::traits::Outputer;
 use crate::Error;

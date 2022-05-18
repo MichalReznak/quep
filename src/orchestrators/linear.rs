@@ -18,7 +18,7 @@ impl Orchestrator for LinearOrchestrator {
         chooser: &Chooser,
         i: i32,
         depth: i32,
-        iter: i32,
+        _iter: i32,
     ) -> Result<(), crate::Error> {
         let mut result = vec![];
         let mut durations = vec![];

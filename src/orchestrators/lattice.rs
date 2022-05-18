@@ -4,7 +4,7 @@ use async_trait::async_trait;
 use derive_more::Constructor;
 use regex::Regex;
 use snafu::OptionExt;
-use toml::value::Time;
+
 use unwrap_infallible::UnwrapInfallible;
 
 use crate::chooser::Chooser;
@@ -41,23 +41,23 @@ impl Orchestrator for LatticeOrchestrator {
                     // run -> Executor
 
                     let mut time = Duration::from_micros(0);
-                    // for _ in 0..iter {
-                    provider.start_measure();
-                    let res = provider.run(circuit.clone()).await?;
+                    let mut val = Value::builder().result("".to_string()).correct(0).build();
+                    for _ in 0..iter {
+                        // TODO if I do a multiple iterations and one falls below limit, how to
+                        // solve this?
+                        provider.start_measure();
+                        let res = provider.run(circuit.clone()).await?;
 
-                    let c = re.captures(&res).context(RegexCapture)?;
-                    sr.push(
-                        Value::builder()
-                            .result(c["result"].parse::<String>().unwrap_infallible())
-                            .correct(c["val"].parse::<i32>()?)
-                            .build(),
-                    );
-                    time += provider.stop_measure();
-                    // }
+                        let c = re.captures(&res).context(RegexCapture)?;
+                        val.result = c["result"].parse::<String>().unwrap_infallible();
+                        val.correct = c["val"].parse::<i32>()?;
+                        time += provider.stop_measure();
+                    }
                     durations
                         .push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO
+                    sr.push(val.clone());
 
-                    if c["val"].parse::<f64>()? <= 1024.0 * (2.0 / 3.0) {
+                    if (val.correct as f64) <= 1024.0 * (2.0 / 3.0) {
                         break;
                     }
                 }

@@ -58,36 +58,29 @@ impl Outputer for SerialOutputer {
         values: Vec<Vec<Value>>,
         duration: Vec<Duration>,
     ) -> Result<(), Error> {
-        unimplemented!();
+        let mut table = Vec::new();
 
-        // let mut table = Vec::new();
-        // let re = Regex::new(r"(?P<out>\d+): (?P<val>\d+)")?;
-        //
-        // for (i, value) in values.iter().enumerate() {
-        //     for (j, col) in value.iter().enumerate() {
-        //         let c = re.captures(&col).context(RegexCapture)?;
-        //         let val = c["val"].parse::<f64>()?;
-        //         let out = c["out"].parse::<String>().unwrap_infallible();
-        //
-        //         let record = Record::builder()
-        //             .width(cast(i + 1).context(OutOfBounds)?)
-        //             .depth(cast(j + 1).context(OutOfBounds)?)
-        //             .output(&out)
-        //             .result(cast(val).context(OutOfBounds)?)
-        //             .correct(val > 1024.0 * (2.0 / 3.0))
-        //             .time_ms(duration.get(j).context(OutOfBounds)?.as_millis())
-        //             .build();
-        //
-        //         table.push(record);
-        //     }
-        // }
-        //
-        // let table = Output::builder().records(table).build();
-        // let res = serialize(self.out, &table)?;
-        //
-        // println!("\nResult:");
-        // println!("{res}");
-        // Ok(())
+        for (i, value) in values.iter().enumerate() {
+            for (j, col) in value.iter().enumerate() {
+                let record = Record::builder()
+                    .width(cast(i + 1).context(OutOfBounds)?)
+                    .depth(cast(j + 1).context(OutOfBounds)?)
+                    .output(&col.result)
+                    .result(col.correct)
+                    .correct((col.correct as f64) > 1024.0 * (2.0 / 3.0))
+                    .time_ms(duration.get(j).context(OutOfBounds)?.as_millis())
+                    .build();
+
+                table.push(record);
+            }
+        }
+
+        let table = Output::builder().records(table).build();
+        let res = serialize(self.out, &table)?;
+
+        println!("\nResult:");
+        println!("{res}");
+        Ok(())
     }
 
     async fn output_volume(
@@ -95,35 +88,34 @@ impl Outputer for SerialOutputer {
         values: Vec<String>,
         duration: Vec<Duration>,
     ) -> Result<(), Error> {
-        unimplemented!();
-        // let len = values.len();
-        // let mut table = vec![];
-        // let re = Regex::new(r"(?P<out>\d+): (?P<val>\d+)")?;
-        //
-        // for (i, (val, dur)) in values.into_iter().zip(duration).enumerate() {
-        //     let c = re.captures(&val).context(RegexCapture)?;
-        //     let val = c["val"].parse::<f64>()?;
-        //     let out = c["out"].parse::<String>().unwrap_infallible();
-        //
-        //     let record = Record::builder()
-        //         .width(cast(i + 1).context(OutOfBounds)?)
-        //         .depth(cast(i + 1).context(OutOfBounds)?)
-        //         .result(cast(val).context(OutOfBounds)?)
-        //         .output(&out)
-        //         .correct(val > 1024.0 * (2.0 / 3.0))
-        //         .time_ms(dur.as_millis())
-        //         .build();
-        //     table.push(record);
-        // }
-        //
-        // let table = Output::builder().records(table).build();
-        // let res = serialize(self.out, &table)?;
-        //
-        // println!("\nResult:");
-        // println!("{res}");
-        //
-        // println!("\nQuantum Volume: {}", len);
-        // Ok(())
+        let len = values.len();
+        let mut table = vec![];
+        let re = Regex::new(r"(?P<out>\d+): (?P<val>\d+)")?;
+
+        for (i, (val, dur)) in values.into_iter().zip(duration).enumerate() {
+            let c = re.captures(&val).context(RegexCapture)?;
+            let val = c["val"].parse::<f64>()?;
+            let out = c["out"].parse::<String>().unwrap_infallible();
+
+            let record = Record::builder()
+                .width(cast(i + 1).context(OutOfBounds)?)
+                .depth(cast(i + 1).context(OutOfBounds)?)
+                .result(cast(val).context(OutOfBounds)?)
+                .output(&out)
+                .correct(val > 1024.0 * (2.0 / 3.0))
+                .time_ms(dur.as_millis())
+                .build();
+            table.push(record);
+        }
+
+        let table = Output::builder().records(table).build();
+        let res = serialize(self.out, &table)?;
+
+        println!("\nResult:");
+        println!("{res}");
+
+        println!("\nQuantum Volume: {}", len);
+        Ok(())
     }
 
     async fn output_linear(
@@ -132,32 +124,30 @@ impl Outputer for SerialOutputer {
         duration: Vec<Duration>,
         width: i32,
     ) -> Result<(), Error> {
-        unimplemented!();
+        let mut table = vec![];
+        let re = Regex::new(r"(?P<out>\d+): (?P<val>\d+)")?;
 
-        // let mut table = vec![];
-        // let re = Regex::new(r"(?P<out>\d+): (?P<val>\d+)")?;
-        //
-        // for (i, (val, dur)) in values.into_iter().zip(duration).enumerate() {
-        //     let c = re.captures(&val).context(RegexCapture)?;
-        //     let val = c["val"].parse::<f64>()?;
-        //     let out = c["out"].parse::<String>().unwrap_infallible();
-        //
-        //     let record = Record::builder()
-        //         .width(cast(i + 1).context(OutOfBounds)?)
-        //         .depth(cast(width).context(OutOfBounds)?)
-        //         .result(cast(val).context(OutOfBounds)?)
-        //         .output(&out)
-        //         .correct(val > 1024.0 * (2.0 / 3.0))
-        //         .time_ms(dur.as_millis())
-        //         .build();
-        //     table.push(record);
-        // }
-        //
-        // let table = Output::builder().records(table).build();
-        // let res = serialize(self.out, &table)?;
-        //
-        // println!("\nResult:");
-        // println!("{res}");
-        // Ok(())
+        for (i, (val, dur)) in values.into_iter().zip(duration).enumerate() {
+            let c = re.captures(&val).context(RegexCapture)?;
+            let val = c["val"].parse::<f64>()?;
+            let out = c["out"].parse::<String>().unwrap_infallible();
+
+            let record = Record::builder()
+                .width(cast(i + 1).context(OutOfBounds)?)
+                .depth(cast(width).context(OutOfBounds)?)
+                .result(cast(val).context(OutOfBounds)?)
+                .output(&out)
+                .correct(val > 1024.0 * (2.0 / 3.0))
+                .time_ms(dur.as_millis())
+                .build();
+            table.push(record);
+        }
+
+        let table = Output::builder().records(table).build();
+        let res = serialize(self.out, &table)?;
+
+        println!("\nResult:");
+        println!("{res}");
+        Ok(())
     }
 }

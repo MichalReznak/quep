@@ -15,7 +15,7 @@ pub struct SingleOrchestrator;
 
 #[async_trait]
 impl Orchestrator for SingleOrchestrator {
-    async fn run(&self, chooser: &Chooser, i: i32, j: i32, iter: i32) -> Result<(), crate::Error> {
+    async fn run(&self, chooser: &Chooser, i: i32, j: i32, _iter: i32) -> Result<(), crate::Error> {
         let mut result = vec![];
         let mut durations = vec![];
 

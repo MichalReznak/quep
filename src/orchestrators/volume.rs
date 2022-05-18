@@ -18,7 +18,7 @@ impl Orchestrator for VolumeOrchestrator {
         chooser: &Chooser,
         width: i32,
         _: i32,
-        iter: i32,
+        _iter: i32,
     ) -> Result<(), crate::Error> {
         let mut result = vec![];
         let mut durations = vec![];

@@ -27,7 +27,7 @@ impl FsCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for FsCircuitGenerator {
-    async fn generate(&self, _: i32, j: i32) -> Result<Option<String>, Error> {
+    async fn generate(&mut self, _: i32, j: i32, _: i32) -> Result<Option<String>, Error> {
         if j >= self.entries.len() as i32 {
             Ok(None)
         }

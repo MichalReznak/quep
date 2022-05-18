@@ -4,7 +4,7 @@ use async_trait::async_trait;
 use load_file::load_str;
 use log::debug;
 use pyo3::prelude::*;
-use pyo3::types::{PyDict, PyTuple};
+use pyo3::types::{PyDict};
 use tokio::time::Instant;
 
 use crate::traits::QcProvider;

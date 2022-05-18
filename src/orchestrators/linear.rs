@@ -23,6 +23,7 @@ impl Orchestrator for LinearOrchestrator {
         i: i32,
         depth: i32,
         iter: i32,
+        rand: bool,
     ) -> Result<(), crate::Error> {
         let mut result = vec![];
         let mut durations = vec![];
@@ -30,7 +31,7 @@ impl Orchestrator for LinearOrchestrator {
         let re = Regex::new(r"(?P<result>\d+): (?P<val>\d+)")?;
 
         // generate test suite -> CircuitGenerator
-        let generator = chooser.get_circuit_generator()?;
+        let mut generator = chooser.get_circuit_generator()?;
         let outputer = chooser.get_outputer()?;
 
         // connect to the provider -> QcProvider
@@ -39,7 +40,7 @@ impl Orchestrator for LinearOrchestrator {
 
         // TODO fix this
         // It runs dummy circuit to make the speed measurement more precise
-        if let Some(circuit) = generator.generate(0, 0).await? {
+        if let Some(circuit) = generator.generate(0, 0, 0).await? {
             provider.set_circuit(circuit.clone()).await?;
             provider.start_measure();
             provider.run().await?;
@@ -47,15 +48,14 @@ impl Orchestrator for LinearOrchestrator {
         }
 
         for j in 0..i {
-            // TODO somehow better allow to define circuit width
-            // (or if it should increase width instead of depth?)
-            if let Some(circuit) = generator.generate(depth - 1, j).await? {
-                // start measuring -> MeasureTool
-                // run -> Executor
-
+            for ii in 0..iter {
                 let mut time = Duration::from_micros(0);
                 let mut val = Value::builder().result("".to_string()).correct(0).build();
-                for _ in 0..iter {
+
+                let rand_i = if rand { ii } else { 0 };
+                // TODO somehow better allow to define circuit width
+                // (or if it should increase width instead of depth?)
+                if let Some(circuit) = generator.generate(depth - 1, j, rand_i).await? {
                     provider.set_circuit(circuit.clone()).await?;
 
                     provider.start_measure();
@@ -66,6 +66,9 @@ impl Orchestrator for LinearOrchestrator {
                     val.result = c["result"].parse::<String>().unwrap_infallible();
                     val.correct = c["val"].parse::<i32>()?;
                 }
+                else {
+                    break;
+                }
 
                 durations.push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO
                 result.push(val.clone());
@@ -73,9 +76,6 @@ impl Orchestrator for LinearOrchestrator {
                 if (val.correct as f64) <= 1024.0 * (2.0 / 3.0) {
                     break;
                 }
-            }
-            else {
-                break;
             }
         }
 

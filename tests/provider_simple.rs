@@ -19,6 +19,7 @@ async fn a() {
         .output(OutputType::Serial)
         .circuit(CircuitType::Volume)
         .orch(OrchestratorType::Volume)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -37,6 +38,7 @@ async fn b() {
         .output(OutputType::Text)
         .circuit(CircuitType::Volume)
         .orch(OrchestratorType::Volume)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -55,6 +57,7 @@ async fn c() {
         .output(OutputType::Serial)
         .circuit(CircuitType::Fs)
         .orch(OrchestratorType::Volume)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -73,6 +76,7 @@ async fn d() {
         .output(OutputType::Text)
         .circuit(CircuitType::Fs)
         .orch(OrchestratorType::Volume)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -91,6 +95,7 @@ async fn e() {
         .output(OutputType::Serial)
         .circuit(CircuitType::Basic)
         .orch(OrchestratorType::Volume)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -109,6 +114,7 @@ async fn f() {
         .output(OutputType::Text)
         .circuit(CircuitType::Basic)
         .orch(OrchestratorType::Volume)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -127,6 +133,7 @@ async fn g() {
         .output(OutputType::Serial)
         .circuit(CircuitType::Mirror)
         .orch(OrchestratorType::Volume)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -145,6 +152,7 @@ async fn h() {
         .output(OutputType::Text)
         .circuit(CircuitType::Mirror)
         .orch(OrchestratorType::Volume)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -163,6 +171,7 @@ async fn i() {
         .output(OutputType::Serial)
         .circuit(CircuitType::RandMirror)
         .orch(OrchestratorType::Volume)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -181,6 +190,7 @@ async fn j() {
         .output(OutputType::Text)
         .circuit(CircuitType::RandMirror)
         .orch(OrchestratorType::Volume)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -200,6 +210,7 @@ async fn aa() {
         .output(OutputType::Serial)
         .circuit(CircuitType::Volume)
         .orch(OrchestratorType::Single)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -218,6 +229,7 @@ async fn ab() {
         .output(OutputType::Text)
         .circuit(CircuitType::Volume)
         .orch(OrchestratorType::Single)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -236,6 +248,7 @@ async fn ac() {
         .output(OutputType::Serial)
         .circuit(CircuitType::Fs)
         .orch(OrchestratorType::Single)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -254,6 +267,7 @@ async fn ad() {
         .output(OutputType::Text)
         .circuit(CircuitType::Fs)
         .orch(OrchestratorType::Single)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -272,6 +286,7 @@ async fn ae() {
         .output(OutputType::Serial)
         .circuit(CircuitType::Basic)
         .orch(OrchestratorType::Single)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -290,6 +305,7 @@ async fn af() {
         .output(OutputType::Text)
         .circuit(CircuitType::Basic)
         .orch(OrchestratorType::Single)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -308,6 +324,7 @@ async fn ag() {
         .output(OutputType::Serial)
         .circuit(CircuitType::Mirror)
         .orch(OrchestratorType::Single)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -326,6 +343,7 @@ async fn ah() {
         .output(OutputType::Text)
         .circuit(CircuitType::Mirror)
         .orch(OrchestratorType::Single)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -344,6 +362,7 @@ async fn ai() {
         .output(OutputType::Serial)
         .circuit(CircuitType::RandMirror)
         .orch(OrchestratorType::Single)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -362,6 +381,7 @@ async fn aj() {
         .output(OutputType::Text)
         .circuit(CircuitType::RandMirror)
         .orch(OrchestratorType::Single)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -381,6 +401,7 @@ async fn ba() {
         .output(OutputType::Serial)
         .circuit(CircuitType::Volume)
         .orch(OrchestratorType::Lattice)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -399,6 +420,7 @@ async fn bb() {
         .output(OutputType::Text)
         .circuit(CircuitType::Volume)
         .orch(OrchestratorType::Lattice)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -417,6 +439,7 @@ async fn bc() {
         .output(OutputType::Serial)
         .circuit(CircuitType::Fs)
         .orch(OrchestratorType::Lattice)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -435,6 +458,7 @@ async fn bd() {
         .output(OutputType::Text)
         .circuit(CircuitType::Fs)
         .orch(OrchestratorType::Lattice)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -453,6 +477,7 @@ async fn be() {
         .output(OutputType::Serial)
         .circuit(CircuitType::Basic)
         .orch(OrchestratorType::Lattice)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -471,6 +496,7 @@ async fn bf() {
         .output(OutputType::Text)
         .circuit(CircuitType::Basic)
         .orch(OrchestratorType::Lattice)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -489,6 +515,7 @@ async fn bg() {
         .output(OutputType::Serial)
         .circuit(CircuitType::Mirror)
         .orch(OrchestratorType::Lattice)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -507,6 +534,7 @@ async fn bh() {
         .output(OutputType::Text)
         .circuit(CircuitType::Mirror)
         .orch(OrchestratorType::Lattice)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -525,6 +553,7 @@ async fn bi() {
         .output(OutputType::Serial)
         .circuit(CircuitType::RandMirror)
         .orch(OrchestratorType::Lattice)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -543,6 +572,7 @@ async fn bj() {
         .output(OutputType::Text)
         .circuit(CircuitType::RandMirror)
         .orch(OrchestratorType::Lattice)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -562,6 +592,7 @@ async fn ca() {
         .output(OutputType::Serial)
         .circuit(CircuitType::Volume)
         .orch(OrchestratorType::Linear)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -580,6 +611,7 @@ async fn cb() {
         .output(OutputType::Text)
         .circuit(CircuitType::Volume)
         .orch(OrchestratorType::Linear)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -598,6 +630,7 @@ async fn cc() {
         .output(OutputType::Serial)
         .circuit(CircuitType::Fs)
         .orch(OrchestratorType::Linear)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -616,6 +649,7 @@ async fn cd() {
         .output(OutputType::Text)
         .circuit(CircuitType::Fs)
         .orch(OrchestratorType::Linear)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -634,6 +668,7 @@ async fn ce() {
         .output(OutputType::Serial)
         .circuit(CircuitType::Basic)
         .orch(OrchestratorType::Linear)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -652,6 +687,7 @@ async fn cf() {
         .output(OutputType::Text)
         .circuit(CircuitType::Basic)
         .orch(OrchestratorType::Linear)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -670,6 +706,7 @@ async fn cg() {
         .output(OutputType::Serial)
         .circuit(CircuitType::Mirror)
         .orch(OrchestratorType::Linear)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -688,6 +725,7 @@ async fn ch() {
         .output(OutputType::Text)
         .circuit(CircuitType::Mirror)
         .orch(OrchestratorType::Linear)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -706,6 +744,7 @@ async fn ci() {
         .output(OutputType::Serial)
         .circuit(CircuitType::RandMirror)
         .orch(OrchestratorType::Linear)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;
@@ -724,6 +763,7 @@ async fn cj() {
         .output(OutputType::Text)
         .circuit(CircuitType::RandMirror)
         .orch(OrchestratorType::Linear)
+        .circuit_rand(true)
         .orch_iter(4)
         .build();
     Quep::new(args).await?.run().await?;

@@ -24,6 +24,9 @@ pub struct CliArgsEnv {
     #[clap(long, env = "QUEP_CIRCUIT")]
     pub circuit: Option<CircuitType>,
 
+    #[clap(long, env = "QUEP_CIRCUIT_RAND")]
+    pub circuit_rand: Option<bool>,
+
     #[clap(long, env = "QUEP_ORCH")]
     pub orch: Option<OrchestratorType>,
 

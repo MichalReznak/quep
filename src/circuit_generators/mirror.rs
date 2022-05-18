@@ -39,7 +39,9 @@ pub struct MirrorCircuitGenerator;
 
 #[async_trait]
 impl CircuitGenerator for MirrorCircuitGenerator {
-    async fn generate(&self, i: i32, j: i32) -> Result<Option<String>, Error> {
+    async fn generate(&mut self, i: i32, j: i32, iter: i32) -> Result<Option<String>, Error> {
+        let iter = dbg!(iter);
+
         let pauli_gates = ["id", "x", "y", "z"];
 
         let clifford_gates = ["h", "s", "id", "x", "y", "z"];
@@ -63,8 +65,8 @@ impl CircuitGenerator for MirrorCircuitGenerator {
         let c_len = clifford_gates.len();
         let c_len2 = c_len + clifford_gates_2.len();
 
-        let mut b = 0;
-        let mut a = 0;
+        let mut a = iter;
+        let mut b = iter;
         let mut half_cir = String::new();
         let mut skip = false;
         for _ in 0..j {

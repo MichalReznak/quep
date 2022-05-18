@@ -17,12 +17,19 @@ pub struct SingleOrchestrator;
 
 #[async_trait]
 impl Orchestrator for SingleOrchestrator {
-    async fn run(&self, chooser: &Chooser, i: i32, j: i32, iter: i32) -> Result<(), crate::Error> {
+    async fn run(
+        &self,
+        chooser: &Chooser,
+        i: i32,
+        j: i32,
+        iter: i32,
+        rand: bool,
+    ) -> Result<(), crate::Error> {
         let mut result = vec![];
         let mut durations = vec![];
 
         // generate test suite -> CircuitGenerator
-        let generator = chooser.get_circuit_generator()?;
+        let mut generator = chooser.get_circuit_generator()?;
         let outputer = chooser.get_outputer()?;
 
         let re = Regex::new(r"(?P<result>\d+): (?P<val>\d+)")?;
@@ -33,7 +40,7 @@ impl Orchestrator for SingleOrchestrator {
 
         // TODO fix this
         // It runs dummy circuit to make the speed measurement more precise
-        if let Some(circuit) = generator.generate(0, 0).await? {
+        if let Some(circuit) = generator.generate(0, 0, 0).await? {
             provider.set_circuit(circuit.clone()).await?;
             provider.start_measure();
             provider.run().await?;
@@ -41,13 +48,13 @@ impl Orchestrator for SingleOrchestrator {
         }
 
         let mut sr = vec![];
-        if let Some(circuit) = generator.generate(i, j).await? {
-            // start measuring -> MeasureTool
-            // run -> Executor
 
-            let mut time = Duration::from_micros(0);
-            let mut val = Value::builder().result("".to_string()).correct(0).build();
-            for _ in 0..iter {
+        let mut time = Duration::from_micros(0);
+        let mut val = Value::builder().result("".to_string()).correct(0).build();
+        for ii in 0..iter {
+            let rand_i = if rand { ii } else { 0 };
+
+            if let Some(circuit) = generator.generate(i, j, rand_i).await? {
                 // TODO if I do a multiple iterations and one falls below limit, how to
                 // solve this?
                 provider.set_circuit(circuit.clone()).await?;
@@ -60,9 +67,9 @@ impl Orchestrator for SingleOrchestrator {
                 val.result = c["result"].parse::<String>().unwrap_infallible();
                 val.correct = c["val"].parse::<i32>()?;
             }
-            durations.push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO
-            sr.push(val.clone());
         }
+        durations.push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO
+        sr.push(val.clone());
 
         result.push(sr.clone());
 

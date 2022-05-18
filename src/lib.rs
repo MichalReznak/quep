@@ -74,7 +74,12 @@ impl Quep {
                     .or_else(|| config.output.ser)
                     .unwrap_or_else(|| OutputSerType::Json),
             )
-            .circuit(clap.circuit.or_else(|| config.circuit).unwrap_or_else(|| CircuitType::Basic))
+            .circuit(
+                clap.circuit.or_else(|| config.circuit.t).unwrap_or_else(|| CircuitType::Basic),
+            )
+            .circuit_rand(
+                clap.circuit_rand.or_else(|| config.circuit.rand).unwrap_or_else(|| false),
+            )
             .orch(clap.orch.or_else(|| config.orch.t).unwrap_or_else(|| OrchestratorType::Single))
             .orch_data(clap.orch_data.or_else(|| config.orch.data).unwrap_or_else(|| orch_data_dir))
             .orch_iter(clap.orch_iter.or_else(|| config.orch.iter).unwrap_or_else(|| 1))
@@ -95,7 +100,13 @@ impl Quep {
     pub async fn run(self) {
         let chooser = Chooser::new(self.args.clone());
         let orch = chooser.get_orchestrator()?;
-        orch.run(&chooser, self.args.orch_size, self.args.orch_size_2, self.args.orch_iter)
-            .await?;
+        orch.run(
+            &chooser,
+            self.args.orch_size,
+            self.args.orch_size_2,
+            self.args.orch_iter,
+            self.args.circuit_rand,
+        )
+        .await?;
     }
 }

@@ -11,9 +11,13 @@ pub mod types;
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct CliArgs {
     pub provider: ProviderType,
+
     pub output: OutputType,
     pub output_ser: OutputSerType,
+
     pub circuit: CircuitType,
+    pub circuit_rand: bool,
+
     pub orch: OrchestratorType,
     pub orch_data: String,
     pub orch_iter: i32,

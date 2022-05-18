@@ -11,7 +11,8 @@ use crate::{OutputType, ProviderType};
 pub struct CliArgsConfig {
     pub provider: Option<ProviderType>,
 
-    pub circuit: Option<CircuitType>,
+    #[serde(default)]
+    pub circuit: CircuitConfig,
 
     #[serde(default)]
     pub orch: OrchConfig,
@@ -22,6 +23,14 @@ pub struct CliArgsConfig {
     #[serde(default)]
     #[serde(deserialize_with = "parse_from_os_str")]
     pub python_dir: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Default, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct CircuitConfig {
+    pub t: Option<CircuitType>,
+    pub rand: Option<bool>,
+    // TODO add pretty flag
 }
 
 #[derive(Serialize, Deserialize, Default, Clone)]

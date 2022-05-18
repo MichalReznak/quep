@@ -2,15 +2,13 @@ use async_trait::async_trait;
 use derive_more::Constructor;
 use fehler::throws;
 use num_traits::cast;
-use regex::Regex;
 use serde::{Deserialize, Serialize};
 use snafu::OptionExt;
 use tokio::time::Duration;
 use typed_builder::TypedBuilder;
-use unwrap_infallible::UnwrapInfallible;
 
 use crate::args::types::OutputSerType;
-use crate::error::{OutOfBounds, RegexCapture};
+use crate::error::OutOfBounds;
 use crate::traits::outputer::Value;
 use crate::traits::Outputer;
 use crate::Error;

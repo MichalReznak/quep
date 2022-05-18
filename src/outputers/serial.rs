@@ -85,24 +85,19 @@ impl Outputer for SerialOutputer {
 
     async fn output_volume(
         &self,
-        values: Vec<String>,
+        values: Vec<Value>,
         duration: Vec<Duration>,
     ) -> Result<(), Error> {
         let len = values.len();
         let mut table = vec![];
-        let re = Regex::new(r"(?P<out>\d+): (?P<val>\d+)")?;
 
         for (i, (val, dur)) in values.into_iter().zip(duration).enumerate() {
-            let c = re.captures(&val).context(RegexCapture)?;
-            let val = c["val"].parse::<f64>()?;
-            let out = c["out"].parse::<String>().unwrap_infallible();
-
             let record = Record::builder()
                 .width(cast(i + 1).context(OutOfBounds)?)
                 .depth(cast(i + 1).context(OutOfBounds)?)
-                .result(cast(val).context(OutOfBounds)?)
-                .output(&out)
-                .correct(val > 1024.0 * (2.0 / 3.0))
+                .result(val.correct)
+                .output(&val.result)
+                .correct(val.correct as f64 > 1024.0 * (2.0 / 3.0))
                 .time_ms(dur.as_millis() as i32)
                 .build();
             table.push(record);
@@ -120,24 +115,19 @@ impl Outputer for SerialOutputer {
 
     async fn output_linear(
         &self,
-        values: Vec<String>,
+        values: Vec<Value>,
         duration: Vec<Duration>,
         width: i32,
     ) -> Result<(), Error> {
         let mut table = vec![];
-        let re = Regex::new(r"(?P<out>\d+): (?P<val>\d+)")?;
 
         for (i, (val, dur)) in values.into_iter().zip(duration).enumerate() {
-            let c = re.captures(&val).context(RegexCapture)?;
-            let val = c["val"].parse::<f64>()?;
-            let out = c["out"].parse::<String>().unwrap_infallible();
-
             let record = Record::builder()
                 .width(cast(i + 1).context(OutOfBounds)?)
                 .depth(cast(width).context(OutOfBounds)?)
-                .result(cast(val).context(OutOfBounds)?)
-                .output(&out)
-                .correct(val > 1024.0 * (2.0 / 3.0))
+                .result(val.correct)
+                .output(&val.result)
+                .correct(val.correct as f64 > 1024.0 * (2.0 / 3.0))
                 .time_ms(dur.as_millis() as i32)
                 .build();
             table.push(record);

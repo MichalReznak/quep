@@ -99,7 +99,7 @@ impl Outputer for TextOutputer {
 
     async fn output_volume(
         &self,
-        values: Vec<String>,
+        values: Vec<Value>,
         duration: Vec<Duration>,
     ) -> Result<(), Error> {
         let len = values.len();
@@ -108,7 +108,7 @@ impl Outputer for TextOutputer {
             let mut row = vec![];
             let i = i + 1;
             row.push(format!("{i} x {i}").cell().background_color(Some(Color::Magenta)));
-            row.push(val.cell());
+            row.push(val.correct.cell());
             row.push(format!("{} ms", dur.as_millis()).cell());
             table.push(row);
         }
@@ -123,7 +123,7 @@ impl Outputer for TextOutputer {
 
     async fn output_linear(
         &self,
-        values: Vec<String>,
+        values: Vec<Value>,
         duration: Vec<Duration>,
         width: i32,
     ) -> Result<(), Error> {
@@ -131,7 +131,7 @@ impl Outputer for TextOutputer {
         for (i, (val, dur)) in values.into_iter().zip(duration).enumerate() {
             let mut row = vec![];
             row.push(format!("{} x {width}", i + 1).cell().background_color(Some(Color::Magenta)));
-            row.push(val.cell());
+            row.push(val.correct.cell());
             row.push(format!("{} ms", dur.as_millis()).cell());
             table.push(row);
         }

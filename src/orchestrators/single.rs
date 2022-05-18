@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use async_trait::async_trait;
 use derive_more::Constructor;
 use regex::Regex;
@@ -15,7 +17,7 @@ pub struct SingleOrchestrator;
 
 #[async_trait]
 impl Orchestrator for SingleOrchestrator {
-    async fn run(&self, chooser: &Chooser, i: i32, j: i32, _iter: i32) -> Result<(), crate::Error> {
+    async fn run(&self, chooser: &Chooser, i: i32, j: i32, iter: i32) -> Result<(), crate::Error> {
         let mut result = vec![];
         let mut durations = vec![];
 
@@ -33,20 +35,22 @@ impl Orchestrator for SingleOrchestrator {
         if let Some(circuit) = generator.generate(i, j).await? {
             // start measuring -> MeasureTool
             // run -> Executor
-            provider.start_measure();
-            let res = provider.run(circuit).await?;
 
-            let c = re.captures(&res).context(RegexCapture)?;
-            sr.push(
-                Value::builder()
-                    .result(c["result"].parse::<String>().unwrap_infallible())
-                    .correct(c["val"].parse::<i32>()?)
-                    .build(),
-            );
+            let mut time = Duration::from_micros(0);
+            let mut val = Value::builder().result("".to_string()).correct(0).build();
+            for _ in 0..iter {
+                // TODO if I do a multiple iterations and one falls below limit, how to
+                // solve this?
+                provider.start_measure();
+                let res = provider.run(circuit.clone()).await?;
 
-            durations.push(provider.stop_measure());
-
-            // TODO orch_iter
+                let c = re.captures(&res).context(RegexCapture)?;
+                val.result = c["result"].parse::<String>().unwrap_infallible();
+                val.correct = c["val"].parse::<i32>()?;
+                time += provider.stop_measure();
+            }
+            durations.push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO
+            sr.push(val.clone());
         }
 
         result.push(sr.clone());

@@ -33,15 +33,12 @@ pub trait Outputer {
         duration: Vec<Duration>,
     ) -> Result<(), Error>;
 
-    async fn output_volume(
-        &self,
-        values: Vec<String>,
-        duration: Vec<Duration>,
-    ) -> Result<(), Error>;
+    async fn output_volume(&self, values: Vec<Value>, duration: Vec<Duration>)
+        -> Result<(), Error>;
 
     async fn output_linear(
         &self,
-        values: Vec<String>,
+        values: Vec<Value>,
         duration: Vec<Duration>,
         width: i32,
     ) -> Result<(), Error>;

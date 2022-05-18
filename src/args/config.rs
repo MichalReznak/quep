@@ -1,8 +1,6 @@
 use serde::{Deserialize, Deserializer, Serialize};
-use snafu::OptionExt;
 
 use crate::args::types::{CircuitType, OrchestratorType, OutputSerType};
-use crate::error::Utf16;
 use crate::utils::dir;
 use crate::{OutputType, ProviderType};
 

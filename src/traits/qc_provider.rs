@@ -4,6 +4,7 @@
 //! with a set or a single computer
 use async_trait::async_trait;
 use enum_dispatch::enum_dispatch;
+use pyo3::Python;
 use tokio::time::Duration;
 
 use crate::qc_providers::{IbmqQcProvider, NoisyQcProvider, SimpleQcProvider};
@@ -21,7 +22,9 @@ pub enum QcProviderDyn {
 pub trait QcProvider {
     async fn connect(&self) -> Result<(), Error>;
 
-    async fn run(&self, circuit: String) -> Result<String, Error>;
+    async fn set_circuit(&mut self, circuit: String) -> Result<(), Error>;
+
+    async fn run(&self) -> Result<String, Error>;
 
     fn start_measure(&mut self);
 

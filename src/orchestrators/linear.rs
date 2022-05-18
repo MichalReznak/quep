@@ -37,6 +37,15 @@ impl Orchestrator for LinearOrchestrator {
         let mut provider = chooser.get_provider()?;
         provider.connect().await?;
 
+        // TODO fix this
+        // It runs dummy circuit to make the speed measurement more precise
+        if let Some(circuit) = generator.generate(0, 0).await? {
+            provider.set_circuit(circuit.clone()).await?;
+            provider.start_measure();
+            provider.run().await?;
+            provider.stop_measure();
+        }
+
         for j in 0..i {
             // TODO somehow better allow to define circuit width
             // (or if it should increase width instead of depth?)
@@ -47,13 +56,15 @@ impl Orchestrator for LinearOrchestrator {
                 let mut time = Duration::from_micros(0);
                 let mut val = Value::builder().result("".to_string()).correct(0).build();
                 for _ in 0..iter {
+                    provider.set_circuit(circuit.clone()).await?;
+
                     provider.start_measure();
-                    let res = provider.run(circuit.clone()).await?;
+                    let res = provider.run().await?;
+                    time += provider.stop_measure();
 
                     let c = re.captures(&res).context(RegexCapture)?;
                     val.result = c["result"].parse::<String>().unwrap_infallible();
                     val.correct = c["val"].parse::<i32>()?;
-                    time += provider.stop_measure();
                 }
 
                 durations.push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO

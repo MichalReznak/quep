@@ -1,25 +1,27 @@
 from qiskit import *
+
+# TODO plot
 # from qiskit.visualization import plot_histogram
 # import matplotlib
+# plot_histogram(output)
+# matplotlib.pyplot.show(block=True)  # To show the graph
 
 
 class Simple:
     def __init__(self):
         self.backend = None
+        self.circuit = None
 
     def auth(self):
         # self.backend = Aer.get_backend('statevector_simulator')
         self.backend = Aer.get_backend('aer_simulator')
 
-    def run(self: 'Qiskit', circuit: str) -> str:
-        qc = QuantumCircuit.from_qasm_str(circuit)
-        print(qc)  # TODO only on debug
+    def set_circuit(self: 'Simple', circuit: str, log: bool):
+        self.circuit = QuantumCircuit.from_qasm_str(circuit)
 
-        job = self.backend.run(qc, shots=1024, memory=True)
-        output = job.result().get_counts(0)
+        if log:
+            print(self.circuit)
 
-        # TODO plot
-        # plot_histogram(output)
-        # matplotlib.pyplot.show(block=True)  # To show the graph
-
-        return output
+    def run(self: 'Simple') -> str:
+        job = self.backend.run(self.circuit, shots=1024, memory=True)
+        return job.result().get_counts(0)

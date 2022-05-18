@@ -43,20 +43,19 @@ noise_bit_flip.add_all_qubit_quantum_error(error_gate2_p2, ["cx", "zx"])
 
 
 class Noisy:
+    def __init__(self):
+        self.backend = None
+        self.circuit = None
+
     def auth(self):
-        pass
+        self.backend = AerSimulator(noise_model=noise_bit_flip)
 
-    def run(self: 'Qiskit', circuit: str) -> str:
-        qc = QuantumCircuit.from_qasm_str(circuit)
-        print(qc)
+    def set_circuit(self: 'Noisy', circuit: str, log: bool):
+        self.circuit = QuantumCircuit.from_qasm_str(circuit)
 
-        sim_noise = AerSimulator(noise_model=noise_bit_flip)
+        if log:
+            print(self.circuit)
 
-        # Transpile circuit for noisy basis gates
-        circ_tnoise = transpile(qc, sim_noise)
-
-        # Run and get counts
-        result_bit_flip = sim_noise.run(circ_tnoise).result()
-        counts_bit_flip = result_bit_flip.get_counts(0)
-
-        return counts_bit_flip
+    def run(self: 'Noisy') -> str:
+        job = transpile(self.circuit, self.backend)
+        return self.backend.run(job).result().get_counts(0)

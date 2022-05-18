@@ -8,18 +8,21 @@ use pyo3::types::{PyDict, PyTuple};
 use tokio::time::Instant;
 
 use crate::traits::QcProvider;
+use crate::utils::debug;
 use crate::Error;
 use crate::Error::PyDowncastError;
 
 pub struct NoisyQcProvider {
     dur: Option<Instant>,
     dir: String,
+    py_instance: Option<PyObject>,
 }
 
 impl NoisyQcProvider {
     pub fn new(dir: &str) -> Self {
         Self {
             dur: None,
+            py_instance: None,
             dir: dir.to_string(),
         }
     }
@@ -31,17 +34,25 @@ impl QcProvider for NoisyQcProvider {
         Ok(())
     }
 
-    async fn run(&self, circuit: String) -> Result<String, Error> {
-        let res = Python::with_gil(|py| -> Result<_, Error> {
-            let code = load_str!(&format!("{}/noisy.py", self.dir));
+    async fn set_circuit(&mut self, circuit: String) -> Result<(), Error> {
+        Python::with_gil(|py| {
+            let code = load_str!(&format!("{}/noisy.py", &self.dir));
             let module = PyModule::from_code(py, code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Noisy")?.into();
             let qiskit = qiskit.call0(py)?;
 
             qiskit.call_method0(py, "auth")?;
 
-            let args = PyTuple::new(py, &[&circuit]);
-            let fun = qiskit.call_method1(py, "run", args)?;
+            qiskit.call_method1(py, "set_circuit", (circuit, debug()))?;
+
+            self.py_instance = Some(qiskit);
+            Ok(())
+        })
+    }
+
+    async fn run(&self) -> Result<String, Error> {
+        Python::with_gil(|py| {
+            let fun = self.py_instance.as_ref().unwrap().call_method0(py, "run")?;
             let res = fun.cast_as::<PyDict>(py).map_err(|_| PyDowncastError)?;
 
             let mut highest = ("".to_string(), 0);
@@ -55,9 +66,7 @@ impl QcProvider for NoisyQcProvider {
 
             debug!("{res:#?}");
             Ok(format!("{}: {}", highest.0, highest.1))
-        })?;
-
-        Ok(res)
+        })
     }
 
     fn start_measure(&mut self) {

@@ -4,7 +4,6 @@
 //! with a set or a single computer
 use async_trait::async_trait;
 use enum_dispatch::enum_dispatch;
-
 use tokio::time::Duration;
 
 use crate::qc_providers::{IbmqQcProvider, NoisyQcProvider, SimpleQcProvider};

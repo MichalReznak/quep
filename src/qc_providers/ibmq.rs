@@ -2,7 +2,7 @@ use async_trait::async_trait;
 use load_file::load_str;
 use log::debug;
 use pyo3::prelude::*;
-use pyo3::types::{PyDict};
+use pyo3::types::PyDict;
 use pyo3::Python;
 use tokio::time::{Duration, Instant};
 

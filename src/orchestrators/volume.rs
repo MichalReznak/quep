@@ -47,6 +47,8 @@ impl Orchestrator for VolumeOrchestrator {
             provider.stop_measure();
         }
 
+        println!("Dummy run done");
+
         // TODO for now it generates empty for not computed ones
         for i in 0..width {
             let mut time = Duration::from_micros(0);

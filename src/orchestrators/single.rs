@@ -38,14 +38,17 @@ impl Orchestrator for SingleOrchestrator {
         let mut provider = chooser.get_provider()?;
         provider.connect().await?;
 
+        // TODO enable
         // TODO fix this
         // It runs dummy circuit to make the speed measurement more precise
-        if let Some(circuit) = generator.generate(0, 0, 0).await? {
-            provider.set_circuit(circuit.clone()).await?;
-            provider.start_measure();
-            provider.run().await?;
-            provider.stop_measure();
-        }
+        // if let Some(circuit) = generator.generate(0, 0, 0).await? {
+        //     provider.set_circuit(circuit.clone()).await?;
+        //     provider.start_measure();
+        //     provider.run().await?;
+        //     provider.stop_measure();
+        // }
+        //
+        // println!("Dummy run done");
 
         let mut sr = vec![];
 

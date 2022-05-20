@@ -47,6 +47,8 @@ impl Orchestrator for LinearOrchestrator {
             provider.stop_measure();
         }
 
+        println!("Dummy run done");
+
         for j in 0..i {
             for ii in 0..iter {
                 let mut time = Duration::from_micros(0);

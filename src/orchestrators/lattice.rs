@@ -47,6 +47,8 @@ impl Orchestrator for LatticeOrchestrator {
             provider.stop_measure();
         }
 
+        println!("Dummy run done");
+
         'main: for i in 0..i {
             let mut sr = vec![];
 

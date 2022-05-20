@@ -34,7 +34,7 @@ impl CircuitGenerator for FsCircuitGenerator {
         else {
             let path = self.entries[j as usize].path();
             let mut circuit = std::fs::read_to_string(path)?;
-            circuit.remove_matches("\r\n");
+            circuit.remove_matches("\r");
 
             let check: Result<_, oq::Errors> = try {
                 let mut cache = oq::SourceCache::new();

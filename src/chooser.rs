@@ -2,8 +2,8 @@ use fehler::throws;
 
 use crate::args::types::*;
 use crate::circuit_generators::{
-    BasicCircuitGenerator, FsCircuitGenerator, MirrorCircuitGenerator, RandMirrorCircuitGenerator,
-    VolumeCircuitGenerator,
+    BaseCircuitGenerator, BasicCircuitGenerator, FsCircuitGenerator, MirrorCircuitGenerator,
+    RandMirrorCircuitGenerator, VolumeCircuitGenerator,
 };
 use crate::orchestrators::{
     LatticeOrchestrator, LinearOrchestrator, SingleOrchestrator, VolumeOrchestrator,
@@ -62,6 +62,7 @@ impl Chooser {
             Volume => CircuitGeneratorDyn::from(VolumeCircuitGenerator::new()),
             Mirror => CircuitGeneratorDyn::from(MirrorCircuitGenerator::new()),
             RandMirror => CircuitGeneratorDyn::from(RandMirrorCircuitGenerator::new()),
+            Base => CircuitGeneratorDyn::from(BaseCircuitGenerator::new()),
         }
     }
 }

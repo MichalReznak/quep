@@ -4,10 +4,9 @@ use clap::Parser;
 use fehler::throws;
 use snafu::OptionExt;
 
-use crate::args::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
+use super::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
 pub use crate::config::CliArgsConfig;
-use crate::error::Utf16;
-use crate::Error;
+use crate::error::{Error, Utf16};
 
 #[derive(Parser, Debug, Clone)]
 #[clap(author, version, about, long_about = None)]

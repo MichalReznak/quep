@@ -21,6 +21,7 @@ pub enum CircuitType {
     Volume,
     Mirror,
     RandMirror,
+    Base,
 }
 
 #[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize)]

@@ -1,9 +1,8 @@
 use fehler::throws;
 use serde::{Deserialize, Deserializer, Serialize};
 
-use crate::args::types::{CircuitType, OrchestratorType, OutputSerType};
+use super::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
 use crate::utils::dir;
-use crate::{OutputType, ProviderType};
 
 // TODO all should be option
 #[derive(Serialize, Deserialize)]

@@ -1,7 +1,8 @@
 use anyhow::Error;
-use app::Quep;
 use fehler::throws;
 use tokio::test;
+
+use crate::Quep;
 
 #[throws]
 #[test]

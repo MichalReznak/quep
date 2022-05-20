@@ -12,8 +12,8 @@ use async_trait::async_trait;
 use enum_dispatch::enum_dispatch;
 
 use crate::circuit_generators::{
-    BasicCircuitGenerator, FsCircuitGenerator, MirrorCircuitGenerator, RandMirrorCircuitGenerator,
-    VolumeCircuitGenerator,
+    BaseCircuitGenerator, BasicCircuitGenerator, FsCircuitGenerator, MirrorCircuitGenerator,
+    RandMirrorCircuitGenerator, VolumeCircuitGenerator,
 };
 use crate::Error;
 
@@ -24,6 +24,7 @@ pub enum CircuitGeneratorDyn {
     VolumeCircuitGenerator,
     MirrorCircuitGenerator,
     RandMirrorCircuitGenerator,
+    BaseCircuitGenerator,
 }
 
 #[async_trait]

@@ -15,7 +15,7 @@ pub struct FsCircuitGenerator {
 
 impl FsCircuitGenerator {
     pub fn new() -> Self {
-        let entries = WalkDir::new("data")
+        let entries = WalkDir::new("data") // TODO needs to be arg
             .into_iter()
             .filter_map(|e| e.ok())
             .filter(|e| e.file_type().is_file())

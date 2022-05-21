@@ -1,15 +1,14 @@
-use std::collections::HashMap;
+use std::io::BufWriter;
 use std::path::Path;
+use std::rc::Rc;
 use std::sync::Mutex;
 
 use async_trait::async_trait;
 use derive_more::Constructor;
 use fehler::throw;
 use openqasm as oq;
-use openqasm::{Decl, Linearize, ProgramVisitor, Span, Stmt};
+use openqasm::{Linearize, ProgramVisitor};
 use oq::GenericError;
-use std::io::BufWriter;
-use std::rc::Rc;
 
 use crate::circuit_generators::base::gate_printer::{GatePrinter, ProgramPrinter};
 use crate::traits::CircuitGenerator;
@@ -133,7 +132,8 @@ impl CircuitGenerator for BaseCircuitGenerator {
         // println!("{gates:?}");
         // println!("{inv_gates:?}");
 
-        // let result: Vec<_> = gates.into_iter().chain(inv_gates.into_iter()).collect();
+        // let result: Vec<_> =
+        // gates.into_iter().chain(inv_gates.into_iter()).collect();
         //
         // println!("{result:?}");
 
@@ -147,14 +147,13 @@ impl CircuitGenerator for BaseCircuitGenerator {
 
         println!("{}", pp.result());
 
+        let buf = Rc::new(Mutex::new(BufWriter::new(Vec::new())));
 
-        // let buf = Rc::new(Mutex::new(BufWriter::new(Vec::new())));
-        //
-        // let mut l = Linearize::new(GatePrinter::new(buf.clone()));
+        let mut _l = Linearize::new(GatePrinter::new(buf.clone()));
         // l.visit_program(&program2).unwrap();
         //
-        // // TODO now all gates are parsed to the base form, maybe an option to keep it as defined?
-        // let bytes = buf.lock().unwrap().get_mut().clone();
+        // // TODO now all gates are parsed to the base form, maybe an option to keep it
+        // as defined? let bytes = buf.lock().unwrap().get_mut().clone();
         // let string = String::from_utf8(bytes).unwrap();
         // println!("{string}");
 

@@ -49,14 +49,15 @@ impl CircuitGenerator for VolumeCircuitGenerator {
         }
         let circuit = circuit.replace("%DEPTH%", &depth);
 
+        let mut cache = oq::SourceCache::new();
+        let mut parser = oq::Parser::new(&mut cache);
+
         let check: Result<_, oq::Errors> = try {
-            let mut cache = oq::SourceCache::new();
-            let mut parser = oq::Parser::new(&mut cache);
             parser.parse_source(circuit.to_string(), Some(&Path::new(".")));
             parser.done().to_errors()?.type_check().to_errors()?;
         };
         if let Err(errors) = check {
-            println!("{errors:#?}");
+            errors.print(&mut cache)?;
             Err(crate::Error::SomeError)
         }
         else {

@@ -5,11 +5,14 @@ use async_trait::async_trait;
 use derive_more::Constructor;
 use fehler::throw;
 use openqasm as oq;
-use openqasm::{Decl, Span, Stmt};
+use openqasm::{Decl, Linearize, ProgramVisitor, Span, Stmt};
 use oq::GenericError;
 
+use crate::circuit_generators::base::gate_printer::GatePrinter;
 use crate::traits::CircuitGenerator;
 use crate::Error;
+
+mod gate_printer;
 
 #[derive(Debug, Constructor)]
 pub struct BaseCircuitGenerator;
@@ -41,6 +44,7 @@ barrier q;
 measure q -> c;
 "#;
 
+// fn construct_circuit(circuit: Vec<>)
 
 fn get_base_circ(i: i32) -> Result<oq::Program, Error> {
     let path = "./data/base.template.qasm"; // TODO arg
@@ -62,7 +66,7 @@ fn get_base_circ(i: i32) -> Result<oq::Program, Error> {
 
     match check {
         Err(errors) => {
-            println!("{errors:#?}");
+            errors.print(&mut cache)?;
             throw!(crate::Error::SomeError)
         }
         Ok(check) => Ok(check),
@@ -91,10 +95,11 @@ impl CircuitGenerator for BaseCircuitGenerator {
         // TODO barriers support
         // TODO different order of operations
 
-        let program = get_base_circ(4)?; // TODO
+        let mut program2 = get_base_circ(4)?; // TODO
 
-        let program: Vec<_> = program
+        let program: Vec<_> = program2
             .decls
+            .clone()
             .into_iter()
             .filter(|e| {
                 let Span { inner, .. } = e;
@@ -106,14 +111,15 @@ impl CircuitGenerator for BaseCircuitGenerator {
                 }
             })
             .collect();
+        // .map(|e| (*e).clone())
 
         // println!("{program:#?}");
 
         let mut gates = vec![];
         let mut index_count = HashMap::new();
 
-        for lex in program {
-            match *lex {
+        for lex in &program {
+            match &**lex {
                 // isolate operations to a specific size
                 Decl::Stmt(ref stmt) => {
                     match &**stmt {
@@ -130,7 +136,7 @@ impl CircuitGenerator for BaseCircuitGenerator {
                                 .map(|e| &**e)
                                 .map(|e| (e.name.to_string(), e.index.unwrap()))
                                 .collect();
-                            println!("{name:#?}, {args:#?}");
+                            println!("{name:?}, {args:?}");
 
                             gates.push((name, args.clone()));
 
@@ -164,7 +170,17 @@ impl CircuitGenerator for BaseCircuitGenerator {
         println!("{gates:?}");
         println!("{inv_gates:?}");
 
-        // TODO push to Program
+        let result: Vec<_> = gates.into_iter().chain(inv_gates.into_iter()).collect();
+
+        println!("{result:?}");
+
+        let mut inv = program2.decls.clone();
+        inv.reverse();
+
+        program2.decls = program2.decls.clone().into_iter().chain(inv.into_iter()).collect();
+
+        let mut l = Linearize::new(GatePrinter::new());
+        l.visit_program(&program2).unwrap();
 
         unimplemented!()
     }

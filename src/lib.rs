@@ -10,6 +10,7 @@
 #![feature(core_intrinsics)]
 #![feature(result_flattening)]
 #![feature(string_remove_matches)]
+#![feature(new_uninit)]
 
 use chooser::Chooser;
 use fehler::throws;

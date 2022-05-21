@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::path::Path;
+use std::sync::Mutex;
 
 use async_trait::async_trait;
 use derive_more::Constructor;
@@ -7,8 +8,10 @@ use fehler::throw;
 use openqasm as oq;
 use openqasm::{Decl, Linearize, ProgramVisitor, Span, Stmt};
 use oq::GenericError;
+use std::io::BufWriter;
+use std::rc::Rc;
 
-use crate::circuit_generators::base::gate_printer::GatePrinter;
+use crate::circuit_generators::base::gate_printer::{GatePrinter, ProgramPrinter};
 use crate::traits::CircuitGenerator;
 use crate::Error;
 
@@ -28,7 +31,7 @@ creg c[%SIZE%];
 %CIRCUIT%
 "#;
 
-const CIRCUIT_RESULT: &str = r#"
+const _CIRCUIT_RESULT: &str = r#"
 OPENQASM 2.0;
 include "qelib1.inc";
 
@@ -80,6 +83,7 @@ fn get_base_circ(i: i32) -> Result<oq::Program, Error> {
 //      Measure is done on all
 //      They define only the circuit
 //      Number of qubits does not change
+// Non inverse gates are not handled
 
 #[async_trait]
 impl CircuitGenerator for BaseCircuitGenerator {
@@ -97,90 +101,62 @@ impl CircuitGenerator for BaseCircuitGenerator {
 
         let mut program2 = get_base_circ(4)?; // TODO
 
-        let program: Vec<_> = program2
-            .decls
-            .clone()
-            .into_iter()
-            .filter(|e| {
-                let Span { inner, .. } = e;
-
-                use Decl::*;
-                match **inner {
-                    Include { .. } | Def { .. } => false,
-                    CReg { .. } | QReg { .. } | Stmt(_) => true,
-                }
-            })
-            .collect();
-        // .map(|e| (*e).clone())
+        // let program: Vec<_> = program2
+        //     .decls
+        //     .clone()
+        //     .into_iter()
+        //     .filter(|e| {
+        //         let Span { inner, .. } = e;
+        //
+        //         use Decl::*;
+        //         match **inner {
+        //             Include { .. } | Def { .. } => false,
+        //             CReg { .. } | QReg { .. } | Stmt(_) => true,
+        //         }
+        //     })
+        //     .collect();
 
         // println!("{program:#?}");
 
-        let mut gates = vec![];
-        let mut index_count = HashMap::new();
+        // let mut gates = vec![];
+        // let mut index_count = HashMap::new();
 
-        for lex in &program {
-            match &**lex {
-                // isolate operations to a specific size
-                Decl::Stmt(ref stmt) => {
-                    match &**stmt {
-                        Stmt::U { .. } => {}
-                        Stmt::CX { .. } => {}
+        // println!("{index_count:#?}");
+        // for i in 0..4 {
+        //     let arg = index_count.get(&i).unwrap_or_else(|| &0);
+        //     println!("{arg}");
+        // }
 
-                        // For now only gates are used
-                        Stmt::Gate { name, args, .. } => {
-                            let name = (&**name).to_string();
-                            // let args = &**args;
-                            // TODO does not need to have index
-                            let args: Vec<_> = (&**args)
-                                .into_iter()
-                                .map(|e| &**e)
-                                .map(|e| (e.name.to_string(), e.index.unwrap()))
-                                .collect();
-                            println!("{name:?}, {args:?}");
+        // let mut inv_gates = gates.clone();
+        // inv_gates.reverse();
 
-                            gates.push((name, args.clone()));
+        // println!("{gates:?}");
+        // println!("{inv_gates:?}");
 
-                            for (_, arg) in args {
-                                if let Some(i) = index_count.get_mut(&arg) {
-                                    *i += 1;
-
-                                    // TODO stop on some size
-                                }
-                                else {
-                                    index_count.insert(arg, 1);
-                                }
-                            }
-                        }
-                        _ => {}
-                    }
-                }
-                _ => {}
-            }
-        }
-
-        println!("{index_count:#?}");
-        for i in 0..4 {
-            let arg = index_count.get(&i).unwrap_or_else(|| &0);
-            println!("{arg}");
-        }
-
-        let mut inv_gates = gates.clone();
-        inv_gates.reverse();
-
-        println!("{gates:?}");
-        println!("{inv_gates:?}");
-
-        let result: Vec<_> = gates.into_iter().chain(inv_gates.into_iter()).collect();
-
-        println!("{result:?}");
+        // let result: Vec<_> = gates.into_iter().chain(inv_gates.into_iter()).collect();
+        //
+        // println!("{result:?}");
 
         let mut inv = program2.decls.clone();
         inv.reverse();
 
         program2.decls = program2.decls.clone().into_iter().chain(inv.into_iter()).collect();
 
-        let mut l = Linearize::new(GatePrinter::new());
-        l.visit_program(&program2).unwrap();
+        let mut pp = ProgramPrinter::new();
+        pp.visit_program(&program2).unwrap(); // TODO can be used for parsing without gate change
+
+        println!("{}", pp.result());
+
+
+        // let buf = Rc::new(Mutex::new(BufWriter::new(Vec::new())));
+        //
+        // let mut l = Linearize::new(GatePrinter::new(buf.clone()));
+        // l.visit_program(&program2).unwrap();
+        //
+        // // TODO now all gates are parsed to the base form, maybe an option to keep it as defined?
+        // let bytes = buf.lock().unwrap().get_mut().clone();
+        // let string = String::from_utf8(bytes).unwrap();
+        // println!("{string}");
 
         unimplemented!()
     }

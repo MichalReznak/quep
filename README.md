@@ -30,3 +30,4 @@ grcov . `
 # TODOs:
 * TODO run on real hardware
 * TODO use thermal relaxation example to create a better noisy simulator
+* TODO extend supported gates with custom defined and their inverse

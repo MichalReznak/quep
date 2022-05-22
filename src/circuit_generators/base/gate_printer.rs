@@ -1,6 +1,8 @@
+use std::collections::HashMap;
 use std::io::{BufWriter, Write};
 use std::rc::Rc;
 use std::sync::Mutex;
+use collection_literals::collection;
 
 use fehler::throws;
 use openqasm::{Expr, GateWriter, ProgramVisitor, Reg, Span, Stmt, Symbol, Value};
@@ -94,12 +96,21 @@ impl GateWriter for GatePrinter {
 
 pub struct ProgramPrinter {
     buf: BufWriter<Vec<u8>>,
+    inverse_gates: Option<HashMap<&'static str, &'static str>>,
 }
 
 impl ProgramPrinter {
     pub fn new() -> Self {
         Self {
             buf: BufWriter::new(Vec::new()),
+            inverse_gates: None,
+        }
+    }
+
+    pub fn with_gates(inverse_gates: HashMap<&'static str, &'static str>) -> Self {
+        Self {
+            buf: BufWriter::new(Vec::new()),
+            inverse_gates: Some(inverse_gates),
         }
     }
 
@@ -112,24 +123,25 @@ impl ProgramPrinter {
 impl ProgramVisitor for ProgramPrinter {
     type Error = std::convert::Infallible;
 
+    #[throws(Self::Error)]
     fn visit_gate_def(
         &mut self,
         _name: &Span<Symbol>,
         _params: &[Span<Symbol>],
         _args: &[Span<Symbol>],
         _body: &[Span<Stmt>],
-    ) -> Result<(), Self::Error> {
+    ) {
         // ignore definitions
-        Ok(())
     }
 
+    #[throws(Self::Error)]
     fn visit_gate(
         &mut self,
         name: &Span<Symbol>,
         _params: &[Span<Expr>],
         args: &[Span<Reg>],
-    ) -> Result<(), Self::Error> {
-        println!("{name:?}: {args:?}");
+    ) {
+        // println!("{name:?}: {args:?}");
 
         let args: Vec<_> = (*args).iter().map(|e| &**e).collect();
 
@@ -144,10 +156,92 @@ impl ProgramVisitor for ProgramPrinter {
         }
         a += &format!("{last};");
 
-        println!("{a}");
+        // println!("{a}");
 
-        self.buf.write(format!("{} {}\n", &**name, a).as_bytes()).unwrap();
-        println!("{:#?}", self.buf);
-        Ok(())
+        let name = (&**name).as_str();
+
+        let name = if let Some(ref gates) = self.inverse_gates {
+            gates.get(&name).unwrap_or_else(|| &name)
+        }
+        else {
+            name
+        };
+
+        self.buf.write(format!("{} {}\n", &name, a).as_bytes()).unwrap();
+        // println!("{:#?}", self.buf);
+    }
+}
+
+
+pub struct ProgramParser {
+    depth: i32,
+    pub counts: HashMap<i32, i32>,
+}
+
+impl ProgramParser {
+    pub fn new(depth: i32) -> Self {
+        Self {
+            depth,
+            counts: HashMap::new(),
+        }
+    }
+}
+
+impl ProgramVisitor for ProgramParser {
+    type Error = std::convert::Infallible;
+
+    #[throws(Self::Error)]
+    fn visit_gate_def(
+        &mut self,
+        _name: &Span<Symbol>,
+        _params: &[Span<Symbol>],
+        _args: &[Span<Symbol>],
+        _body: &[Span<Stmt>],
+    ) {
+        // ignore definitions
+    }
+
+    #[throws(Self::Error)]
+    fn visit_gate(
+        &mut self,
+        name: &Span<Symbol>,
+        _params: &[Span<Expr>],
+        args: &[Span<Reg>],
+    ) {
+        // println!("{name:?}: {args:?}");
+
+        let args: Vec<_> = (*args).iter().map(|e| &**e).collect();
+
+        let mut inserts = collection! { HashMap<i32, i32> };
+
+        // TODO do not depend on index
+        for arg in args {
+            let i = arg.index.unwrap() as i32;
+            match inserts.get_mut(&i) {
+                None => { inserts.insert(i, 1); },
+                Some(val) => { let mut a = *val; a += 1; inserts.insert(i, a); },
+            };
+        }
+
+        let any = inserts.iter().any(|(k, v)| {
+            let counts = if let Some(a) = self.counts.get(k) {
+                *a
+            }
+            else {
+                0
+            };
+
+            let inserts_count = if let Some(a) = inserts.get(k) {
+                *a
+            }
+            else {
+                0
+            };
+
+            counts + inserts_count <= self.depth // TODO <= or < ??
+        });
+        if !any {
+
+        }
     }
 }

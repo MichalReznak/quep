@@ -14,6 +14,8 @@ cx q[0], q[1];
 
 x q[1];
 
+s q[2];
+
 // x q[0];
 
 measure q -> c;

@@ -5,6 +5,8 @@ use fehler::throws;
 
 mod common;
 
+// TODO add base tests
+
 // Orch: Volume
 #[throws]
 #[tokio::test]
@@ -763,6 +765,26 @@ async fn cj() {
         .output(OutputType::Text)
         .circuit(CircuitType::RandMirror)
         .orch(OrchestratorType::Linear)
+        .circuit_rand(true)
+        .orch_iter(4)
+        .build();
+    Quep::new(args).await?.run().await?;
+}
+
+// Circuit: Base
+#[throws]
+#[tokio::test]
+async fn da() {
+    let args = CliArgs::builder()
+        .orch_size(4)
+        .orch_size_2(4)
+        .python_dir(common::get_dir("./python")?)
+        .orch_data(common::get_dir("./data")?)
+        .output_ser(OutputSerType::Json)
+        .provider(ProviderType::Noisy)
+        .output(OutputType::Text)
+        .circuit(CircuitType::Base)
+        .orch(OrchestratorType::Lattice)
         .circuit_rand(true)
         .orch_iter(4)
         .build();

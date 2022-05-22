@@ -19,6 +19,8 @@ creg c[%SIZE%];
 %RESET%
 %DEPTH%
 
+barrier q;
+
 measure q -> c;
 "#;
 

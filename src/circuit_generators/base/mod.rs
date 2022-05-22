@@ -30,7 +30,7 @@ creg c[%SIZE%];
 %CIRCUIT%
 "#;
 
-const _CIRCUIT_RESULT: &str = r#"
+const CIRCUIT_RESULT: &str = r#"
 OPENQASM 2.0;
 include "qelib1.inc";
 
@@ -43,10 +43,10 @@ barrier q;
 
 %CIRCUIT_INV%
 
+barrier q;
+
 measure q -> c;
 "#;
-
-// fn construct_circuit(circuit: Vec<>)
 
 fn get_base_circ(i: i32) -> Result<oq::Program, Error> {
     let path = "./data/base.template.qasm"; // TODO arg
@@ -88,34 +88,10 @@ fn get_base_circ(i: i32) -> Result<oq::Program, Error> {
 impl CircuitGenerator for BaseCircuitGenerator {
     async fn generate(&mut self, _i: i32, _j: i32, _iter: i32) -> Result<Option<String>, Error> {
         // TODO check circuit size
-        // if j >= self.entries.len() as i32 {
-        //     Ok(None)
-        // }
-        // else {
-        //
-        // }
-
         // TODO barriers support
         // TODO different order of operations
 
         let mut program2 = get_base_circ(4)?; // TODO
-
-        // let program: Vec<_> = program2
-        //     .decls
-        //     .clone()
-        //     .into_iter()
-        //     .filter(|e| {
-        //         let Span { inner, .. } = e;
-        //
-        //         use Decl::*;
-        //         match **inner {
-        //             Include { .. } | Def { .. } => false,
-        //             CReg { .. } | QReg { .. } | Stmt(_) => true,
-        //         }
-        //     })
-        //     .collect();
-
-        // println!("{program:#?}");
 
         // let mut gates = vec![];
         // let mut index_count = HashMap::new();
@@ -126,37 +102,26 @@ impl CircuitGenerator for BaseCircuitGenerator {
         //     println!("{arg}");
         // }
 
-        // let mut inv_gates = gates.clone();
-        // inv_gates.reverse();
-
-        // println!("{gates:?}");
-        // println!("{inv_gates:?}");
-
-        // let result: Vec<_> =
-        // gates.into_iter().chain(inv_gates.into_iter()).collect();
-        //
-        // println!("{result:?}");
-
-        let mut inv = program2.decls.clone();
-        inv.reverse();
-
-        program2.decls = program2.decls.clone().into_iter().chain(inv.into_iter()).collect();
-
         let mut pp = ProgramPrinter::new();
         pp.visit_program(&program2).unwrap(); // TODO can be used for parsing without gate change
 
+        let mut inv = program2.decls.clone();
+        inv.reverse();
+        program2.decls = inv;
+        let mut pp_inv = ProgramPrinter::new();
+        pp_inv.visit_program(&program2).unwrap(); // TODO can be used for parsing without gate change
+
+        println!("Normal:");
         println!("{}", pp.result());
+        println!("INVERSE:");
+        println!("{}", pp_inv.result());
 
-        let buf = Rc::new(Mutex::new(BufWriter::new(Vec::new())));
+        let res = CIRCUIT_RESULT
+            .replace("%SIZE%", &4.to_string())
+            .replace("%CIRCUIT%", &pp.result())
+            .replace("%CIRCUIT_INV%", &pp_inv.result());
 
-        let mut _l = Linearize::new(GatePrinter::new(buf.clone()));
-        // l.visit_program(&program2).unwrap();
-        //
-        // // TODO now all gates are parsed to the base form, maybe an option to keep it
-        // as defined? let bytes = buf.lock().unwrap().get_mut().clone();
-        // let string = String::from_utf8(bytes).unwrap();
-        // println!("{string}");
-
-        unimplemented!()
+        println!("{res}");
+        Ok(Some(res))
     }
 }

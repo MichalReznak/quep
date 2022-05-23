@@ -83,12 +83,13 @@ fn get_base_circ(i: i32) -> Result<oq::Program, Error> {
 //      Number of qubits does not change
 // Non inverse gates are not handled
 // For now only a single qreg and creg can be defined
+// Gates needs to be defined only in an entry file (otherwise order is wrong)
 
 #[throws]
 pub fn parse_circuit(program: &Program, _depth: i32) -> Vec<Span<Decl>> {
     let mut program_parser = ProgramParser::new(4);
     program_parser.visit_program(&program).unwrap();
-    unimplemented!();
+    vec![]
 }
 
 #[throws]
@@ -116,12 +117,10 @@ pub fn print_circuit(program: &Program) -> String {
     // println!("INVERSE:");
     // println!("{}", pp_inv.result());
 
-    let _res = CIRCUIT_RESULT
+    CIRCUIT_RESULT
         .replace("%SIZE%", &4.to_string())
         .replace("%CIRCUIT%", &pp.result())
-        .replace("%CIRCUIT_INV%", &pp_inv.result());
-
-    unimplemented!();
+        .replace("%CIRCUIT_INV%", &pp_inv.result())
 }
 
 #[async_trait]
@@ -141,6 +140,8 @@ impl CircuitGenerator for BaseCircuitGenerator {
         let _parsed_gates = parse_circuit(&program2, depth)?;
 
         let print_program = print_circuit(&program2)?;
+        println!("{print_program}");
+
         Ok(Some(print_program))
     }
 }

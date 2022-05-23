@@ -13,15 +13,15 @@ pub struct GatePrinter {
     creg: Vec<Symbol>,
 }
 
-impl GatePrinter {
-    pub fn new(buf: Rc<Mutex<BufWriter<Vec<u8>>>>) -> Self {
-        Self {
-            buf,
-            qreg: vec![],
-            creg: vec![],
-        }
-    }
-}
+// impl GatePrinter {
+//     pub fn new(buf: Rc<Mutex<BufWriter<Vec<u8>>>>) -> Self {
+//         Self {
+//             buf,
+//             qreg: vec![],
+//             creg: vec![],
+//         }
+//     }
+// }
 
 // TODO can be used to parsed output
 impl GateWriter for GatePrinter {
@@ -115,8 +115,7 @@ impl ProgramPrinter {
     }
 
     pub fn result(&mut self) -> String {
-        println!("{:?}", self.buf.buffer().to_vec());
-        dbg!(String::from_utf8(self.buf.buffer().to_vec()).unwrap())
+        String::from_utf8(self.buf.buffer().to_vec()).unwrap()
     }
 }
 
@@ -196,8 +195,8 @@ impl ProgramVisitor for ProgramParser {
     }
 
     #[throws(Self::Error)]
-    fn visit_gate(&mut self, name: &Span<Symbol>, params: &[Span<Expr>], args: &[Span<Reg>]) {
-        println!("{name:?}: {args:?}, {params:#?}");
+    fn visit_gate(&mut self, _name: &Span<Symbol>, _params: &[Span<Expr>], args: &[Span<Reg>]) {
+        // println!("{name:?}: {args:?}, {params:#?}");
 
         let args: Vec<_> = (*args).iter().map(|e| &**e).collect();
 

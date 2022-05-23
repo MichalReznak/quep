@@ -3,13 +3,15 @@ use std::io::BufWriter;
 use std::path::Path;
 use std::rc::Rc;
 use std::sync::Mutex;
+use itertools::Itertools;
+use fehler::throws;
 
 use async_trait::async_trait;
 use collection_literals::collection;
 use derive_more::Constructor;
 use fehler::throw;
 use openqasm as oq;
-use openqasm::{Linearize, ProgramVisitor};
+use openqasm::{Linearize, ProgramVisitor, Span, Decl, Stmt, Program};
 use oq::GenericError;
 
 use crate::circuit_generators::base::gate_printer::{GatePrinter, ProgramParser, ProgramPrinter};
@@ -87,6 +89,47 @@ fn get_base_circ(i: i32) -> Result<oq::Program, Error> {
 // Non inverse gates are not handled
 // For now only a single qreg and creg can be defined
 
+#[throws]
+pub fn parse_circuit(program: &Program, depth: i32) -> Vec<Span<Decl>> {
+    let mut program_parser = ProgramParser::new(4);
+    program_parser.visit_program(&program).unwrap();
+    unimplemented!();
+}
+
+
+#[throws]
+pub fn print_circuit(program: &Program) -> String {
+    // TODO allow dynamic definition
+    let inverse_gates = collection! {
+            HashMap<&str, &str>;
+            "s" => "sdg",
+            "t" => "tdg",
+        };
+
+    let mut pp = ProgramPrinter::new();
+    pp.visit_program(&program).unwrap();
+
+    let mut inv = program.decls.clone();
+    inv.reverse();
+
+    let mut program = program.clone();
+    program.decls = inv;
+    let mut pp_inv = ProgramPrinter::with_gates(inverse_gates);
+    pp_inv.visit_program(&program).unwrap();
+
+    // println!("Normal:");
+    // println!("{}", pp.result());
+    // println!("INVERSE:");
+    // println!("{}", pp_inv.result());
+
+    let res = CIRCUIT_RESULT
+        .replace("%SIZE%", &4.to_string())
+        .replace("%CIRCUIT%", &pp.result())
+        .replace("%CIRCUIT_INV%", &pp_inv.result());
+
+    unimplemented!();
+}
+
 #[async_trait]
 impl CircuitGenerator for BaseCircuitGenerator {
     async fn generate(&mut self, depth: i32, _width: i32, _iter: i32) -> Result<Option<String>, Error> {
@@ -96,87 +139,9 @@ impl CircuitGenerator for BaseCircuitGenerator {
 
         let mut program2 = get_base_circ(4)?; // TODO
 
-        // println!("{name:?}: {args:?}");
+        let parsed_gates = parse_circuit(&program2, depth)?;
 
-        // let args: Vec<_> = (*args).iter().map(|e| &**e).collect();
-        //
-        // let mut inserts = collection! { HashMap<i32, i32> };
-        //
-        // // TODO do not depend on index
-        // for arg in args {
-        //     let i = arg.index.unwrap() as i32;
-        //     match inserts.get_mut(&i) {
-        //         None => { inserts.insert(i, 1); },
-        //         Some(val) => { let mut a = *val; a += 1; inserts.insert(i, a); },
-        //     };
-        // }
-        //
-        // let any = inserts.iter().any(|(k, v)| {
-        //     let counts = if let Some(a) = self.counts.get(k) {
-        //         *a
-        //     }
-        //     else {
-        //         0
-        //     };
-        //
-        //     let inserts_count = if let Some(a) = inserts.get(k) {
-        //         *a
-        //     }
-        //     else {
-        //         0
-        //     };
-        //
-        //     counts + inserts_count <= self.depth // TODO <= or < ??
-        // });
-        // if !any {
-        //
-        // }
-
-
-        
-
-
-        // let mut gates = vec![];
-        // let mut index_count = HashMap::new();
-
-        // println!("{index_count:#?}");
-        // for i in 0..4 {
-        //     let arg = index_count.get(&i).unwrap_or_else(|| &0);
-        //     println!("{arg}");
-        // }
-
-        let mut program_parser = ProgramParser::new(4);
-        program_parser.visit_program(&program2).unwrap();
-
-        println!("{:?}", program_parser.counts);
-
-        // TODO allow dynamic definition
-        let inverse_gates = collection! {
-            HashMap<&str, &str>;
-            "s" => "sdg",
-            "t" => "tdg",
-        };
-
-        let mut pp = ProgramPrinter::new();
-        pp.visit_program(&program2).unwrap();
-
-        let mut inv = program2.decls.clone();
-        inv.reverse();
-        program2.decls = inv;
-        let mut pp_inv = ProgramPrinter::with_gates(inverse_gates);
-        pp_inv.visit_program(&program2).unwrap();
-
-        // println!("Normal:");
-        // println!("{}", pp.result());
-        // println!("INVERSE:");
-        // println!("{}", pp_inv.result());
-
-        let res = CIRCUIT_RESULT
-            .replace("%SIZE%", &4.to_string())
-            .replace("%CIRCUIT%", &pp.result())
-            .replace("%CIRCUIT_INV%", &pp_inv.result());
-
-        // println!("{res}");
-        Ok(Some(res))
+        let print_program = print_circuit(&program2)?;
+        Ok(Some(print_program))
     }
 }

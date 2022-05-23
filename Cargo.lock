@@ -1162,6 +1162,7 @@ dependencies = [
  "fehler",
  "futures",
  "futures-async-stream",
+ "itertools",
  "json5",
  "lazy_mut",
  "lazy_static",

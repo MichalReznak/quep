@@ -205,10 +205,10 @@ impl ProgramVisitor for ProgramParser {
     fn visit_gate(
         &mut self,
         name: &Span<Symbol>,
-        _params: &[Span<Expr>],
+        params: &[Span<Expr>],
         args: &[Span<Reg>],
     ) {
-        // println!("{name:?}: {args:?}");
+        println!("{name:?}: {args:?}, {params:#?}");
 
         let args: Vec<_> = (*args).iter().map(|e| &**e).collect();
 

@@ -2,8 +2,8 @@ use std::collections::HashMap;
 use std::io::{BufWriter, Write};
 use std::rc::Rc;
 use std::sync::Mutex;
-use collection_literals::collection;
 
+use collection_literals::collection;
 use fehler::throws;
 use openqasm::{Expr, GateWriter, ProgramVisitor, Reg, Span, Stmt, Symbol, Value};
 
@@ -135,12 +135,7 @@ impl ProgramVisitor for ProgramPrinter {
     }
 
     #[throws(Self::Error)]
-    fn visit_gate(
-        &mut self,
-        name: &Span<Symbol>,
-        _params: &[Span<Expr>],
-        args: &[Span<Reg>],
-    ) {
+    fn visit_gate(&mut self, name: &Span<Symbol>, _params: &[Span<Expr>], args: &[Span<Reg>]) {
         // println!("{name:?}: {args:?}");
 
         let args: Vec<_> = (*args).iter().map(|e| &**e).collect();
@@ -172,7 +167,6 @@ impl ProgramVisitor for ProgramPrinter {
     }
 }
 
-
 pub struct ProgramParser {
     depth: i32,
     pub counts: HashMap<i32, i32>,
@@ -202,12 +196,7 @@ impl ProgramVisitor for ProgramParser {
     }
 
     #[throws(Self::Error)]
-    fn visit_gate(
-        &mut self,
-        name: &Span<Symbol>,
-        params: &[Span<Expr>],
-        args: &[Span<Reg>],
-    ) {
+    fn visit_gate(&mut self, name: &Span<Symbol>, params: &[Span<Expr>], args: &[Span<Reg>]) {
         println!("{name:?}: {args:?}, {params:#?}");
 
         let args: Vec<_> = (*args).iter().map(|e| &**e).collect();
@@ -218,12 +207,18 @@ impl ProgramVisitor for ProgramParser {
         for arg in args {
             let i = arg.index.unwrap() as i32;
             match inserts.get_mut(&i) {
-                None => { inserts.insert(i, 1); },
-                Some(val) => { let mut a = *val; a += 1; inserts.insert(i, a); },
+                None => {
+                    inserts.insert(i, 1);
+                }
+                Some(val) => {
+                    let mut a = *val;
+                    a += 1;
+                    inserts.insert(i, a);
+                }
             };
         }
 
-        let any = inserts.iter().any(|(k, v)| {
+        let any = inserts.iter().any(|(k, _v)| {
             let counts = if let Some(a) = self.counts.get(k) {
                 *a
             }
@@ -231,17 +226,10 @@ impl ProgramVisitor for ProgramParser {
                 0
             };
 
-            let inserts_count = if let Some(a) = inserts.get(k) {
-                *a
-            }
-            else {
-                0
-            };
+            let inserts_count = if let Some(a) = inserts.get(k) { *a } else { 0 };
 
             counts + inserts_count <= self.depth // TODO <= or < ??
         });
-        if !any {
-
-        }
+        if !any {}
     }
 }

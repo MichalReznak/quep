@@ -1,20 +1,15 @@
 use std::collections::HashMap;
-use std::io::BufWriter;
 use std::path::Path;
-use std::rc::Rc;
-use std::sync::Mutex;
-use itertools::Itertools;
-use fehler::throws;
 
 use async_trait::async_trait;
 use collection_literals::collection;
 use derive_more::Constructor;
-use fehler::throw;
+use fehler::{throw, throws};
 use openqasm as oq;
-use openqasm::{Linearize, ProgramVisitor, Span, Decl, Stmt, Program};
+use openqasm::{Decl, Program, ProgramVisitor, Span};
 use oq::GenericError;
 
-use crate::circuit_generators::base::gate_printer::{GatePrinter, ProgramParser, ProgramPrinter};
+use crate::circuit_generators::base::gate_printer::{ProgramParser, ProgramPrinter};
 use crate::traits::CircuitGenerator;
 use crate::Error;
 
@@ -90,21 +85,20 @@ fn get_base_circ(i: i32) -> Result<oq::Program, Error> {
 // For now only a single qreg and creg can be defined
 
 #[throws]
-pub fn parse_circuit(program: &Program, depth: i32) -> Vec<Span<Decl>> {
+pub fn parse_circuit(program: &Program, _depth: i32) -> Vec<Span<Decl>> {
     let mut program_parser = ProgramParser::new(4);
     program_parser.visit_program(&program).unwrap();
     unimplemented!();
 }
 
-
 #[throws]
 pub fn print_circuit(program: &Program) -> String {
     // TODO allow dynamic definition
     let inverse_gates = collection! {
-            HashMap<&str, &str>;
-            "s" => "sdg",
-            "t" => "tdg",
-        };
+        HashMap<&str, &str>;
+        "s" => "sdg",
+        "t" => "tdg",
+    };
 
     let mut pp = ProgramPrinter::new();
     pp.visit_program(&program).unwrap();
@@ -122,7 +116,7 @@ pub fn print_circuit(program: &Program) -> String {
     // println!("INVERSE:");
     // println!("{}", pp_inv.result());
 
-    let res = CIRCUIT_RESULT
+    let _res = CIRCUIT_RESULT
         .replace("%SIZE%", &4.to_string())
         .replace("%CIRCUIT%", &pp.result())
         .replace("%CIRCUIT_INV%", &pp_inv.result());
@@ -132,14 +126,19 @@ pub fn print_circuit(program: &Program) -> String {
 
 #[async_trait]
 impl CircuitGenerator for BaseCircuitGenerator {
-    async fn generate(&mut self, depth: i32, _width: i32, _iter: i32) -> Result<Option<String>, Error> {
+    async fn generate(
+        &mut self,
+        depth: i32,
+        _width: i32,
+        _iter: i32,
+    ) -> Result<Option<String>, Error> {
         // TODO check circuit size
         // TODO barriers support
         // TODO different order of operations
 
-        let mut program2 = get_base_circ(4)?; // TODO
+        let program2 = get_base_circ(4)?; // TODO
 
-        let parsed_gates = parse_circuit(&program2, depth)?;
+        let _parsed_gates = parse_circuit(&program2, depth)?;
 
         let print_program = print_circuit(&program2)?;
         Ok(Some(print_program))

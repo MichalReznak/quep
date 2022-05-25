@@ -1,10 +1,11 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
 use async_trait::async_trait;
 use collection_literals::collection;
 use derive_more::Constructor;
 use fehler::{throw, throws};
+use itertools::Itertools;
 use openqasm as oq;
 use openqasm::{Decl, Program, ProgramVisitor, Span};
 use oq::GenericError;
@@ -86,14 +87,18 @@ fn get_base_circ(i: i32) -> Result<oq::Program, Error> {
 // Gates needs to be defined only in an entry file (otherwise order is wrong)
 
 #[throws]
-pub fn parse_circuit(program: &Program, _depth: i32) -> Vec<Span<Decl>> {
-    let mut program_parser = ProgramParser::new(4);
+pub fn parse_circuit(program: &Program, _depth: i32) -> HashSet<i32> {
+    let mut program_parser = ProgramParser::new(2);
     program_parser.visit_program(&program).unwrap();
-    vec![]
+
+    println!("{:#?}", program_parser.counts);
+    println!("{:#?}", program_parser.included_gates.clone().into_iter().sorted());
+
+    program_parser.included_gates
 }
 
 #[throws]
-pub fn print_circuit(program: &Program) -> String {
+pub fn print_circuit(included_gates: HashSet<i32>, program: &Program) -> String {
     // TODO allow dynamic definition
     let inverse_gates = collection! {
         HashMap<&str, &str>;
@@ -101,15 +106,17 @@ pub fn print_circuit(program: &Program) -> String {
         "t" => "tdg",
     };
 
-    let mut pp = ProgramPrinter::new();
+    let mut pp = ProgramPrinter::new(included_gates.clone());
     pp.visit_program(&program).unwrap();
 
     let mut inv = program.decls.clone();
     inv.reverse();
 
+
+    // TODO inverse gates are incorrect, counter needs to go from length to 0
     let mut program = program.clone();
     program.decls = inv;
-    let mut pp_inv = ProgramPrinter::with_gates(inverse_gates);
+    let mut pp_inv = ProgramPrinter::with_gates(included_gates, inverse_gates, pp.current_gate_i - 1);
     pp_inv.visit_program(&program).unwrap();
 
     // println!("Normal:");
@@ -137,9 +144,9 @@ impl CircuitGenerator for BaseCircuitGenerator {
 
         let program2 = get_base_circ(4)?; // TODO
 
-        let _parsed_gates = parse_circuit(&program2, depth)?;
+        let included_gates = parse_circuit(&program2, depth)?;
 
-        let print_program = print_circuit(&program2)?;
+        let print_program = print_circuit(included_gates, &program2)?;
         println!("{print_program}");
 
         Ok(Some(print_program))

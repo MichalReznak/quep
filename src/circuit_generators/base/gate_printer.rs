@@ -1,12 +1,13 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::io::{BufWriter, Write};
 use std::rc::Rc;
 use std::sync::Mutex;
 
 use collection_literals::collection;
 use fehler::throws;
-use openqasm::{Expr, GateWriter, ProgramVisitor, Reg, Span, Stmt, Symbol, Value};
+use openqasm::{Decl, Expr, GateWriter, Program, ProgramVisitor, Reg, Span, Stmt, Symbol, Value};
 
+/// Translates gates to a primitive ones and outputs them
 pub struct GatePrinter {
     buf: Rc<Mutex<BufWriter<Vec<u8>>>>,
     qreg: Vec<Symbol>,
@@ -94,23 +95,35 @@ impl GateWriter for GatePrinter {
     }
 }
 
+
+/// Outputs gates in the original format
 pub struct ProgramPrinter {
     buf: BufWriter<Vec<u8>>,
     inverse_gates: Option<HashMap<&'static str, &'static str>>,
+    pub current_gate_i: i32,
+    len: i32,
+    pub included_gates: HashSet<i32>,
 }
 
 impl ProgramPrinter {
-    pub fn new() -> Self {
+    pub fn new(included_gates: HashSet<i32>) -> Self {
         Self {
             buf: BufWriter::new(Vec::new()),
             inverse_gates: None,
+            current_gate_i: 0,
+            len: 0,
+            included_gates,
         }
     }
 
-    pub fn with_gates(inverse_gates: HashMap<&'static str, &'static str>) -> Self {
+    pub fn with_gates(included_gates: HashSet<i32>, inverse_gates: HashMap<&'static str, &'static str>, len: i32) -> Self {
+        println!("LEn: {len}");
         Self {
             buf: BufWriter::new(Vec::new()),
             inverse_gates: Some(inverse_gates),
+            current_gate_i: 0,
+            len,
+            included_gates,
         }
     }
 
@@ -135,6 +148,20 @@ impl ProgramVisitor for ProgramPrinter {
 
     #[throws(Self::Error)]
     fn visit_gate(&mut self, name: &Span<Symbol>, _params: &[Span<Expr>], args: &[Span<Reg>]) {
+        let i = if let Some(_) = self.inverse_gates {
+            println!("{}", self.current_gate_i);
+            self.len - self.current_gate_i
+        }
+        else {
+            self.current_gate_i
+        };
+        self.current_gate_i += 1;
+        let i = dbg!(i);
+
+        if !self.included_gates.contains(&i) {
+            return;
+        }
+
         // println!("{name:?}: {args:?}");
 
         let args: Vec<_> = (*args).iter().map(|e| &**e).collect();
@@ -166,9 +193,13 @@ impl ProgramVisitor for ProgramPrinter {
     }
 }
 
+
+/// Parses gates to some size
 pub struct ProgramParser {
     depth: i32,
     pub counts: HashMap<i32, i32>,
+    pub included_gates: HashSet<i32>,
+    pub current_gate_i: i32,
 }
 
 impl ProgramParser {
@@ -176,6 +207,8 @@ impl ProgramParser {
         Self {
             depth,
             counts: HashMap::new(),
+            included_gates: HashSet::new(),
+            current_gate_i: 0,
         }
     }
 }
@@ -195,11 +228,11 @@ impl ProgramVisitor for ProgramParser {
     }
 
     #[throws(Self::Error)]
-    fn visit_gate(&mut self, _name: &Span<Symbol>, _params: &[Span<Expr>], args: &[Span<Reg>]) {
-        // println!("{name:?}: {args:?}, {params:#?}");
-
+    fn visit_gate(&mut self, name: &Span<Symbol>, _params: &[Span<Expr>], args: &[Span<Reg>]) {
+        self.current_gate_i += 1;
         let args: Vec<_> = (*args).iter().map(|e| &**e).collect();
 
+        // newly inserted gates
         let mut inserts = collection! { HashMap<i32, i32> };
 
         // TODO do not depend on index
@@ -217,18 +250,26 @@ impl ProgramVisitor for ProgramParser {
             };
         }
 
-        let any = inserts.iter().any(|(k, _v)| {
-            let counts = if let Some(a) = self.counts.get(k) {
-                *a
-            }
-            else {
-                0
-            };
+        println!("{inserts:#?}");
 
+        let all = inserts.iter().all(|(k, _v)| {
+            let counts = if let Some(a) = self.counts.get(k) { *a } else { 0 };
             let inserts_count = if let Some(a) = inserts.get(k) { *a } else { 0 };
-
             counts + inserts_count <= self.depth // TODO <= or < ??
         });
-        if !any {}
+
+        for (key, val) in inserts {
+            if let Some(old_val) = self.counts.get(&key) {
+                self.counts.insert(key, old_val + val);
+            }
+            else {
+                self.counts.insert(key, val);
+            }
+        }
+
+        println!("{all}: {name:?}");
+        if all {
+            self.included_gates.insert(self.current_gate_i);
+        }
     }
 }

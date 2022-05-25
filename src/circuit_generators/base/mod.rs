@@ -7,7 +7,7 @@ use derive_more::Constructor;
 use fehler::{throw, throws};
 use itertools::Itertools;
 use openqasm as oq;
-use openqasm::{Decl, Program, ProgramVisitor, Span};
+use openqasm::{Program, ProgramVisitor};
 use oq::GenericError;
 
 use crate::circuit_generators::base::gate_printer::{ProgramParser, ProgramPrinter};
@@ -112,11 +112,11 @@ pub fn print_circuit(included_gates: HashSet<i32>, program: &Program) -> String 
     let mut inv = program.decls.clone();
     inv.reverse();
 
-
     // TODO inverse gates are incorrect, counter needs to go from length to 0
     let mut program = program.clone();
     program.decls = inv;
-    let mut pp_inv = ProgramPrinter::with_gates(included_gates, inverse_gates, pp.current_gate_i - 1);
+    let mut pp_inv =
+        ProgramPrinter::with_gates(included_gates, inverse_gates, pp.current_gate_i - 1);
     pp_inv.visit_program(&program).unwrap();
 
     // println!("Normal:");

@@ -5,7 +5,7 @@ use std::sync::Mutex;
 
 use collection_literals::collection;
 use fehler::throws;
-use openqasm::{Decl, Expr, GateWriter, Program, ProgramVisitor, Reg, Span, Stmt, Symbol, Value};
+use openqasm::{Expr, GateWriter, ProgramVisitor, Reg, Span, Stmt, Symbol, Value};
 
 /// Translates gates to a primitive ones and outputs them
 pub struct GatePrinter {
@@ -95,7 +95,6 @@ impl GateWriter for GatePrinter {
     }
 }
 
-
 /// Outputs gates in the original format
 pub struct ProgramPrinter {
     buf: BufWriter<Vec<u8>>,
@@ -116,7 +115,11 @@ impl ProgramPrinter {
         }
     }
 
-    pub fn with_gates(included_gates: HashSet<i32>, inverse_gates: HashMap<&'static str, &'static str>, len: i32) -> Self {
+    pub fn with_gates(
+        included_gates: HashSet<i32>,
+        inverse_gates: HashMap<&'static str, &'static str>,
+        len: i32,
+    ) -> Self {
         println!("LEn: {len}");
         Self {
             buf: BufWriter::new(Vec::new()),
@@ -193,7 +196,6 @@ impl ProgramVisitor for ProgramPrinter {
     }
 }
 
-
 /// Parses gates to some size
 pub struct ProgramParser {
     depth: i32,
@@ -253,7 +255,12 @@ impl ProgramVisitor for ProgramParser {
         println!("{inserts:#?}");
 
         let all = inserts.iter().all(|(k, _v)| {
-            let counts = if let Some(a) = self.counts.get(k) { *a } else { 0 };
+            let counts = if let Some(a) = self.counts.get(k) {
+                *a
+            }
+            else {
+                0
+            };
             let inserts_count = if let Some(a) = inserts.get(k) { *a } else { 0 };
             counts + inserts_count <= self.depth // TODO <= or < ??
         });

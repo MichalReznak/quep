@@ -1,7 +1,6 @@
 use std::time::Duration;
 
 use async_trait::async_trait;
-
 use regex::Regex;
 use snafu::OptionExt;
 use unwrap_infallible::UnwrapInfallible;
@@ -11,7 +10,6 @@ use crate::chooser::Chooser;
 use crate::error::{OutOfBounds, RegexCapture};
 use crate::traits::outputer::Value;
 use crate::traits::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
-
 
 /// Iterates in all combination for 2D array
 pub struct LatticeOrchestrator {

@@ -1,9 +1,6 @@
 use std::collections::{HashMap, HashSet};
 use std::io::{BufWriter, Write};
 
-
-
-
 use fehler::throws;
 use openqasm::{Expr, ProgramVisitor, Reg, Span, Stmt, Symbol};
 

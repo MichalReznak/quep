@@ -1,8 +1,5 @@
 use std::collections::{HashMap, HashSet};
 
-
-
-
 use collection_literals::collection;
 use fehler::throws;
 use openqasm::{Expr, ProgramVisitor, Reg, Span, Stmt, Symbol};

@@ -1,7 +1,6 @@
 use std::time::Duration;
 
 use async_trait::async_trait;
-
 use regex::Regex;
 use snafu::OptionExt;
 use unwrap_infallible::UnwrapInfallible;

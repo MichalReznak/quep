@@ -47,12 +47,14 @@ barrier q;
 measure q -> c;
 "#;
 
-fn get_base_circ(i: i32) -> Result<oq::Program, Error> {
+fn get_base_circ() -> Result<oq::Program, Error> {
     let path = "./base.template.qasm"; // TODO arg
     let mut circuit = std::fs::read_to_string(path)?;
     circuit.remove_matches("\r");
+
+    // TODO allow to define size, or increase until circuit can be parsed?
     let circuit = CIRCUIT_PLACEHOLDER
-        .replace("%SIZE%", &i.to_string())
+        .replace("%SIZE%", &64.to_string())
         .replace("%CIRCUIT%", &circuit);
 
     let mut cache = oq::SourceCache::new();
@@ -74,20 +76,9 @@ fn get_base_circ(i: i32) -> Result<oq::Program, Error> {
     }
 }
 
-// NOTES:
-// order of reg defines order in circuit
-// barrier inputs I-gates to unset ones
-// Now restricted version -> single qreg[n] and creg[n]
-//      Measure is done on all
-//      They define only the circuit
-//      Number of qubits does not change
-// Non inverse gates are not handled
-// For now only a single qreg and creg can be defined
-// Gates needs to be defined only in an entry file (otherwise order is wrong)
-
 #[throws]
-pub fn parse_circuit(program: &Program, _depth: i32) -> HashSet<i32> {
-    let mut program_parser = ProgramParser::new(2);
+pub fn parse_circuit(program: &Program, depth: i32) -> HashSet<i32> {
+    let mut program_parser = ProgramParser::new(depth);
     program_parser.visit_program(&program).unwrap();
 
     println!("{:#?}", program_parser.counts);
@@ -97,7 +88,7 @@ pub fn parse_circuit(program: &Program, _depth: i32) -> HashSet<i32> {
 }
 
 #[throws]
-pub fn print_circuit(included_gates: HashSet<i32>, program: &Program) -> String {
+pub fn print_circuit(included_gates: HashSet<i32>, program: &Program, size: i32) -> String {
     // TODO allow dynamic definition
     let inverse_gates = collection! {
         HashMap<&str, &str>;
@@ -111,23 +102,28 @@ pub fn print_circuit(included_gates: HashSet<i32>, program: &Program) -> String 
     let mut inv = program.decls.clone();
     inv.reverse();
 
-    // TODO inverse gates are incorrect, counter needs to go from length to 0
     let mut program = program.clone();
     program.decls = inv;
     let mut pp_inv =
         ProgramPrinter::with_gates(included_gates, inverse_gates, pp.current_gate_i - 1);
     pp_inv.visit_program(&program).unwrap();
 
-    // println!("Normal:");
-    // println!("{}", pp.result());
-    // println!("INVERSE:");
-    // println!("{}", pp_inv.result());
-
     CIRCUIT_RESULT
-        .replace("%SIZE%", &4.to_string())
+        .replace("%SIZE%", &size.to_string())
         .replace("%CIRCUIT%", &pp.result())
         .replace("%CIRCUIT_INV%", &pp_inv.result())
 }
+
+// NOTES:
+// order of reg defines order in circuit
+// barrier inputs I-gates to unset ones
+// Now restricted version -> single qreg[n] and creg[n]
+//      Measure is done on all
+//      They define only the circuit
+//      Number of qubits does not change
+// Non inverse gates are not handled
+// For now only a single qreg and creg can be defined
+// Gates needs to be defined only in an entry file (otherwise order is wrong)
 
 #[allow(dead_code)]
 #[derive(Debug)]
@@ -146,19 +142,21 @@ impl CircuitGenerator for BaseCircuitGenerator {
     async fn generate(
         &mut self,
         depth: i32,
-        _width: i32,
-        _iter: i32,
-        _parse: bool,
+        _width: i32,  // TODO
+        _iter: i32,   // TODO
+        _parse: bool, // TODO
     ) -> Result<Option<String>, Error> {
         // TODO check circuit size
         // TODO barriers support
         // TODO different order of operations
 
-        let program2 = get_base_circ(4)?; // TODO
+        let program2 = get_base_circ()?; // TODO
 
         let included_gates = parse_circuit(&program2, depth)?;
+        println!("{included_gates:?}");
+        // unimplemented!();
 
-        let print_program = print_circuit(included_gates, &program2)?;
+        let print_program = print_circuit(included_gates, &program2, depth)?;
         println!("{print_program}");
 
         Ok(Some(print_program))

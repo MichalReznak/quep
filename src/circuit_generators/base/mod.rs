@@ -3,7 +3,6 @@ use std::path::Path;
 
 use async_trait::async_trait;
 use collection_literals::collection;
-
 use fehler::{throw, throws};
 use itertools::Itertools;
 use openqasm as oq;
@@ -12,7 +11,7 @@ use oq::GenericError;
 use parser::ProgramParser;
 use printers::ProgramPrinter;
 
-use crate::args::{CliArgsCircuit};
+use crate::args::CliArgsCircuit;
 use crate::traits::CircuitGenerator;
 use crate::Error;
 
@@ -130,6 +129,7 @@ pub fn print_circuit(included_gates: HashSet<i32>, program: &Program) -> String 
         .replace("%CIRCUIT_INV%", &pp_inv.result())
 }
 
+#[allow(dead_code)]
 #[derive(Debug)]
 pub struct BaseCircuitGenerator {
     args: CliArgsCircuit,

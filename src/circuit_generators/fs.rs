@@ -9,6 +9,7 @@ use crate::args::CliArgsCircuit;
 use crate::traits::CircuitGenerator;
 use crate::Error;
 
+#[allow(dead_code)]
 #[derive(Debug)]
 pub struct FsCircuitGenerator {
     args: CliArgsCircuit,

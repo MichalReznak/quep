@@ -2,7 +2,6 @@ use std::path::Path;
 
 use async_trait::async_trait;
 
-
 use crate::traits::CircuitGenerator;
 use crate::Error;
 
@@ -31,10 +30,12 @@ use oq::GenericError;
 
 use crate::args::CliArgsCircuit;
 
+#[allow(dead_code)]
 pub struct BasicCircuitGenerator {
     args: CliArgsCircuit,
 }
 
+#[allow(dead_code)]
 impl BasicCircuitGenerator {
     pub fn new(args: &CliArgsCircuit) -> Self {
         Self { args: args.clone() }

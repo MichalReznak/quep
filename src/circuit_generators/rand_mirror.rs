@@ -1,7 +1,6 @@
 use std::fmt::Write;
 
 use async_trait::async_trait;
-
 use log::debug;
 use rand::distributions::{Distribution, Uniform};
 
@@ -31,6 +30,7 @@ barrier q;
 measure q -> c;
 "#;
 
+#[allow(dead_code)]
 pub struct RandMirrorCircuitGenerator {
     args: CliArgsCircuit,
 }

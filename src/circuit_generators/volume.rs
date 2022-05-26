@@ -2,7 +2,6 @@ use std::fmt::Write;
 use std::path::Path;
 
 use async_trait::async_trait;
-
 use openqasm as oq;
 use oq::GenericError;
 
@@ -25,6 +24,7 @@ barrier q;
 measure q -> c;
 "#;
 
+#[allow(dead_code)]
 pub struct VolumeCircuitGenerator {
     args: CliArgsCircuit,
 }

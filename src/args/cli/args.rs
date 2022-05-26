@@ -27,6 +27,9 @@ pub struct CliArgsCircuit {
 
     /// Base: Parse gates to primitive ones
     pub parse: bool,
+
+    /// Base: Source file
+    pub source: String,
 }
 
 #[derive(Debug, Clone, TypedBuilder)]

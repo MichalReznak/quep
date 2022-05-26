@@ -51,5 +51,10 @@ fn get_out(t: OutputType) -> CliArgsOutput {
 
 #[throws]
 fn get_cir(t: CircuitType) -> CliArgsCircuit {
-    CliArgsCircuit::builder().t(t).rand(true).parse(false).build()
+    CliArgsCircuit::builder()
+        .t(t)
+        .rand(true)
+        .parse(false)
+        .source(get_dir("./base.template.qasm")?)
+        .build()
 }

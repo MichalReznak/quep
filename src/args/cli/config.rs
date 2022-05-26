@@ -8,7 +8,8 @@ use crate::utils::dir;
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CliArgsConfig {
-    pub provider: Option<ProviderType>,
+    #[serde(default)]
+    pub provider: ProviderConfig,
 
     #[serde(default)]
     pub circuit: CircuitConfig,
@@ -18,6 +19,12 @@ pub struct CliArgsConfig {
 
     #[serde(default)]
     pub output: OutputConfig,
+}
+
+#[derive(Serialize, Deserialize, Default, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct ProviderConfig {
+    pub t: Option<ProviderType>,
 
     #[serde(default)]
     #[serde(deserialize_with = "parse_from_os_str")]
@@ -30,6 +37,7 @@ pub struct CircuitConfig {
     pub t: Option<CircuitType>,
     pub rand: Option<bool>,
     pub parse: Option<bool>,
+    pub source: Option<String>,
     // TODO add pretty flag
 }
 

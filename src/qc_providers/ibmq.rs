@@ -1,5 +1,4 @@
 use async_trait::async_trait;
-use load_file::load_str;
 use log::debug;
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
@@ -37,8 +36,8 @@ impl QcProvider for IbmqQcProvider {
 
     async fn set_circuit(&mut self, circuit: String) -> Result<(), Error> {
         Python::with_gil(|py| -> Result<_, Error> {
-            let code = load_str!(&format!("{}/ibmq.py", self.args.python_dir));
-            let module = PyModule::from_code(py, code, "", "")?;
+            let code = std::fs::read_to_string(&format!("{}/ibmq.py", self.args.python_dir))?;
+            let module = PyModule::from_code(py, &code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Ibmq")?.into();
             let qiskit = qiskit.call0(py)?;
 

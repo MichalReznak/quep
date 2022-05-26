@@ -697,12 +697,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7fb9b38af92608140b86b693604b9ffcc5824240a484d1ecd4795bacb2fe88f3"
 
 [[package]]
-name = "load_file"
-version = "1.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "31da4bce62428941030036a44d0d4b123f031b04080f8aeb44248b41de3e79cd"
-
-[[package]]
 name = "lock_api"
 version = "0.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1166,7 +1160,6 @@ dependencies = [
  "json5",
  "lazy_mut",
  "lazy_static",
- "load_file",
  "log",
  "num-traits",
  "openqasm",

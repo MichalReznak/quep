@@ -14,6 +14,9 @@ pub struct CliArgsEnv {
     #[clap(long, env = "QUEP_PROVIDER")]
     pub provider: Option<ProviderType>,
 
+    #[clap(long, env = "QUEP_PROVIDER_PYTHON_DIR", parse(try_from_os_str = parse_from_os_str))]
+    pub provider_python_dir: Option<String>,
+
     #[clap(long, env = "QUEP_OUTPUT")]
     pub output: Option<OutputType>,
 
@@ -28,6 +31,9 @@ pub struct CliArgsEnv {
 
     #[clap(long, env = "QUEP_CIRCUIT_PARSE")]
     pub circuit_parse: Option<bool>,
+
+    #[clap(long, env = "QUEP_CIRCUIT_SOURCE")]
+    pub circuit_source: Option<String>,
 
     #[clap(long, env = "QUEP_ORCH")]
     pub orch: Option<OrchestratorType>,
@@ -46,10 +52,6 @@ pub struct CliArgsEnv {
     // This is to define width and depth separately in some orchestrators
     #[clap(long, env = "QUEP_ORCH_SIZE_2")]
     pub orch_size_2: Option<i32>,
-
-    // TODO default_value does not work
-    #[clap(long, env = "QUEP_PYTHON_DIR", parse(try_from_os_str = parse_from_os_str))]
-    pub python_dir: Option<String>,
 
     // TODO just for testing only
     #[clap(long)] // default_value = "1"

@@ -8,7 +8,6 @@ use clap::Parser;
 pub use config::CliArgsConfig;
 pub use env::CliArgsEnv;
 use fehler::throws;
-use load_file::load_str;
 use typed_builder::TypedBuilder;
 use types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
 
@@ -30,15 +29,20 @@ impl CliArgs {
 
         // TODO define correct combinations
         // parse config file, json for now
-        let config = load_str!(&config_path); // TODO panics on error, relative dir
-        let config = json5::from_str::<CliArgsConfig>(config)?;
+        let config = std::fs::read_to_string(&config_path)?;
+        let config = json5::from_str::<CliArgsConfig>(&config)?;
 
         let orch_data_dir = dir("./data")?;
         let python_dir = dir("./python")?;
+        let circuit_source = dir("./base.template.qasm")?;
 
         let provider = CliArgsProvider::builder()
             .t(clap.provider.unwrap_or_else(|| ProviderType::Simple))
-            .python_dir(clap.python_dir.or_else(|| config.python_dir).unwrap_or_else(|| python_dir))
+            .python_dir(
+                clap.provider_python_dir
+                    .or_else(|| config.provider.python_dir)
+                    .unwrap_or_else(|| python_dir),
+            )
             .build();
 
         let output = CliArgsOutput::builder()
@@ -54,6 +58,11 @@ impl CliArgs {
             .t(clap.circuit.or_else(|| config.circuit.t).unwrap_or_else(|| CircuitType::Basic))
             .rand(clap.circuit_rand.or_else(|| config.circuit.rand).unwrap_or_else(|| false))
             .parse(clap.circuit_parse.or_else(|| config.circuit.parse).unwrap_or_else(|| false))
+            .source(
+                clap.circuit_source
+                    .or_else(|| config.circuit.source)
+                    .unwrap_or_else(|| circuit_source),
+            )
             .build();
 
         let orch = CliArgsOrch::builder()

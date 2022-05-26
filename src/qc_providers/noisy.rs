@@ -1,7 +1,6 @@
 use std::time::Duration;
 
 use async_trait::async_trait;
-use load_file::load_str;
 use log::debug;
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
@@ -38,8 +37,8 @@ impl QcProvider for NoisyQcProvider {
 
     async fn set_circuit(&mut self, circuit: String) -> Result<(), Error> {
         Python::with_gil(|py| {
-            let code = load_str!(&format!("{}/noisy.py", &self.args.python_dir));
-            let module = PyModule::from_code(py, code, "", "")?;
+            let code = std::fs::read_to_string(&format!("{}/noisy.py", &self.args.python_dir))?;
+            let module = PyModule::from_code(py, &code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Noisy")?.into();
             let qiskit = qiskit.call0(py)?;
 

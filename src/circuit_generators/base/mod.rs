@@ -4,9 +4,7 @@ use std::path::Path;
 use async_trait::async_trait;
 use collection_literals::collection;
 use fehler::{throw, throws};
-use openqasm as oq;
-use openqasm::{Program, ProgramVisitor};
-use oq::GenericError;
+use openqasm::{Errors, GenericError, Parser, Program, ProgramVisitor, SourceCache};
 use parser::ProgramParser;
 use printers::ProgramPrinter;
 
@@ -46,8 +44,7 @@ barrier q;
 measure q -> c;
 "#;
 
-fn get_base_circ() -> Result<oq::Program, Error> {
-    let path = "./base.template.qasm"; // TODO arg
+fn get_base_circ(path: &str) -> Result<Program, Error> {
     let mut circuit = std::fs::read_to_string(path)?;
     circuit.remove_matches("\r");
 
@@ -56,11 +53,11 @@ fn get_base_circ() -> Result<oq::Program, Error> {
         .replace("%SIZE%", &64.to_string())
         .replace("%CIRCUIT%", &circuit);
 
-    let mut cache = oq::SourceCache::new();
-    let mut parser = oq::Parser::new(&mut cache);
+    let mut cache = SourceCache::new();
+    let mut parser = Parser::new(&mut cache);
     parser.parse_source(circuit, Some(&Path::new(".")));
 
-    let check: Result<_, oq::Errors> = try {
+    let check: Result<_, Errors> = try {
         let res = parser.done().to_errors()?;
         res.type_check().to_errors()?;
         res
@@ -148,7 +145,7 @@ impl CircuitGenerator for BaseCircuitGenerator {
         // TODO barriers support
         // TODO different order of operations
 
-        let program2 = get_base_circ()?; // TODO
+        let program2 = get_base_circ(&self.args.source)?;
 
         let included_gates = parse_circuit(&program2, depth, width)?;
 

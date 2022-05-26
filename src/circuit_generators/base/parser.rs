@@ -7,15 +7,17 @@ use openqasm::{Expr, ProgramVisitor, Reg, Span, Stmt, Symbol};
 /// Parses gates to some size
 pub struct ProgramParser {
     depth: i32,
+    width: i32,
     pub counts: HashMap<i32, i32>,
     pub included_gates: HashSet<i32>,
     pub current_gate_i: i32,
 }
 
 impl ProgramParser {
-    pub fn new(depth: i32) -> Self {
+    pub fn new(depth: i32, width: i32) -> Self {
         Self {
             depth,
+            width,
             counts: HashMap::new(),
             included_gates: HashSet::new(),
             current_gate_i: 0,
@@ -39,15 +41,21 @@ impl ProgramVisitor for ProgramParser {
 
     #[throws(Self::Error)]
     fn visit_gate(&mut self, _name: &Span<Symbol>, _params: &[Span<Expr>], args: &[Span<Reg>]) {
-        self.current_gate_i += 1;
         let args: Vec<_> = (*args).iter().map(|e| &**e).collect();
-
-        // newly inserted gates
+        // Newly inserted gates
         let mut inserts = collection! { HashMap<i32, i32> };
 
         // TODO do not depend on index
+        // Count number of indices
         for arg in args {
             let i = arg.index.unwrap() as i32;
+
+            // Skip gates with index out of range
+            if i >= self.width {
+                self.current_gate_i += 1;
+                return;
+            }
+
             match inserts.get_mut(&i) {
                 None => {
                     inserts.insert(i, 1);
@@ -60,6 +68,7 @@ impl ProgramVisitor for ProgramParser {
             };
         }
 
+        // Do all indices fulfill the limit?
         let all = inserts.iter().all(|(k, _v)| {
             let counts = if let Some(a) = self.counts.get(k) {
                 *a
@@ -71,17 +80,20 @@ impl ProgramVisitor for ProgramParser {
             counts + inserts_count <= self.depth
         });
 
-        for (key, val) in inserts {
-            if let Some(old_val) = self.counts.get(&key) {
-                self.counts.insert(key, old_val + val);
-            }
-            else {
-                self.counts.insert(key, val);
+        if all {
+            self.included_gates.insert(self.current_gate_i);
+
+            // Add limits for the next gate
+            for (key, val) in inserts {
+                if let Some(old_val) = self.counts.get(&key) {
+                    self.counts.insert(key, old_val + val);
+                }
+                else {
+                    self.counts.insert(key, val);
+                }
             }
         }
 
-        if all {
-            self.included_gates.insert(self.current_gate_i);
-        }
+        self.current_gate_i += 1;
     }
 }

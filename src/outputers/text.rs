@@ -29,10 +29,6 @@ impl Outputer for TextOutputer {
         values: Vec<Vec<Value>>,
         duration: Vec<Duration>,
     ) -> Result<(), Error> {
-        // TODO fix crash when Volume is used
-        let values = dbg!(values);
-        let duration = dbg!(duration);
-
         let mut table_dur = vec![];
         let mut table = vec![];
 

@@ -4,7 +4,6 @@ use std::path::Path;
 use async_trait::async_trait;
 use collection_literals::collection;
 use fehler::{throw, throws};
-use itertools::Itertools;
 use openqasm as oq;
 use openqasm::{Program, ProgramVisitor};
 use oq::GenericError;
@@ -77,13 +76,9 @@ fn get_base_circ() -> Result<oq::Program, Error> {
 }
 
 #[throws]
-pub fn parse_circuit(program: &Program, depth: i32) -> HashSet<i32> {
-    let mut program_parser = ProgramParser::new(depth);
+pub fn parse_circuit(program: &Program, depth: i32, width: i32) -> HashSet<i32> {
+    let mut program_parser = ProgramParser::new(depth, width);
     program_parser.visit_program(&program).unwrap();
-
-    println!("{:#?}", program_parser.counts);
-    println!("{:#?}", program_parser.included_gates.clone().into_iter().sorted());
-
     program_parser.included_gates
 }
 
@@ -124,6 +119,7 @@ pub fn print_circuit(included_gates: HashSet<i32>, program: &Program, size: i32)
 // Non inverse gates are not handled
 // For now only a single qreg and creg can be defined
 // Gates needs to be defined only in an entry file (otherwise order is wrong)
+// Depth is number of gates on each qubit it's not with automatic identity gates
 
 #[allow(dead_code)]
 #[derive(Debug)]
@@ -142,21 +138,21 @@ impl CircuitGenerator for BaseCircuitGenerator {
     async fn generate(
         &mut self,
         depth: i32,
-        _width: i32,  // TODO
+        width: i32,
         _iter: i32,   // TODO
         _parse: bool, // TODO
     ) -> Result<Option<String>, Error> {
+        let depth = depth + 1;
+        let width = width + 1;
         // TODO check circuit size
         // TODO barriers support
         // TODO different order of operations
 
         let program2 = get_base_circ()?; // TODO
 
-        let included_gates = parse_circuit(&program2, depth)?;
-        println!("{included_gates:?}");
-        // unimplemented!();
+        let included_gates = parse_circuit(&program2, depth, width)?;
 
-        let print_program = print_circuit(included_gates, &program2, depth)?;
+        let print_program = print_circuit(included_gates, &program2, width)?;
         println!("{print_program}");
 
         Ok(Some(print_program))

@@ -29,7 +29,6 @@ impl ProgramPrinter {
         inverse_gates: HashMap<&'static str, &'static str>,
         len: i32,
     ) -> Self {
-        println!("LEn: {len}");
         Self {
             buf: BufWriter::new(Vec::new()),
             inverse_gates: Some(inverse_gates),

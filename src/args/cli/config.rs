@@ -29,6 +29,7 @@ pub struct CliArgsConfig {
 pub struct CircuitConfig {
     pub t: Option<CircuitType>,
     pub rand: Option<bool>,
+    pub parse: Option<bool>,
     // TODO add pretty flag
 }
 

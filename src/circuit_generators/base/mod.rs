@@ -9,12 +9,14 @@ use itertools::Itertools;
 use openqasm as oq;
 use openqasm::{Program, ProgramVisitor};
 use oq::GenericError;
+use parser::ProgramParser;
+use printers::ProgramPrinter;
 
-use crate::circuit_generators::base::gate_printer::{ProgramParser, ProgramPrinter};
 use crate::traits::CircuitGenerator;
 use crate::Error;
 
-mod gate_printer;
+mod parser;
+mod printers;
 
 #[derive(Debug, Constructor)]
 pub struct BaseCircuitGenerator;
@@ -137,6 +139,7 @@ impl CircuitGenerator for BaseCircuitGenerator {
         depth: i32,
         _width: i32,
         _iter: i32,
+        parse: bool,
     ) -> Result<Option<String>, Error> {
         // TODO check circuit size
         // TODO barriers support

@@ -17,19 +17,29 @@ pub struct CliArgs {
     pub provider: ProviderType,
 
     pub output: OutputType,
+    /// Serialize format
     pub output_ser: OutputSerType,
 
     pub circuit: CircuitType,
+    /// Randomize circuit generation of the same size
     pub circuit_rand: bool,
+    /// Base: Parse gates to primitive ones
+    pub circuit_parse: bool,
 
     pub orch: OrchestratorType,
+    /// Fs: location of the .qasm files
     pub orch_data: String,
+    /// Number of iterations of the same size
     pub orch_iter: i32,
+    /// Depth of the max circuits
     pub orch_size: i32,
 
     // TODO make it better
     // This is to define width and depth separately in some orchestrators
+    /// Width of the circuits
     pub orch_size_2: i32,
+
+    /// Python script files location
     pub python_dir: String,
 }
 
@@ -62,6 +72,9 @@ impl CliArgs {
             )
             .circuit_rand(
                 clap.circuit_rand.or_else(|| config.circuit.rand).unwrap_or_else(|| false),
+            )
+            .circuit_parse(
+                clap.circuit_parse.or_else(|| config.circuit.parse).unwrap_or_else(|| false),
             )
             .orch(clap.orch.or_else(|| config.orch.t).unwrap_or_else(|| OrchestratorType::Single))
             .orch_data(clap.orch_data.or_else(|| config.orch.data).unwrap_or_else(|| orch_data_dir))

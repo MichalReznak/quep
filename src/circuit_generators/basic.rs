@@ -34,7 +34,7 @@ use oq::GenericError;
 
 #[async_trait]
 impl CircuitGenerator for BasicCircuitGenerator {
-    async fn generate(&mut self, i: i32, j: i32, _: i32) -> Result<Option<String>, Error> {
+    async fn generate(&mut self, i: i32, j: i32, _: i32, _: bool) -> Result<Option<String>, Error> {
         if i > 0 || j > 0 {
             Ok(None)
         }

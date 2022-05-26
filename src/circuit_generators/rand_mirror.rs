@@ -41,7 +41,7 @@ pub struct RandMirrorCircuitGenerator;
 
 #[async_trait]
 impl CircuitGenerator for RandMirrorCircuitGenerator {
-    async fn generate(&mut self, i: i32, j: i32, _: i32) -> Result<Option<String>, Error> {
+    async fn generate(&mut self, i: i32, j: i32, _: i32, _: bool) -> Result<Option<String>, Error> {
         let pauli_gates = ["id", "x", "y", "z"];
 
         let clifford_gates = ["h", "s", "id", "x", "y", "z"];

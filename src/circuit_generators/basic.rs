@@ -1,13 +1,10 @@
 use std::path::Path;
 
 use async_trait::async_trait;
-use derive_more::Constructor;
+
 
 use crate::traits::CircuitGenerator;
 use crate::Error;
-
-#[derive(Constructor)]
-pub struct BasicCircuitGenerator;
 
 const CIRCUIT: &str = r#"
 OPENQASM 2.0;
@@ -31,6 +28,18 @@ measure q -> c;
 
 use openqasm as oq;
 use oq::GenericError;
+
+use crate::args::CliArgsCircuit;
+
+pub struct BasicCircuitGenerator {
+    args: CliArgsCircuit,
+}
+
+impl BasicCircuitGenerator {
+    pub fn new(args: &CliArgsCircuit) -> Self {
+        Self { args: args.clone() }
+    }
+}
 
 #[async_trait]
 impl CircuitGenerator for BasicCircuitGenerator {

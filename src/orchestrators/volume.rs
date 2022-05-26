@@ -1,30 +1,33 @@
 use std::time::Duration;
 
 use async_trait::async_trait;
-use derive_more::Constructor;
+
 use regex::Regex;
 use snafu::OptionExt;
 use unwrap_infallible::UnwrapInfallible;
 
+use crate::args::CliArgsOrch;
 use crate::chooser::Chooser;
 use crate::error::RegexCapture;
 use crate::traits::outputer::Value;
 use crate::traits::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
 
 /// Always increase depth and width by one in each iteration
-#[derive(Constructor)]
-pub struct VolumeOrchestrator;
+pub struct VolumeOrchestrator {
+    args: CliArgsOrch,
+}
+
+impl VolumeOrchestrator {
+    pub fn new(args: &CliArgsOrch) -> Self {
+        Self { args: args.clone() }
+    }
+}
 
 #[async_trait]
 impl Orchestrator for VolumeOrchestrator {
-    async fn run(
-        &self,
-        chooser: &Chooser,
-        width: i32,
-        _: i32,
-        iter: i32,
-        rand: bool,
-    ) -> Result<(), crate::Error> {
+    async fn run(&self, chooser: &Chooser) -> Result<(), crate::Error> {
+        let width = self.args.size;
+        let iter = self.args.iter;
         let mut result = vec![];
         let mut durations = vec![];
 
@@ -54,8 +57,7 @@ impl Orchestrator for VolumeOrchestrator {
             let mut time = Duration::from_micros(0);
             let mut val = Value::builder().result("".to_string()).correct(0).build();
             for ii in 0..iter {
-                let rand_i = if rand { ii } else { 0 };
-                if let Some(circuit) = generator.generate(i, i, rand_i, false).await? {
+                if let Some(circuit) = generator.generate(i, i, ii, false).await? {
                     // TODO if I do a multiple iterations and one falls below limit, how to
                     // solve this?
                     provider.set_circuit(circuit.clone()).await?;

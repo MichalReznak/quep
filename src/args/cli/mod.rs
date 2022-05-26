@@ -1,7 +1,9 @@
+pub mod args;
 pub mod config;
 pub mod env;
 pub mod types;
 
+pub use args::*;
 use clap::Parser;
 pub use config::CliArgsConfig;
 pub use env::CliArgsEnv;
@@ -14,33 +16,10 @@ use crate::{dir, Error};
 
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct CliArgs {
-    pub provider: ProviderType,
-
-    pub output: OutputType,
-    /// Serialize format
-    pub output_ser: OutputSerType,
-
-    pub circuit: CircuitType,
-    /// Randomize circuit generation of the same size
-    pub circuit_rand: bool,
-    /// Base: Parse gates to primitive ones
-    pub circuit_parse: bool,
-
-    pub orch: OrchestratorType,
-    /// Fs: location of the .qasm files
-    pub orch_data: String,
-    /// Number of iterations of the same size
-    pub orch_iter: i32,
-    /// Depth of the max circuits
-    pub orch_size: i32,
-
-    // TODO make it better
-    // This is to define width and depth separately in some orchestrators
-    /// Width of the circuits
-    pub orch_size_2: i32,
-
-    /// Python script files location
-    pub python_dir: String,
+    pub provider: CliArgsProvider,
+    pub output: CliArgsOutput,
+    pub circuit: CliArgsCircuit,
+    pub orch: CliArgsOrch,
 }
 
 impl CliArgs {
@@ -57,31 +36,40 @@ impl CliArgs {
         let orch_data_dir = dir("./data")?;
         let python_dir = dir("./python")?;
 
-        // TODO better?
-        // if not set use it
-        CliArgs::builder()
-            .provider(clap.provider.unwrap_or_else(|| ProviderType::Simple))
-            .output(clap.output.or_else(|| config.output.t).unwrap_or_else(|| OutputType::Text))
-            .output_ser(
+        let provider = CliArgsProvider::builder()
+            .t(clap.provider.unwrap_or_else(|| ProviderType::Simple))
+            .python_dir(clap.python_dir.or_else(|| config.python_dir).unwrap_or_else(|| python_dir))
+            .build();
+
+        let output = CliArgsOutput::builder()
+            .t(clap.output.or_else(|| config.output.t).unwrap_or_else(|| OutputType::Text))
+            .ser(
                 clap.output_ser
                     .or_else(|| config.output.ser)
                     .unwrap_or_else(|| OutputSerType::Json),
             )
-            .circuit(
-                clap.circuit.or_else(|| config.circuit.t).unwrap_or_else(|| CircuitType::Basic),
-            )
-            .circuit_rand(
-                clap.circuit_rand.or_else(|| config.circuit.rand).unwrap_or_else(|| false),
-            )
-            .circuit_parse(
-                clap.circuit_parse.or_else(|| config.circuit.parse).unwrap_or_else(|| false),
-            )
-            .orch(clap.orch.or_else(|| config.orch.t).unwrap_or_else(|| OrchestratorType::Single))
-            .orch_data(clap.orch_data.or_else(|| config.orch.data).unwrap_or_else(|| orch_data_dir))
-            .orch_iter(clap.orch_iter.or_else(|| config.orch.iter).unwrap_or_else(|| 1))
-            .orch_size(clap.orch_size.or_else(|| config.orch.size).unwrap_or_else(|| 1))
-            .orch_size_2(clap.orch_size_2.or_else(|| config.orch.size_2).unwrap_or_else(|| 1))
-            .python_dir(clap.python_dir.or_else(|| config.python_dir).unwrap_or_else(|| python_dir))
+            .build();
+
+        let circuit = CliArgsCircuit::builder()
+            .t(clap.circuit.or_else(|| config.circuit.t).unwrap_or_else(|| CircuitType::Basic))
+            .rand(clap.circuit_rand.or_else(|| config.circuit.rand).unwrap_or_else(|| false))
+            .parse(clap.circuit_parse.or_else(|| config.circuit.parse).unwrap_or_else(|| false))
+            .build();
+
+        let orch = CliArgsOrch::builder()
+            .t(clap.orch.or_else(|| config.orch.t).unwrap_or_else(|| OrchestratorType::Single))
+            .data(clap.orch_data.or_else(|| config.orch.data).unwrap_or_else(|| orch_data_dir))
+            .iter(clap.orch_iter.or_else(|| config.orch.iter).unwrap_or_else(|| 1))
+            .size(clap.orch_size.or_else(|| config.orch.size).unwrap_or_else(|| 1))
+            .size_2(clap.orch_size_2.or_else(|| config.orch.size_2).unwrap_or_else(|| 1))
+            .build();
+
+        // TODO better?
+        CliArgs::builder()
+            .provider(provider)
+            .output(output)
+            .circuit(circuit)
+            .orch(orch)
             .build()
     }
 }

@@ -1,10 +1,11 @@
 use std::fmt::Write;
 
 use async_trait::async_trait;
-use derive_more::Constructor;
+
 use log::debug;
 use rand::distributions::{Distribution, Uniform};
 
+use crate::args::CliArgsCircuit;
 use crate::traits::CircuitGenerator;
 use crate::Error;
 
@@ -30,8 +31,15 @@ barrier q;
 measure q -> c;
 "#;
 
-#[derive(Constructor)]
-pub struct RandMirrorCircuitGenerator;
+pub struct RandMirrorCircuitGenerator {
+    args: CliArgsCircuit,
+}
+
+impl RandMirrorCircuitGenerator {
+    pub fn new(args: &CliArgsCircuit) -> Self {
+        Self { args: args.clone() }
+    }
+}
 
 // Randomized mirror benchmarking with some restrictions:
 // Always the result should be all zeros
@@ -39,9 +47,17 @@ pub struct RandMirrorCircuitGenerator;
 // Length is counted as 2d.
 // It is using **uniform sampling**
 
+// TODO missing rand
+
 #[async_trait]
 impl CircuitGenerator for RandMirrorCircuitGenerator {
-    async fn generate(&mut self, i: i32, j: i32, _: i32, _: bool) -> Result<Option<String>, Error> {
+    async fn generate(
+        &mut self,
+        i: i32,
+        j: i32,
+        _iter: i32,
+        _: bool,
+    ) -> Result<Option<String>, Error> {
         let pauli_gates = ["id", "x", "y", "z"];
 
         let clifford_gates = ["h", "s", "id", "x", "y", "z"];

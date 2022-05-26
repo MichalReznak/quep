@@ -1,9 +1,10 @@
 use std::fmt::Write;
 
 use async_trait::async_trait;
-use derive_more::Constructor;
+
 use log::debug;
 
+use crate::args::CliArgsCircuit;
 use crate::traits::CircuitGenerator;
 use crate::Error;
 
@@ -29,13 +30,20 @@ barrier q;
 measure q -> c;
 "#;
 
-#[derive(Constructor)]
-pub struct MirrorCircuitGenerator;
+pub struct MirrorCircuitGenerator {
+    args: CliArgsCircuit,
+}
 
 // Structured mirror benchmarking with some restrictions:
 // Always the result should be all zeros
 // Second part of algorithm is always inverse to the first part in everything
 // Length is counted as 2d.
+
+impl MirrorCircuitGenerator {
+    pub fn new(args: &CliArgsCircuit) -> Self {
+        Self { args: args.clone() }
+    }
+}
 
 #[async_trait]
 impl CircuitGenerator for MirrorCircuitGenerator {
@@ -46,7 +54,7 @@ impl CircuitGenerator for MirrorCircuitGenerator {
         iter: i32,
         _: bool,
     ) -> Result<Option<String>, Error> {
-        let iter = dbg!(iter);
+        let iter = if self.args.rand { iter } else { 0 };
 
         let pauli_gates = ["id", "x", "y", "z"];
 

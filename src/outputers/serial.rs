@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use derive_more::Constructor;
+
 use fehler::throws;
 use num_traits::cast;
 use serde::{Deserialize, Serialize};
@@ -8,6 +8,7 @@ use tokio::time::Duration;
 use typed_builder::TypedBuilder;
 
 use crate::args::types::OutputSerType;
+use crate::args::CliArgsOutput;
 use crate::error::OutOfBounds;
 use crate::traits::outputer::Value;
 use crate::traits::Outputer;
@@ -30,9 +31,14 @@ struct Record {
     correct: bool,
 }
 
-#[derive(Constructor)]
 pub struct SerialOutputer {
-    out: OutputSerType,
+    args: CliArgsOutput,
+}
+
+impl SerialOutputer {
+    pub fn new(args: &CliArgsOutput) -> Self {
+        Self { args: args.clone() }
+    }
 }
 
 // TODO can be any serialized format
@@ -74,7 +80,7 @@ impl Outputer for SerialOutputer {
         }
 
         let table = Output::builder().records(table).build();
-        let res = serialize(self.out, &table)?;
+        let res = serialize(self.args.ser, &table)?;
 
         println!("\nResult:");
         println!("{res}");
@@ -102,7 +108,7 @@ impl Outputer for SerialOutputer {
         }
 
         let table = Output::builder().records(table).build();
-        let res = serialize(self.out, &table)?;
+        let res = serialize(self.args.ser, &table)?;
 
         println!("\nResult:");
         println!("{res}");
@@ -132,7 +138,7 @@ impl Outputer for SerialOutputer {
         }
 
         let table = Output::builder().records(table).build();
-        let res = serialize(self.out, &table)?;
+        let res = serialize(self.args.ser, &table)?;
 
         println!("\nResult:");
         println!("{res}");

@@ -42,7 +42,7 @@ pub struct Quep {
 impl Quep {
     #[throws]
     pub async fn new(args: CliArgs) -> Self {
-        pyvenv::PyVenv::init(&args.python_dir).await?;
+        pyvenv::PyVenv::init(&args.provider.python_dir).await?;
         info!("Done");
         Self { args }
     }
@@ -55,7 +55,7 @@ impl Quep {
         let args = CliArgs::parse_with_config(&config_path)?;
         println!("{args:#?}");
 
-        pyvenv::PyVenv::init(&args.python_dir).await?;
+        pyvenv::PyVenv::init(&args.provider.python_dir).await?;
 
         info!("Done");
         Self { args }
@@ -65,13 +65,6 @@ impl Quep {
     pub async fn run(self) {
         let chooser = Chooser::new(self.args.clone());
         let orch = chooser.get_orchestrator()?;
-        orch.run(
-            &chooser,
-            self.args.orch_size,
-            self.args.orch_size_2,
-            self.args.orch_iter,
-            self.args.circuit_rand,
-        )
-        .await?;
+        orch.run(&chooser).await?;
     }
 }

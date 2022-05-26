@@ -2,10 +2,11 @@ use std::fmt::Write;
 use std::path::Path;
 
 use async_trait::async_trait;
-use derive_more::Constructor;
+
 use openqasm as oq;
 use oq::GenericError;
 
+use crate::args::CliArgsCircuit;
 use crate::traits::CircuitGenerator;
 use crate::Error;
 
@@ -24,8 +25,15 @@ barrier q;
 measure q -> c;
 "#;
 
-#[derive(Constructor)]
-pub struct VolumeCircuitGenerator;
+pub struct VolumeCircuitGenerator {
+    args: CliArgsCircuit,
+}
+
+impl VolumeCircuitGenerator {
+    pub fn new(args: &CliArgsCircuit) -> Self {
+        Self { args: args.clone() }
+    }
+}
 
 #[async_trait]
 impl CircuitGenerator for VolumeCircuitGenerator {

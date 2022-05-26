@@ -1,30 +1,36 @@
 use std::time::Duration;
 
 use async_trait::async_trait;
-use derive_more::Constructor;
+
 use regex::Regex;
 use snafu::OptionExt;
 use unwrap_infallible::UnwrapInfallible;
 
+use crate::args::CliArgsOrch;
 use crate::chooser::Chooser;
 use crate::error::{OutOfBounds, RegexCapture};
 use crate::traits::outputer::Value;
 use crate::traits::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
 
+
 /// Iterates in all combination for 2D array
-#[derive(Constructor)]
-pub struct LatticeOrchestrator;
+pub struct LatticeOrchestrator {
+    args: CliArgsOrch,
+}
+
+impl LatticeOrchestrator {
+    pub fn new(args: &CliArgsOrch) -> Self {
+        Self { args: args.clone() }
+    }
+}
 
 #[async_trait]
 impl Orchestrator for LatticeOrchestrator {
-    async fn run(
-        &self,
-        chooser: &Chooser,
-        i: i32,
-        j: i32,
-        iter: i32,
-        rand: bool,
-    ) -> Result<(), crate::Error> {
+    async fn run(&self, chooser: &Chooser) -> Result<(), crate::Error> {
+        let i = self.args.size;
+        let j = self.args.size_2;
+        let iter = self.args.iter;
+
         let mut result = vec![];
         let mut durations = vec![];
 
@@ -56,8 +62,7 @@ impl Orchestrator for LatticeOrchestrator {
                 let mut time = Duration::from_micros(0);
                 let mut val = Value::builder().result("".to_string()).correct(0).build();
                 for ii in 0..iter {
-                    let rand_i = if rand { ii } else { 0 };
-                    if let Some(circuit) = generator.generate(i, j, rand_i, false).await? {
+                    if let Some(circuit) = generator.generate(i, j, ii, false).await? {
                         // TODO if I do a multiple iterations and one falls below limit, how to
                         // solve this?
                         provider.set_circuit(circuit.clone()).await?;

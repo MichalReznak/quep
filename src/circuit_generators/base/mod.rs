@@ -3,7 +3,7 @@ use std::path::Path;
 
 use async_trait::async_trait;
 use collection_literals::collection;
-use derive_more::Constructor;
+
 use fehler::{throw, throws};
 use itertools::Itertools;
 use openqasm as oq;
@@ -12,14 +12,12 @@ use oq::GenericError;
 use parser::ProgramParser;
 use printers::ProgramPrinter;
 
+use crate::args::{CliArgsCircuit};
 use crate::traits::CircuitGenerator;
 use crate::Error;
 
 mod parser;
 mod printers;
-
-#[derive(Debug, Constructor)]
-pub struct BaseCircuitGenerator;
 
 // TODO allow user to define it
 const CIRCUIT_PLACEHOLDER: &str = r#"
@@ -132,6 +130,17 @@ pub fn print_circuit(included_gates: HashSet<i32>, program: &Program) -> String 
         .replace("%CIRCUIT_INV%", &pp_inv.result())
 }
 
+#[derive(Debug)]
+pub struct BaseCircuitGenerator {
+    args: CliArgsCircuit,
+}
+
+impl BaseCircuitGenerator {
+    pub fn new(args: &CliArgsCircuit) -> Self {
+        Self { args: args.clone() }
+    }
+}
+
 #[async_trait]
 impl CircuitGenerator for BaseCircuitGenerator {
     async fn generate(
@@ -139,7 +148,7 @@ impl CircuitGenerator for BaseCircuitGenerator {
         depth: i32,
         _width: i32,
         _iter: i32,
-        parse: bool,
+        _parse: bool,
     ) -> Result<Option<String>, Error> {
         // TODO check circuit size
         // TODO barriers support

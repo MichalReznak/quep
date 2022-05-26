@@ -1,30 +1,35 @@
 use std::time::Duration;
 
 use async_trait::async_trait;
-use derive_more::Constructor;
+
 use regex::Regex;
 use snafu::OptionExt;
 use unwrap_infallible::UnwrapInfallible;
 
+use crate::args::CliArgsOrch;
 use crate::chooser::Chooser;
 use crate::error::RegexCapture;
 use crate::traits::outputer::Value;
 use crate::traits::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
 
 /// Linear iteration from 0 to MAX
-#[derive(Constructor)]
-pub struct LinearOrchestrator;
+pub struct LinearOrchestrator {
+    args: CliArgsOrch,
+}
+
+impl LinearOrchestrator {
+    pub fn new(args: &CliArgsOrch) -> Self {
+        Self { args: args.clone() }
+    }
+}
 
 #[async_trait]
 impl Orchestrator for LinearOrchestrator {
-    async fn run(
-        &self,
-        chooser: &Chooser,
-        i: i32,
-        depth: i32,
-        iter: i32,
-        rand: bool,
-    ) -> Result<(), crate::Error> {
+    async fn run(&self, chooser: &Chooser) -> Result<(), crate::Error> {
+        let i = self.args.size;
+        let depth = self.args.size_2;
+        let iter = self.args.iter;
+
         let mut result = vec![];
         let mut durations = vec![];
 
@@ -54,10 +59,9 @@ impl Orchestrator for LinearOrchestrator {
                 let mut time = Duration::from_micros(0);
                 let mut val = Value::builder().result("".to_string()).correct(0).build();
 
-                let rand_i = if rand { ii } else { 0 };
                 // TODO somehow better allow to define circuit width
                 // (or if it should increase width instead of depth?)
-                if let Some(circuit) = generator.generate(depth - 1, j, rand_i, false).await? {
+                if let Some(circuit) = generator.generate(depth - 1, j, ii, false).await? {
                     provider.set_circuit(circuit.clone()).await?;
 
                     provider.start_measure();

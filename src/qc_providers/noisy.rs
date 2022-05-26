@@ -7,23 +7,25 @@ use pyo3::prelude::*;
 use pyo3::types::PyDict;
 use tokio::time::Instant;
 
+use crate::args::CliArgsProvider;
 use crate::traits::QcProvider;
 use crate::utils::debug;
 use crate::Error;
 use crate::Error::PyDowncastError;
 
 pub struct NoisyQcProvider {
+    args: CliArgsProvider,
+
     dur: Option<Instant>,
-    dir: String,
     py_instance: Option<PyObject>,
 }
 
 impl NoisyQcProvider {
-    pub fn new(dir: &str) -> Self {
+    pub fn new(args: &CliArgsProvider) -> Self {
         Self {
             dur: None,
             py_instance: None,
-            dir: dir.to_string(),
+            args: args.clone(),
         }
     }
 }
@@ -36,7 +38,7 @@ impl QcProvider for NoisyQcProvider {
 
     async fn set_circuit(&mut self, circuit: String) -> Result<(), Error> {
         Python::with_gil(|py| {
-            let code = load_str!(&format!("{}/noisy.py", &self.dir));
+            let code = load_str!(&format!("{}/noisy.py", &self.args.python_dir));
             let module = PyModule::from_code(py, code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Noisy")?.into();
             let qiskit = qiskit.call0(py)?;

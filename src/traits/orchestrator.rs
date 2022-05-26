@@ -22,12 +22,5 @@ pub enum OrchestratorDyn {
 #[async_trait]
 #[enum_dispatch(OrchestratorDyn)]
 pub trait Orchestrator {
-    async fn run(
-        &self,
-        chooser: &Chooser,
-        i: i32,
-        j: i32,
-        iter: i32,
-        rand: bool,
-    ) -> Result<(), Error>;
+    async fn run(&self, chooser: &Chooser) -> Result<(), Error>;
 }

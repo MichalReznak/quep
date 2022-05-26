@@ -5,23 +5,29 @@ use openqasm as oq;
 use oq::GenericError;
 use walkdir::{DirEntry, WalkDir};
 
+use crate::args::CliArgsCircuit;
 use crate::traits::CircuitGenerator;
 use crate::Error;
 
 #[derive(Debug)]
 pub struct FsCircuitGenerator {
+    args: CliArgsCircuit,
+
     entries: Vec<DirEntry>,
 }
 
 impl FsCircuitGenerator {
-    pub fn new() -> Self {
+    pub fn new(args: &CliArgsCircuit) -> Self {
         let entries = WalkDir::new("data") // TODO needs to be arg
             .into_iter()
             .filter_map(|e| e.ok())
             .filter(|e| e.file_type().is_file())
             .collect();
 
-        Self { entries }
+        Self {
+            args: args.clone(),
+            entries,
+        }
     }
 }
 

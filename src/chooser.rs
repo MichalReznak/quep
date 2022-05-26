@@ -26,43 +26,45 @@ impl Chooser {
     #[throws]
     pub fn get_provider(&self) -> QcProviderDyn {
         use ProviderType::*;
-        match self.args.provider {
-            Ibmq => QcProviderDyn::from(IbmqQcProvider::new(&self.args.python_dir)),
-            Simple => QcProviderDyn::from(SimpleQcProvider::new(&self.args.python_dir)),
-            Noisy => QcProviderDyn::from(NoisyQcProvider::new(&self.args.python_dir)),
+        match self.args.provider.t {
+            Ibmq => QcProviderDyn::from(IbmqQcProvider::new(&self.args.provider)),
+            Simple => QcProviderDyn::from(SimpleQcProvider::new(&self.args.provider)),
+            Noisy => QcProviderDyn::from(NoisyQcProvider::new(&self.args.provider)),
         }
     }
 
     #[throws]
     pub fn get_outputer(&self) -> OutputerDyn {
         use OutputType::*;
-        match self.args.output {
-            Text => OutputerDyn::from(TextOutputer::new()),
-            Serial => OutputerDyn::from(SerialOutputer::new(self.args.output_ser)),
-        }
-    }
-
-    #[throws]
-    pub fn get_orchestrator(&self) -> OrchestratorDyn {
-        use OrchestratorType::*;
-        match self.args.orch {
-            Lattice => OrchestratorDyn::from(LatticeOrchestrator::new()),
-            Linear => OrchestratorDyn::from(LinearOrchestrator::new()),
-            Single => OrchestratorDyn::from(SingleOrchestrator::new()),
-            Volume => OrchestratorDyn::from(VolumeOrchestrator::new()),
+        match self.args.output.t {
+            Text => OutputerDyn::from(TextOutputer::new(&self.args.output)),
+            Serial => OutputerDyn::from(SerialOutputer::new(&self.args.output)),
         }
     }
 
     #[throws]
     pub fn get_circuit_generator(&self) -> CircuitGeneratorDyn {
         use CircuitType::*;
-        match self.args.circuit {
-            Basic => CircuitGeneratorDyn::from(BasicCircuitGenerator::new()),
-            Fs => CircuitGeneratorDyn::from(FsCircuitGenerator::new()),
-            Volume => CircuitGeneratorDyn::from(VolumeCircuitGenerator::new()),
-            Mirror => CircuitGeneratorDyn::from(MirrorCircuitGenerator::new()),
-            RandMirror => CircuitGeneratorDyn::from(RandMirrorCircuitGenerator::new()),
-            Base => CircuitGeneratorDyn::from(BaseCircuitGenerator::new()),
+        match self.args.circuit.t {
+            Basic => CircuitGeneratorDyn::from(BasicCircuitGenerator::new(&self.args.circuit)),
+            Fs => CircuitGeneratorDyn::from(FsCircuitGenerator::new(&self.args.circuit)),
+            Volume => CircuitGeneratorDyn::from(VolumeCircuitGenerator::new(&self.args.circuit)),
+            Mirror => CircuitGeneratorDyn::from(MirrorCircuitGenerator::new(&self.args.circuit)),
+            RandMirror => {
+                CircuitGeneratorDyn::from(RandMirrorCircuitGenerator::new(&self.args.circuit))
+            }
+            Base => CircuitGeneratorDyn::from(BaseCircuitGenerator::new(&self.args.circuit)),
+        }
+    }
+
+    #[throws]
+    pub fn get_orchestrator(&self) -> OrchestratorDyn {
+        use OrchestratorType::*;
+        match self.args.orch.t {
+            Lattice => OrchestratorDyn::from(LatticeOrchestrator::new(&self.args.orch)),
+            Linear => OrchestratorDyn::from(LinearOrchestrator::new(&self.args.orch)),
+            Single => OrchestratorDyn::from(SingleOrchestrator::new(&self.args.orch)),
+            Volume => OrchestratorDyn::from(VolumeOrchestrator::new(&self.args.orch)),
         }
     }
 }

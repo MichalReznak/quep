@@ -1,8 +1,7 @@
-use std::collections::{HashMap, HashSet};
 use std::io::{BufWriter, Write};
 
 use fehler::throws;
-use openqasm::{Decl, Expr, Program, ProgramVisitor, Reg, Span, Stmt, Symbol};
+use openqasm::{Decl, Program, ProgramVisitor, Reg, Span, Stmt, Symbol};
 
 use crate::Error;
 
@@ -87,7 +86,7 @@ impl ProgramVisitor for TemplatePrinter {
         let reg = &*reg.inner;
         let name = reg.name.as_str();
         // TODO can fail
-        let i = reg.index.unwrap_or(0);
+        let _i = reg.index.unwrap_or(0);
 
         self.buf.write(format!("qreg {name}[{}];\n", self.width).as_bytes())?;
     }
@@ -97,7 +96,7 @@ impl ProgramVisitor for TemplatePrinter {
     fn visit_creg(&mut self, reg: &Span<Reg>) {
         let reg = &*reg.inner;
         let name = reg.name.as_str();
-        let i = reg.index.unwrap_or(0);
+        let _i = reg.index.unwrap_or(0);
 
         self.buf.write(format!("creg {name}[{}];\n", self.width).as_bytes())?;
     }

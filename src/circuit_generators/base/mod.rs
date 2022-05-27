@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::io::BufWriter;
 use std::path::Path;
 use std::rc::Rc;
@@ -20,24 +20,6 @@ use crate::Error;
 
 mod parser;
 mod printers;
-
-const CIRCUIT_RESULT: &str = r#"
-OPENQASM 2.0;
-include "qelib1.inc";
-
-qreg q[%SIZE%];
-creg c[%SIZE%];
-
-%CIRCUIT%
-
-barrier q;
-
-%CIRCUIT_INV%
-
-barrier q;
-
-measure q -> c;
-"#;
 
 fn get_base_circ(path: &str) -> Result<Program, Error> {
     let mut circuit = std::fs::read_to_string(path)?;
@@ -75,7 +57,7 @@ pub fn parse_circuit(program: &Program, depth: i32, width: i32) -> Vec<Span<Decl
 }
 
 #[throws]
-pub fn print_circuit(program: &Program, template: String, size: i32, gates: bool) -> String {
+pub fn print_circuit(program: &Program, template: String, _size: i32, gates: bool) -> String {
     // TODO allow dynamic definition
     let inverse_gates = collection! {
         HashMap<&str, &str>;

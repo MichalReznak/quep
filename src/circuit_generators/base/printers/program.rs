@@ -8,33 +8,20 @@ use openqasm::{Expr, ProgramVisitor, Reg, Span, Stmt, Symbol};
 pub struct ProgramPrinter {
     buf: BufWriter<Vec<u8>>,
     inverse_gates: Option<HashMap<&'static str, &'static str>>,
-    pub current_gate_i: i32,
-    len: i32,
-    pub included_gates: HashSet<i32>,
 }
 
 impl ProgramPrinter {
-    pub fn new(included_gates: HashSet<i32>) -> Self {
+    pub fn new() -> Self {
         Self {
             buf: BufWriter::new(Vec::new()),
             inverse_gates: None,
-            current_gate_i: 0,
-            len: 0,
-            included_gates,
         }
     }
 
-    pub fn with_gates(
-        included_gates: HashSet<i32>,
-        inverse_gates: HashMap<&'static str, &'static str>,
-        len: i32,
-    ) -> Self {
+    pub fn with_gates(inverse_gates: HashMap<&'static str, &'static str>) -> Self {
         Self {
             buf: BufWriter::new(Vec::new()),
             inverse_gates: Some(inverse_gates),
-            current_gate_i: 0,
-            len,
-            included_gates,
         }
     }
 
@@ -59,18 +46,6 @@ impl ProgramVisitor for ProgramPrinter {
 
     #[throws(Self::Error)]
     fn visit_gate(&mut self, name: &Span<Symbol>, _params: &[Span<Expr>], args: &[Span<Reg>]) {
-        let i = if let Some(_) = self.inverse_gates {
-            self.len - self.current_gate_i
-        }
-        else {
-            self.current_gate_i
-        };
-        self.current_gate_i += 1;
-
-        if !self.included_gates.contains(&i) {
-            return;
-        }
-
         let args: Vec<_> = (*args).iter().map(|e| &**e).collect();
 
         let args: Vec<_> =

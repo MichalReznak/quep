@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet};
 
 use collection_literals::collection;
 use fehler::throws;
-use openqasm::{Expr, ProgramVisitor, Reg, Span, Stmt, Symbol};
+use openqasm::{Decl, Expr, Program, ProgramVisitor, Reg, Span, Stmt, Symbol};
 
 /// Parses gates to some size
 pub struct ProgramParser {
@@ -22,6 +22,48 @@ impl ProgramParser {
             included_gates: HashSet::new(),
             current_gate_i: 0,
         }
+    }
+
+    pub fn parsed_gates(&self, program: &Program) -> Vec<Span<Decl>> {
+        // This keeps all gates intact except inserted gates
+        // let mut i = 0;
+        // let mut res = vec![];
+        //
+        // for decl in program.decls.clone() {
+        //     match &*decl.inner {
+        //         Decl::Stmt(a) => match &**a {
+        //             Stmt::Gate { .. } => {
+        //                 if self.included_gates.contains(&(i as i32)) {
+        //                     res.push(decl);
+        //                 }
+        //                 i += 1;
+        //             }
+        //             _ => {
+        //                 res.push(decl);
+        //             }
+        //         },
+        //         _ => {
+        //             res.push(decl);
+        //         }
+        //     }
+        // }
+        // res
+
+        program
+            .decls
+            .clone()
+            .into_iter()
+            .filter(|e| match &*e.inner {
+                Decl::Stmt(aa) => match &**aa {
+                    Stmt::Gate { .. } => true,
+                    _ => false,
+                },
+                _ => false,
+            })
+            .enumerate()
+            .filter(|(i, _)| self.included_gates.contains(&(*i as i32)))
+            .map(|(_, e)| e)
+            .collect()
     }
 }
 

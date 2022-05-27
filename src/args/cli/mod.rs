@@ -37,7 +37,10 @@ impl CliArgs {
         let circuit_source = dir("./base.template.qasm")?;
 
         let provider = CliArgsProvider::builder()
-            .t(clap.provider.unwrap_or_else(|| ProviderType::Simple))
+            .t(clap
+                .provider
+                .or_else(|| config.provider.t)
+                .unwrap_or_else(|| ProviderType::Simple))
             .python_dir(
                 clap.provider_python_dir
                     .or_else(|| config.provider.python_dir)

@@ -12,15 +12,15 @@ pub struct GatePrinter {
     creg: Vec<Symbol>,
 }
 
-// impl GatePrinter {
-//     pub fn new(buf: Rc<Mutex<BufWriter<Vec<u8>>>>) -> Self {
-//         Self {
-//             buf,
-//             qreg: vec![],
-//             creg: vec![],
-//         }
-//     }
-// }
+impl GatePrinter {
+    pub fn new(buf: Rc<Mutex<BufWriter<Vec<u8>>>>) -> Self {
+        Self {
+            buf,
+            qreg: vec![],
+            creg: vec![],
+        }
+    }
+}
 
 // TODO can be used to parsed output
 impl GateWriter for GatePrinter {

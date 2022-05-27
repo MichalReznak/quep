@@ -4,9 +4,11 @@ use async_trait::async_trait;
 use log::debug;
 use pyo3::prelude::*;
 use pyo3::types::PyDict;
+use snafu::OptionExt;
 use tokio::time::Instant;
 
 use crate::args::CliArgsProvider;
+use crate::error::OutOfBounds;
 use crate::traits::QcProvider;
 use crate::utils::debug;
 use crate::Error;
@@ -53,7 +55,7 @@ impl QcProvider for NoisyQcProvider {
 
     async fn run(&self) -> Result<String, Error> {
         Python::with_gil(|py| {
-            let fun = self.py_instance.as_ref().unwrap().call_method0(py, "run")?;
+            let fun = self.py_instance.as_ref().context(OutOfBounds)?.call_method0(py, "run")?;
             let res = fun.cast_as::<PyDict>(py).map_err(|_| PyDowncastError)?;
 
             let mut highest = ("".to_string(), 0);

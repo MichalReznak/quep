@@ -65,7 +65,7 @@ pub struct OrchConfig {
 #[throws(D::Error)]
 fn parse_from_os_str<'de, D: Deserializer<'de>>(d: D) -> Option<String> {
     match String::deserialize(d) {
-        Ok(buf) => Some(dir(&buf).unwrap()),
+        Ok(buf) => Some(dir(&buf).unwrap()), // template error
         Err(_) => None,
     }
 }

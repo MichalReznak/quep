@@ -68,7 +68,7 @@ impl ProgramParser {
 }
 
 impl ProgramVisitor for ProgramParser {
-    type Error = std::convert::Infallible;
+    type Error = crate::Error;
 
     #[throws(Self::Error)]
     fn visit_gate_def(

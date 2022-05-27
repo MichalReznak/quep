@@ -3,6 +3,10 @@ use std::io::{BufWriter, Write};
 
 use fehler::throws;
 use openqasm::{Expr, ProgramVisitor, Reg, Span, Stmt, Symbol};
+use snafu::OptionExt;
+
+use crate::error::OutOfBounds;
+use crate::Error;
 
 /// Outputs gates in the original format
 pub struct ProgramPrinter {
@@ -25,13 +29,14 @@ impl ProgramPrinter {
         }
     }
 
+    #[throws]
     pub fn result(&mut self) -> String {
-        String::from_utf8(self.buf.buffer().to_vec()).unwrap()
+        String::from_utf8(self.buf.buffer().to_vec())?
     }
 }
 
 impl ProgramVisitor for ProgramPrinter {
-    type Error = std::convert::Infallible;
+    type Error = crate::Error;
 
     #[throws(Self::Error)]
     fn visit_gate_def(
@@ -50,7 +55,7 @@ impl ProgramVisitor for ProgramPrinter {
 
         let args: Vec<_> =
             args.into_iter().map(|e| format!("{}[{}]", e.name, e.index.unwrap())).collect();
-        let (last, args) = args.split_last().unwrap();
+        let (last, args) = args.split_last().context(OutOfBounds)?;
         let args: Vec<_> = args.into_iter().map(|e| format!("{e}, ")).collect();
 
         let mut a = String::new();
@@ -68,6 +73,6 @@ impl ProgramVisitor for ProgramPrinter {
             name
         };
 
-        self.buf.write(format!("{} {}\n", &name, a).as_bytes()).unwrap();
+        self.buf.write(format!("{} {}\n", &name, a).as_bytes())?;
     }
 }

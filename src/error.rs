@@ -1,4 +1,5 @@
 use std::num::{ParseFloatError, ParseIntError};
+use std::string::FromUtf8Error;
 
 use pyo3::PyErr;
 use quick_xml::DeError;
@@ -46,6 +47,9 @@ pub enum Error {
 
     #[snafu(display("{}", source), context(false))]
     SerdeTomlError { source: toml::ser::Error },
+
+    #[snafu(display("{}", source), context(false))]
+    FromUtf8Error { source: FromUtf8Error },
 
     #[snafu(display("{}", source), context(false))]
     SerdeRonError { source: ron::Error },

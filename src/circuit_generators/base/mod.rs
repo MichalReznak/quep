@@ -70,12 +70,12 @@ fn get_base_circ(path: &str) -> Result<Program, Error> {
 #[throws]
 pub fn parse_circuit(program: &Program, depth: i32, width: i32) -> Vec<Span<Decl>> {
     let mut program_parser = ProgramParser::new(depth, width);
-    program_parser.visit_program(&program).unwrap();
+    program_parser.visit_program(&program)?;
     dbg!(program_parser.parsed_gates(&program))
 }
 
 #[throws]
-pub fn print_circuit(program: &Program, size: i32, gates: bool) -> String {
+pub fn print_circuit(program: &Program, template: String, size: i32, gates: bool) -> String {
     // TODO allow dynamic definition
     let inverse_gates = collection! {
         HashMap<&str, &str>;
@@ -90,7 +90,7 @@ pub fn print_circuit(program: &Program, size: i32, gates: bool) -> String {
         gp.visit_program(&program).unwrap();
         let mut lock = buf.lock().unwrap();
         let buf = lock.get_mut();
-        let gp_result = String::from_utf8(buf.clone()).unwrap();
+        let gp_result = String::from_utf8(buf.clone())?;
 
         gp_result
         // TODO inverse only gates
@@ -102,10 +102,10 @@ pub fn print_circuit(program: &Program, size: i32, gates: bool) -> String {
         // let buf = Rc::new(Mutex::new(BufWriter::new(vec![])));
         //
         // let mut gp_inv = Linearize::new(GatePrinter::new(buf.clone()));
-        // gp_inv.visit_program(&program).unwrap();
+        // gp_inv.visit_program(&program)?;
         // let mut lock = buf.lock().unwrap();
         // let buf = lock.get_mut();
-        // let gp_inv_result = String::from_utf8(buf.clone()).unwrap();
+        // let gp_inv_result = String::from_utf8(buf.clone())?;
 
         // CIRCUIT_RESULT.replace("%SIZE%", &size.to_string())
         // .replace("%CIRCUIT%", &gp_result)
@@ -113,7 +113,7 @@ pub fn print_circuit(program: &Program, size: i32, gates: bool) -> String {
     }
     else {
         let mut pp = ProgramPrinter::new();
-        pp.visit_program(&program).unwrap();
+        pp.visit_program(&program)?;
 
         let mut inv = program.decls.clone();
         inv.reverse();
@@ -123,12 +123,11 @@ pub fn print_circuit(program: &Program, size: i32, gates: bool) -> String {
 
         // TODO only inverse gates
         let mut pp_inv = ProgramPrinter::with_gates(inverse_gates);
-        pp_inv.visit_program(&program).unwrap();
+        pp_inv.visit_program(&program)?;
 
-        CIRCUIT_RESULT
-            .replace("%SIZE%", &size.to_string())
-            .replace("%CIRCUIT%", &pp.result())
-            .replace("%CIRCUIT_INV%", &pp_inv.result())
+        template
+            .replace("%GATES%", &pp.result()?)
+            .replace("%GATES_INV%", &pp_inv.result()?)
     }
 }
 
@@ -174,17 +173,14 @@ impl CircuitGenerator for BaseCircuitGenerator {
         let mut program2 = get_base_circ(&self.args.source)?;
 
         // TODO create template from base circuit and then include parsed gates
-        let mut tp = TemplatePrinter::new();
-        tp.visit_program(&program2).unwrap();
-        println!("{}", tp.result());
-        unimplemented!();
+        let mut tp = TemplatePrinter::new(width);
+        tp.visit_program(&program2)?;
+        println!("{}", tp.result()?);
 
         program2.decls = parse_circuit(&program2, depth, width)?;
 
-        let print_program = print_circuit(&program2, width, self.args.parse)?;
+        let print_program = print_circuit(&program2, tp.result()?, width, self.args.parse)?;
         println!("{print_program}");
-
-        unimplemented!();
 
         Ok(Some(print_program))
     }

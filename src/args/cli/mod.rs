@@ -74,6 +74,7 @@ impl CliArgs {
             .iter(clap.orch_iter.or_else(|| config.orch.iter).unwrap_or_else(|| 1))
             .size(clap.orch_size.or_else(|| config.orch.size).unwrap_or_else(|| 1))
             .size_2(clap.orch_size_2.or_else(|| config.orch.size_2).unwrap_or_else(|| 1))
+            .collect(clap.orch_collect.or_else(|| config.orch.collect).unwrap_or_else(|| false))
             .build();
 
         // TODO better?

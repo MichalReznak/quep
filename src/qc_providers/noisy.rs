@@ -3,7 +3,7 @@ use std::time::Duration;
 use async_trait::async_trait;
 use log::debug;
 use pyo3::prelude::*;
-use pyo3::types::PyDict;
+use pyo3::types::{PyDict, PyList};
 use snafu::OptionExt;
 use tokio::time::Instant;
 
@@ -33,11 +33,7 @@ impl NoisyQcProvider {
 
 #[async_trait]
 impl QcProvider for NoisyQcProvider {
-    async fn connect(&self) -> Result<(), Error> {
-        Ok(())
-    }
-
-    async fn set_circuit(&mut self, circuit: String) -> Result<(), Error> {
+    async fn connect(&mut self) -> Result<(), Error> {
         Python::with_gil(|py| {
             let code = std::fs::read_to_string(&format!("{}/noisy.py", &self.args.python_dir))?;
             let module = PyModule::from_code(py, &code, "", "")?;
@@ -46,9 +42,29 @@ impl QcProvider for NoisyQcProvider {
 
             qiskit.call_method0(py, "auth")?;
 
-            qiskit.call_method1(py, "set_circuit", (circuit, debug()))?;
-
             self.py_instance = Some(qiskit);
+            Ok(())
+        })
+    }
+
+    async fn set_circuit(&mut self, circuit: String) -> Result<(), Error> {
+        Python::with_gil(|py| {
+            self.py_instance.as_ref().context(OutOfBounds)?.call_method1(
+                py,
+                "set_circuit",
+                (circuit, debug()),
+            )?;
+            Ok(())
+        })
+    }
+
+    async fn append_circuit(&mut self, circuit: String) -> Result<(), Error> {
+        Python::with_gil(|py| {
+            self.py_instance.as_ref().context(OutOfBounds)?.call_method1(
+                py,
+                "append_circuit",
+                (circuit, debug()),
+            )?;
             Ok(())
         })
     }
@@ -69,6 +85,31 @@ impl QcProvider for NoisyQcProvider {
 
             debug!("{res:#?}");
             Ok(format!("{}: {}", highest.0, highest.1))
+        })
+    }
+
+    async fn run_all(&self) -> Result<Vec<String>, Error> {
+        Python::with_gil(|py| {
+            let fun =
+                self.py_instance.as_ref().context(OutOfBounds)?.call_method0(py, "run_all")?;
+            let res = fun.cast_as::<PyList>(py).map_err(|_| PyDowncastError)?;
+            let res: Vec<_> = res
+                .into_iter()
+                .map(|e| e.cast_as::<PyDict>().map_err(|_| PyDowncastError).unwrap())
+                .map(|e| {
+                    let mut highest = ("".to_string(), 0);
+                    for (key, val) in e.into_iter() {
+                        println!("{key:#?}, {val:#?}");
+                        let val: i32 = val.extract().unwrap();
+
+                        if val > highest.1 {
+                            highest = (key.to_string(), val);
+                        }
+                    }
+                    format!("{}: {}", highest.0, highest.1)
+                })
+                .collect();
+            Ok(res)
         })
     }
 

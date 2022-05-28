@@ -51,33 +51,69 @@ impl Orchestrator for VolumeOrchestrator {
 
         println!("Dummy run done");
 
-        // TODO for now it generates empty for not computed ones
-        for i in 0..width {
-            let mut time = Duration::from_micros(0);
-            let mut val = Value::builder().result("".to_string()).correct(0).build();
-            for ii in 0..iter {
-                if let Some(circuit) = generator.generate(i, i, ii, false).await? {
-                    // TODO if I do a multiple iterations and one falls below limit, how to
-                    // solve this?
-                    provider.set_circuit(circuit.clone()).await?;
-
-                    provider.start_measure();
-                    let res = provider.run().await?;
-                    time += provider.stop_measure();
-
-                    let c = re.captures(&res).context(RegexCapture)?;
-                    val.result = c["result"].parse::<String>().unwrap_infallible();
-                    val.correct = c["val"].parse::<i32>()?;
+        if self.args.collect {
+            // TODO add iterations
+            for i in 0..width {
+                if let Some(c) = generator.generate(i, i, 0 /* TODO */, false).await? {
+                    provider.append_circuit(c.clone()).await?;
                 }
                 else {
                     break;
                 }
+            }
 
-                durations.push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO
-                result.push(val.clone());
+            let mut time = Duration::from_micros(0);
+            provider.start_measure();
+            let res = provider.run_all().await?;
+            time += provider.stop_measure();
 
-                if val.correct as f64 <= 1024.0 * (2.0 / 3.0) {
-                    break;
+            result = res
+                .into_iter()
+                .map(|res| {
+                    let mut val = Value::builder().result("".to_string()).correct(0).build();
+                    let c = re.captures(&res).context(RegexCapture).unwrap();
+                    val.result = c["result"].parse::<String>().unwrap_infallible();
+                    val.correct = c["val"].parse::<i32>().unwrap();
+                    val
+                })
+                .collect();
+
+            // TODO
+            durations =
+                std::iter::repeat(Duration::from_millis((time.as_millis() as u64) / (iter as u64)))
+                    .take(width as usize)
+                    .collect();
+        }
+        else {
+            // TODO for now it generates empty for not computed ones
+            for i in 0..width {
+                let mut time = Duration::from_micros(0);
+                let mut val = Value::builder().result("".to_string()).correct(0).build();
+                for ii in 0..iter {
+                    if let Some(circuit) = generator.generate(i, i, ii, false).await? {
+                        // TODO if I do a multiple iterations and one falls below limit, how to
+                        // solve this?
+                        provider.set_circuit(circuit.clone()).await?;
+
+                        provider.start_measure();
+                        let res = provider.run().await?;
+                        time += provider.stop_measure();
+
+                        let c = re.captures(&res).context(RegexCapture)?;
+                        val.result = c["result"].parse::<String>().unwrap_infallible();
+                        val.correct = c["val"].parse::<i32>()?;
+                    }
+                    else {
+                        break;
+                    }
+
+                    durations
+                        .push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO
+                    result.push(val.clone());
+
+                    if val.correct as f64 <= 1024.0 * (2.0 / 3.0) {
+                        break;
+                    }
                 }
             }
         }

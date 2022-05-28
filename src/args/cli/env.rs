@@ -53,6 +53,9 @@ pub struct CliArgsEnv {
     #[clap(long, env = "QUEP_ORCH_SIZE_2")]
     pub orch_size_2: Option<i32>,
 
+    #[clap(long, env = "QUEP_ORCH_COLLECT")]
+    pub orch_collect: Option<bool>,
+
     // TODO just for testing only
     #[clap(long)] // default_value = "1"
     pub test_threads: Option<i32>,

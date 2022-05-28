@@ -53,33 +53,69 @@ impl Orchestrator for LinearOrchestrator {
 
         println!("Dummy run done");
 
-        for j in 0..i {
-            for ii in 0..iter {
-                let mut time = Duration::from_micros(0);
-                let mut val = Value::builder().result("".to_string()).correct(0).build();
-
-                // TODO somehow better allow to define circuit width
-                // (or if it should increase width instead of depth?)
-                if let Some(circuit) = generator.generate(depth - 1, j, ii, false).await? {
-                    provider.set_circuit(circuit.clone()).await?;
-
-                    provider.start_measure();
-                    let res = provider.run().await?;
-                    time += provider.stop_measure();
-
-                    let c = re.captures(&res).context(RegexCapture)?;
-                    val.result = c["result"].parse::<String>().unwrap_infallible();
-                    val.correct = c["val"].parse::<i32>()?;
+        if self.args.collect {
+            // TODO add iterations
+            'main: for j in 0..i {
+                if let Some(c) = generator.generate(depth - 1, j, 1 /* TODO */, false).await? {
+                    provider.append_circuit(c.clone()).await?;
                 }
                 else {
-                    break;
+                    break 'main;
                 }
+            }
 
-                durations.push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO
-                result.push(val.clone());
+            let mut time = Duration::from_micros(0);
+            provider.start_measure();
+            let res = provider.run_all().await?;
+            time += provider.stop_measure();
 
-                if (val.correct as f64) <= 1024.0 * (2.0 / 3.0) {
-                    break;
+            result = res
+                .into_iter()
+                .map(|res| {
+                    let mut val = Value::builder().result("".to_string()).correct(0).build();
+                    let c = re.captures(&res).context(RegexCapture).unwrap();
+                    val.result = c["result"].parse::<String>().unwrap_infallible();
+                    val.correct = c["val"].parse::<i32>().unwrap();
+                    val
+                })
+                .collect();
+
+            // TODO
+            durations =
+                std::iter::repeat(Duration::from_millis((time.as_millis() as u64) / (iter as u64)))
+                    .take(i as usize)
+                    .collect();
+        }
+        else {
+            for j in 0..i {
+                for ii in 0..iter {
+                    let mut time = Duration::from_micros(0);
+                    let mut val = Value::builder().result("".to_string()).correct(0).build();
+
+                    // TODO somehow better allow to define circuit width
+                    // (or if it should increase width instead of depth?)
+                    if let Some(circuit) = generator.generate(depth - 1, j, ii, false).await? {
+                        provider.set_circuit(circuit.clone()).await?;
+
+                        provider.start_measure();
+                        let res = provider.run().await?;
+                        time += provider.stop_measure();
+
+                        let c = re.captures(&res).context(RegexCapture)?;
+                        val.result = c["result"].parse::<String>().unwrap_infallible();
+                        val.correct = c["val"].parse::<i32>()?;
+                    }
+                    else {
+                        break;
+                    }
+
+                    durations
+                        .push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO
+                    result.push(val.clone());
+
+                    if (val.correct as f64) <= 1024.0 * (2.0 / 3.0) {
+                        break;
+                    }
                 }
             }
         }
@@ -87,7 +123,6 @@ impl Orchestrator for LinearOrchestrator {
         // get measured results
         // output -> Outputer
         outputer.output_linear(result, durations, depth).await?;
-
         Ok(())
     }
 }

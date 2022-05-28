@@ -49,4 +49,7 @@ pub struct CliArgsOrch {
     // This is to define width and depth separately in some orchestrators
     /// Width of the circuits
     pub size_2: i32,
+
+    /// Collect all circuits first and then run them
+    pub collect: bool,
 }

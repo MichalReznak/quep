@@ -32,7 +32,7 @@ impl IbmqQcProvider {
 
 #[async_trait]
 impl QcProvider for IbmqQcProvider {
-    async fn connect(&self) -> Result<(), Error> {
+    async fn connect(&mut self) -> Result<(), Error> {
         Ok(())
     }
 
@@ -68,6 +68,14 @@ impl QcProvider for IbmqQcProvider {
             debug!("{res:#?}");
             Ok(format!("{}: {}", highest.0, highest.1))
         })
+    }
+
+    async fn append_circuit(&mut self, circuit: String) -> Result<(), Error> {
+        todo!()
+    }
+
+    async fn run_all(&self) -> Result<Vec<String>, Error> {
+        todo!()
     }
 
     fn start_measure(&mut self) {

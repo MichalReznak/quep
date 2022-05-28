@@ -46,6 +46,7 @@ class Noisy:
     def __init__(self):
         self.backend = None
         self.circuit = None
+        self.circuits = []
 
     def auth(self):
         self.backend = AerSimulator(noise_model=noise_bit_flip)
@@ -56,6 +57,17 @@ class Noisy:
         if log:
             print(self.circuit)
 
+    def append_circuit(self: 'Noisy', circuit: str, log: bool):
+        self.circuits.append(QuantumCircuit.from_qasm_str(circuit))
+
+        if log:
+            for p in self.circuits:
+                print(p)
+
     def run(self: 'Noisy') -> str:
         job = transpile(self.circuit, self.backend)
         return self.backend.run(job).result().get_counts(0)
+
+    def run_all(self: 'Noisy') -> str:
+        job = self.backend.run(self.circuits, shots=1024, memory=True)
+        return job.result().get_counts()

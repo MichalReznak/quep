@@ -56,6 +56,7 @@ pub struct OrchConfig {
     pub size: Option<i32>,
     pub size_2: Option<i32>,
     pub iter: Option<i32>,
+    pub collect: Option<bool>,
 
     #[serde(default)]
     #[serde(deserialize_with = "parse_from_os_str")]

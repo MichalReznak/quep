@@ -19,11 +19,13 @@ pub enum QcProviderDyn {
 #[async_trait]
 #[enum_dispatch(QcProviderDyn)]
 pub trait QcProvider {
-    async fn connect(&self) -> Result<(), Error>;
+    async fn connect(&mut self) -> Result<(), Error>;
 
     async fn set_circuit(&mut self, circuit: String) -> Result<(), Error>;
+    async fn append_circuit(&mut self, circuit: String) -> Result<(), Error>;
 
     async fn run(&self) -> Result<String, Error>;
+    async fn run_all(&self) -> Result<Vec<String>, Error>;
 
     fn start_measure(&mut self);
 

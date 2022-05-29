@@ -141,7 +141,7 @@ impl Orchestrator for LatticeOrchestrator {
 
         // get measured results
         // output -> Outputer
-        outputer.output_table(result, durations).await?;
+        outputer.output_table(result, Some(durations), Duration::from_millis(0)).await?; // TODO
         Ok(())
     }
 }

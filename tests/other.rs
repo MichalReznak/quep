@@ -8,3 +8,5 @@ use tokio::test;
 async fn new() {
     Quep::from_env().await?.run().await?;
 }
+
+// TODO add collect: true tests

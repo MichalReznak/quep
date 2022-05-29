@@ -16,6 +16,8 @@ use crate::Error;
 #[derive(Serialize, Deserialize, TypedBuilder, Debug)]
 struct Output {
     records: Vec<Record>,
+    #[builder(setter(into))]
+    runtime_ms: i32,
 }
 
 #[derive(Serialize, Deserialize, TypedBuilder, Debug)]
@@ -59,8 +61,10 @@ impl Outputer for SerialOutputer {
     async fn output_table(
         &self,
         values: Vec<Vec<Value>>,
-        duration: Vec<Duration>,
+        durations: Option<Vec<Duration>>,
+        runtime: Duration,
     ) -> Result<(), Error> {
+        let durations = durations.unwrap(); // TODO
         let mut table = Vec::new();
 
         for (i, value) in values.iter().enumerate() {
@@ -71,14 +75,14 @@ impl Outputer for SerialOutputer {
                     .output(&col.result)
                     .result(col.correct)
                     .correct((col.correct as f64) > 1024.0 * (2.0 / 3.0))
-                    .time_ms(duration.get(j).context(OutOfBounds)?.as_millis() as i32)
+                    .time_ms(durations.get(j).context(OutOfBounds)?.as_millis() as i32)
                     .build();
 
                 table.push(record);
             }
         }
 
-        let table = Output::builder().records(table).build();
+        let table = Output::builder().records(table).runtime_ms(runtime.as_millis() as i32).build();
         let res = serialize(self.args.ser, &table)?;
 
         println!("\nResult:");
@@ -89,12 +93,14 @@ impl Outputer for SerialOutputer {
     async fn output_volume(
         &self,
         values: Vec<Value>,
-        duration: Vec<Duration>,
+        durations: Option<Vec<Duration>>,
+        runtime: Duration,
     ) -> Result<(), Error> {
+        let durations = durations.unwrap(); // TODO
         let len = values.len();
         let mut table = vec![];
 
-        for (i, (val, dur)) in values.into_iter().zip(duration).enumerate() {
+        for (i, (val, dur)) in values.into_iter().zip(durations).enumerate() {
             let record = Record::builder()
                 .width(cast(i + 1).context(OutOfBounds)?)
                 .depth(cast(i + 1).context(OutOfBounds)?)
@@ -106,7 +112,7 @@ impl Outputer for SerialOutputer {
             table.push(record);
         }
 
-        let table = Output::builder().records(table).build();
+        let table = Output::builder().records(table).runtime_ms(runtime.as_millis() as i32).build();
         let res = serialize(self.args.ser, &table)?;
 
         println!("\nResult:");
@@ -119,12 +125,14 @@ impl Outputer for SerialOutputer {
     async fn output_linear(
         &self,
         values: Vec<Value>,
-        duration: Vec<Duration>,
+        durations: Option<Vec<Duration>>,
         width: i32,
+        runtime: Duration,
     ) -> Result<(), Error> {
+        let durations = durations.unwrap(); // TODO
         let mut table = vec![];
 
-        for (i, (val, dur)) in values.into_iter().zip(duration).enumerate() {
+        for (i, (val, dur)) in values.into_iter().zip(durations).enumerate() {
             let record = Record::builder()
                 .width(cast(i + 1).context(OutOfBounds)?)
                 .depth(cast(width).context(OutOfBounds)?)
@@ -136,7 +144,7 @@ impl Outputer for SerialOutputer {
             table.push(record);
         }
 
-        let table = Output::builder().records(table).build();
+        let table = Output::builder().records(table).runtime_ms(runtime.as_millis() as i32).build();
         let res = serialize(self.args.ser, &table)?;
 
         println!("\nResult:");

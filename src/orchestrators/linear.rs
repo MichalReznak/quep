@@ -122,7 +122,9 @@ impl Orchestrator for LinearOrchestrator {
 
         // get measured results
         // output -> Outputer
-        outputer.output_linear(result, durations, depth).await?;
+        outputer
+            .output_linear(result, Some(durations), depth, Duration::from_millis(0))
+            .await?; // TODO
         Ok(())
     }
 }

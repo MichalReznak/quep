@@ -120,7 +120,9 @@ impl Orchestrator for VolumeOrchestrator {
 
         // get measured results
         // output -> Outputer
-        outputer.output_volume(result, durations).await?;
+        outputer
+            .output_volume(result, Some(durations), Duration::from_millis(0))
+            .await?; // TODO
 
         Ok(())
     }

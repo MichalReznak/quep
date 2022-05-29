@@ -27,8 +27,10 @@ impl Outputer for TextOutputer {
     async fn output_table(
         &self,
         values: Vec<Vec<Value>>,
-        duration: Vec<Duration>,
+        durations: Option<Vec<Duration>>,
+        runtime: Duration,
     ) -> Result<(), Error> {
+        let durations = durations.unwrap(); // TODO
         let mut table_dur = vec![];
         let mut table = vec![];
 
@@ -82,7 +84,7 @@ impl Outputer for TextOutputer {
                 };
 
                 row_dur.push(
-                    format!("{} ms", duration.get(i + j).context(OutOfBounds)?.as_millis())
+                    format!("{} ms", durations.get(i + j).context(OutOfBounds)?.as_millis())
                         .cell()
                         .justify(Justify::Right),
                 );
@@ -98,17 +100,21 @@ impl Outputer for TextOutputer {
 
         println!("\nRuntime:");
         print_stdout(table_dur.table())?;
+
+        println!("\nApplication Runtime: {} ms", runtime.as_millis());
         Ok(())
     }
 
     async fn output_volume(
         &self,
         values: Vec<Value>,
-        duration: Vec<Duration>,
+        durations: Option<Vec<Duration>>,
+        runtime: Duration,
     ) -> Result<(), Error> {
+        let durations = durations.unwrap(); // TODO
         let len = values.len();
         let mut table = vec![];
-        for (i, (val, dur)) in values.into_iter().zip(duration).enumerate() {
+        for (i, (val, dur)) in values.into_iter().zip(durations).enumerate() {
             let mut row = vec![];
             let i = i + 1;
             row.push(format!("{i} x {i}").cell().background_color(Some(Color::Magenta)));
@@ -122,17 +128,20 @@ impl Outputer for TextOutputer {
 
         println!("\nQuantum Volume: {}", len);
 
+        println!("\nApplication Runtime: {} ms", runtime.as_millis());
         Ok(())
     }
 
     async fn output_linear(
         &self,
         values: Vec<Value>,
-        duration: Vec<Duration>,
+        durations: Option<Vec<Duration>>,
         width: i32,
+        runtime: Duration,
     ) -> Result<(), Error> {
+        let durations = durations.unwrap(); // TODO
         let mut table = vec![];
-        for (i, (val, dur)) in values.into_iter().zip(duration).enumerate() {
+        for (i, (val, dur)) in values.into_iter().zip(durations).enumerate() {
             let mut row = vec![];
             row.push(format!("{} x {width}", i + 1).cell().background_color(Some(Color::Magenta)));
             row.push(val.correct.cell());
@@ -142,6 +151,8 @@ impl Outputer for TextOutputer {
 
         println!("\nResult:");
         print_stdout(table.table())?;
+
+        println!("\nApplication Runtime: {} ms", runtime.as_millis());
         Ok(())
     }
 }

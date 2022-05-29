@@ -3,6 +3,7 @@ use std::time::Duration;
 use async_trait::async_trait;
 use regex::Regex;
 use snafu::OptionExt;
+use tokio::time::Instant;
 use unwrap_infallible::UnwrapInfallible;
 
 use crate::args::CliArgsOrch;
@@ -42,17 +43,16 @@ impl Orchestrator for SingleOrchestrator {
         let mut provider = chooser.get_provider()?;
         provider.connect().await?;
 
-        // TODO enable
-        // TODO fix this
         // It runs dummy circuit to make the speed measurement more precise
-        // if let Some(circuit) = generator.generate(0, 0, 0, false).await? {
-        //     provider.set_circuit(circuit.clone()).await?;
-        //     provider.start_measure();
-        //     provider.run().await?;
-        //     provider.stop_measure();
-        // }
-        //
-        // println!("Dummy run done");
+        if let Some(circuit) = generator.generate(0, 0, 0, false).await? {
+            provider.set_circuit(circuit.clone()).await?;
+            provider.start_measure();
+            provider.run().await?;
+            provider.stop_measure();
+        }
+
+        println!("Dummy run done");
+        let runtime = Instant::now();
 
         let mut sr = vec![];
 
@@ -80,7 +80,7 @@ impl Orchestrator for SingleOrchestrator {
 
         // get measured results
         // output -> Outputer
-        outputer.output_table(result, Some(durations), Duration::from_millis(0)).await?; // TODO
+        outputer.output_table(result, Some(durations), Instant::now() - runtime).await?; // TODO
 
         Ok(())
     }

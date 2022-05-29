@@ -1,8 +1,10 @@
 use std::time::Duration;
 
 use async_trait::async_trait;
+use regex::internal::Inst;
 use regex::Regex;
 use snafu::OptionExt;
+use tokio::time::Instant;
 use unwrap_infallible::UnwrapInfallible;
 
 use crate::args::CliArgsOrch;
@@ -50,6 +52,7 @@ impl Orchestrator for VolumeOrchestrator {
         }
 
         println!("Dummy run done");
+        let runtime = Instant::now();
 
         if self.args.collect {
             // TODO add iterations
@@ -78,11 +81,7 @@ impl Orchestrator for VolumeOrchestrator {
                 })
                 .collect();
 
-            // TODO
-            durations =
-                std::iter::repeat(Duration::from_millis((time.as_millis() as u64) / (iter as u64)))
-                    .take(width as usize)
-                    .collect();
+            outputer.output_volume(result, None, Instant::now() - runtime).await?;
         }
         else {
             // TODO for now it generates empty for not computed ones
@@ -116,14 +115,11 @@ impl Orchestrator for VolumeOrchestrator {
                     }
                 }
             }
+
+            outputer
+                .output_volume(result, Some(durations), Instant::now() - runtime)
+                .await?;
         }
-
-        // get measured results
-        // output -> Outputer
-        outputer
-            .output_volume(result, Some(durations), Duration::from_millis(0))
-            .await?; // TODO
-
         Ok(())
     }
 }

@@ -1,8 +1,10 @@
 use std::time::Duration;
 
 use async_trait::async_trait;
+use regex::internal::Inst;
 use regex::Regex;
 use snafu::OptionExt;
+use tokio::time::Instant;
 use unwrap_infallible::UnwrapInfallible;
 
 use crate::args::CliArgsOrch;
@@ -53,6 +55,9 @@ impl Orchestrator for LatticeOrchestrator {
 
         println!("Dummy run done");
 
+        // TODO should be as close to computation as possible
+        let runtime = Instant::now();
+
         if self.args.collect {
             // TODO add iterations
             'main: for i in 0..i {
@@ -88,11 +93,7 @@ impl Orchestrator for LatticeOrchestrator {
                 result.push(sr);
             }
 
-            // TODO
-            durations =
-                std::iter::repeat(Duration::from_millis((time.as_millis() as u64) / (iter as u64)))
-                    .take((i * j) as usize)
-                    .collect();
+            outputer.output_table(result, None, Instant::now() - runtime).await?;
         }
         else {
             'main: for i in 0..i {
@@ -137,11 +138,10 @@ impl Orchestrator for LatticeOrchestrator {
                     break;
                 }
             }
+
+            outputer.output_table(result, Some(durations), Instant::now() - runtime).await?;
         }
 
-        // get measured results
-        // output -> Outputer
-        outputer.output_table(result, Some(durations), Duration::from_millis(0)).await?; // TODO
         Ok(())
     }
 }

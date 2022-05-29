@@ -3,6 +3,7 @@ use std::time::Duration;
 use async_trait::async_trait;
 use regex::Regex;
 use snafu::OptionExt;
+use tokio::time::Instant;
 use unwrap_infallible::UnwrapInfallible;
 
 use crate::args::CliArgsOrch;
@@ -52,6 +53,7 @@ impl Orchestrator for LinearOrchestrator {
         }
 
         println!("Dummy run done");
+        let runtime = Instant::now();
 
         if self.args.collect {
             // TODO add iterations
@@ -80,11 +82,7 @@ impl Orchestrator for LinearOrchestrator {
                 })
                 .collect();
 
-            // TODO
-            durations =
-                std::iter::repeat(Duration::from_millis((time.as_millis() as u64) / (iter as u64)))
-                    .take(i as usize)
-                    .collect();
+            outputer.output_linear(result, None, depth, Instant::now() - runtime).await?;
         }
         else {
             for j in 0..i {
@@ -118,13 +116,12 @@ impl Orchestrator for LinearOrchestrator {
                     }
                 }
             }
+
+            outputer
+                .output_linear(result, Some(durations), depth, Instant::now() - runtime)
+                .await?;
         }
 
-        // get measured results
-        // output -> Outputer
-        outputer
-            .output_linear(result, Some(durations), depth, Duration::from_millis(0))
-            .await?; // TODO
         Ok(())
     }
 }

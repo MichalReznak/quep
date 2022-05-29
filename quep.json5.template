@@ -1,0 +1,45 @@
+{
+    provider: {
+        t: 'Ibmq',
+        pythonDir: './python',
+    },
+    circuit: {
+        t: 'Mirror',
+        rand: true,
+        path: './data/base.template.qasm'
+    },
+    output: {
+        t: 'Text',
+        ser: 'Json',
+    },
+    orch: {
+        t: 'Lattice',
+        size: 4,
+        size2: 4,
+        iter: 1,
+        data: './data',
+        collect: false,
+    },
+}
+
+//
+//{
+//    provider: 'Noisy',
+//    circuit: {
+//        t: 'Mirror',
+//        rand: true,
+//        path: './data/base.template.qasm'
+//    },
+//    output: {
+//        t: 'Text',
+//        ser: 'Json',
+//    },
+//    orch: {
+//        t: 'Lattice',
+//        size: 6,
+//        size2: 6,
+//        iter: 4,
+//        data: './data',
+//    },
+//    pythonDir: './python',
+//}

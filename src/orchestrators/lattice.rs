@@ -80,7 +80,7 @@ impl Orchestrator for LatticeOrchestrator {
                 let mut sr = vec![];
 
                 for jj in 0..j {
-                    let ci = (ii * i) + jj;
+                    let ci = (ii * j) + jj;
                     let c = res.get(ci as usize).unwrap();
 
                     let mut val = Value::builder().result("".to_string()).correct(0).build();

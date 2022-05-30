@@ -28,11 +28,11 @@ class Ibmq:
                 print(p)
 
     def run(self: 'Ibmq') -> str:
-        print("Waiting for executing...")
+        print("Waiting for execution...")
         job = execute(self.circuit, self.backend, shots=1024, memory=True)  # TODO use execute everywhere (it transpiles
-        # job = self.backend.run(self.circuit, shots=1024, memory=True)
         return job.result().get_counts(0)
 
     def run_all(self: 'Ibmq') -> str:
-        job = execute(self.circuit, self.backend, shots=1024, memory=True)
+        print("Waiting for execution...")
+        job = execute(self.circuits, self.backend, shots=1024, memory=True)
         return job.result().get_counts()

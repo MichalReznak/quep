@@ -1,12 +1,5 @@
 from pprint import pprint
-
 from qiskit import *
-
-# TODO plot
-# from qiskit.visualization import plot_histogram
-# import matplotlib
-# plot_histogram(output)
-# matplotlib.pyplot.show(block=True)  # To show the graph
 
 
 class Simple:
@@ -26,16 +19,16 @@ class Simple:
             print(self.circuit)
 
     def append_circuit(self: 'Simple', circuit: str, log: bool):
-        self.circuits.append(QuantumCircuit.from_qasm_str(circuit))
+        qasm_circuit = QuantumCircuit.from_qasm_str(circuit)
+        self.circuits.append(qasm_circuit)
 
         if log:
-            for p in self.circuits:
-                print(p)
+            print(qasm_circuit)
 
     def run(self: 'Simple') -> str:
-        job = self.backend.run(self.circuit, shots=1024, memory=True)
+        job = execute(self.circuit, self.backend, shots=1024, memory=True)
         return job.result().get_counts(0)
 
     def run_all(self: 'Simple') -> str:
-        job = self.backend.run(self.circuits, shots=1024, memory=True)
+        job = execute(self.circuits, self.backend, shots=1024, memory=True)
         return job.result().get_counts()

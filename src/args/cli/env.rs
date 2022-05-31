@@ -17,11 +17,17 @@ pub struct CliArgsEnv {
     #[clap(long, env = "QUEP_PROVIDER_PYTHON_DIR", parse(try_from_os_str = parse_from_os_str))]
     pub provider_python_dir: Option<String>,
 
+    #[clap(long, env = "QUEP_PROVIDER_ACCOUNT_ID")]
+    pub provider_account_id: Option<String>,
+
     #[clap(long, env = "QUEP_OUTPUT")]
     pub output: Option<OutputType>,
 
     #[clap(long, env = "QUEP_OUTPUT_SER")]
     pub output_ser: Option<OutputSerType>,
+
+    #[clap(long, env = "QUEP_CIRCUIT_PRETTY")]
+    pub output_pretty: Option<bool>,
 
     #[clap(long, env = "QUEP_CIRCUIT")]
     pub circuit: Option<CircuitType>,

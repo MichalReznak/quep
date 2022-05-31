@@ -58,16 +58,16 @@ class Noisy:
             print(self.circuit)
 
     def append_circuit(self: 'Noisy', circuit: str, log: bool):
-        self.circuits.append(QuantumCircuit.from_qasm_str(circuit))
+        qasm_circuit = QuantumCircuit.from_qasm_str(circuit)
+        self.circuits.append(qasm_circuit)
 
         if log:
-            for p in self.circuits:
-                print(p)
+            print(qasm_circuit)
 
     def run(self: 'Noisy') -> str:
-        job = transpile(self.circuit, self.backend)
-        return self.backend.run(job).result().get_counts(0)
+        job = execute(self.circuit, self.backend, shots=1024, memory=True)
+        return job.result().get_counts(0)
 
     def run_all(self: 'Noisy') -> str:
-        job = self.backend.run(self.circuits, shots=1024, memory=True)
+        job = execute(self.circuits, self.backend, shots=1024, memory=True)
         return job.result().get_counts()

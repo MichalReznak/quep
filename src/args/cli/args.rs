@@ -8,6 +8,9 @@ pub struct CliArgsProvider {
 
     /// Python script files location
     pub python_dir: String,
+
+    /// IBMQ: Account ID
+    pub account_id: String,
 }
 
 #[derive(Debug, Clone, TypedBuilder)]
@@ -16,6 +19,9 @@ pub struct CliArgsOutput {
 
     /// Serialize format
     pub ser: OutputSerType,
+
+    /// Pretty print the output
+    pub pretty: bool,
 }
 
 #[derive(Debug, Clone, TypedBuilder)]

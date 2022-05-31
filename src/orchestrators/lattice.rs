@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use async_trait::async_trait;
-use regex::internal::Inst;
+
 use regex::Regex;
 use snafu::OptionExt;
 use tokio::time::Instant;
@@ -46,12 +46,12 @@ impl Orchestrator for LatticeOrchestrator {
 
         // TODO fix this
         // It runs dummy circuit to make the speed measurement more precise
-        if let Some(circuit) = generator.generate(0, 0, 0, false).await? {
-            provider.set_circuit(circuit.clone()).await?;
-            provider.start_measure();
-            provider.run().await?;
-            provider.stop_measure();
-        }
+        // if let Some(circuit) = generator.generate(0, 0, 0, false).await? {
+        //     provider.set_circuit(circuit.clone()).await?;
+        //     provider.start_measure();
+        //     provider.run().await?;
+        //     provider.stop_measure();
+        // }
 
         println!("Dummy run done");
 

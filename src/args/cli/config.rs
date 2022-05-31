@@ -4,7 +4,6 @@ use serde::{Deserialize, Deserializer, Serialize};
 use super::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
 use crate::utils::dir;
 
-// TODO all should be option
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CliArgsConfig {
@@ -29,6 +28,8 @@ pub struct ProviderConfig {
     #[serde(default)]
     #[serde(deserialize_with = "parse_from_os_str")]
     pub python_dir: Option<String>,
+
+    pub account_id: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Default, Clone)]
@@ -38,7 +39,6 @@ pub struct CircuitConfig {
     pub rand: Option<bool>,
     pub parse: Option<bool>,
     pub source: Option<String>,
-    // TODO add pretty flag
 }
 
 #[derive(Serialize, Deserialize, Default, Clone)]
@@ -46,7 +46,7 @@ pub struct CircuitConfig {
 pub struct OutputConfig {
     pub t: Option<OutputType>,
     pub ser: Option<OutputSerType>,
-    // TODO add pretty flag
+    pub pretty: Option<bool>,
 }
 
 #[derive(Serialize, Deserialize, Default, Clone)]

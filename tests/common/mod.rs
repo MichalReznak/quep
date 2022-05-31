@@ -36,6 +36,7 @@ fn get_orch(t: OrchestratorType) -> CliArgsOrch {
         .size_2(4)
         .iter(4)
         .data(get_dir("./data")?)
+        .collect(false)
         .build()
 }
 
@@ -46,7 +47,7 @@ fn get_prov(t: ProviderType) -> CliArgsProvider {
 
 #[throws]
 fn get_out(t: OutputType) -> CliArgsOutput {
-    CliArgsOutput::builder().t(t).ser(OutputSerType::Json).build()
+    CliArgsOutput::builder().t(t).ser(OutputSerType::Json).pretty(true).build()
 }
 
 #[throws]

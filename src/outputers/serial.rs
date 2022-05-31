@@ -48,14 +48,26 @@ impl SerialOutputer {
 // TODO can be any serialized format
 
 #[throws]
-fn serialize(t: OutputSerType, out: &Output) -> String {
+fn serialize(t: OutputSerType, out: &Output, pretty: bool) -> String {
     use OutputSerType::*;
-    match t {
-        Json => serde_json::to_string_pretty(out)?,
-        Xml => quick_xml::se::to_string(out)?,
-        Yaml => serde_yaml::to_string(out)?,
-        Toml => toml::to_string_pretty(out)?,
-        Ron => ron::to_string(out)?,
+
+    if pretty {
+        match t {
+            Json => serde_json::to_string_pretty(out)?,
+            Xml => quick_xml::se::to_string(out)?,
+            Yaml => serde_yaml::to_string(out)?,
+            Toml => toml::to_string_pretty(out)?,
+            Ron => ron::to_string(out)?,
+        }
+    }
+    else {
+        match t {
+            Json => serde_json::to_string(out)?,
+            Xml => quick_xml::se::to_string(out)?,
+            Yaml => serde_yaml::to_string(out)?,
+            Toml => toml::to_string(out)?,
+            Ron => ron::to_string(out)?,
+        }
     }
 }
 
@@ -92,7 +104,7 @@ impl Outputer for SerialOutputer {
         }
 
         let table = Output::builder().records(table).runtime_ms(runtime.as_millis() as i32).build();
-        let res = serialize(self.args.ser, &table)?;
+        let res = serialize(self.args.ser, &table, self.args.pretty)?;
 
         println!("\nResult:");
         println!("{res}");
@@ -134,7 +146,7 @@ impl Outputer for SerialOutputer {
         }
 
         let table = Output::builder().records(table).runtime_ms(runtime.as_millis() as i32).build();
-        let res = serialize(self.args.ser, &table)?;
+        let res = serialize(self.args.ser, &table, self.args.pretty)?;
 
         println!("\nResult:");
         println!("{res}");
@@ -178,7 +190,7 @@ impl Outputer for SerialOutputer {
         }
 
         let table = Output::builder().records(table).runtime_ms(runtime.as_millis() as i32).build();
-        let res = serialize(self.args.ser, &table)?;
+        let res = serialize(self.args.ser, &table, self.args.pretty)?;
 
         println!("\nResult:");
         println!("{res}");

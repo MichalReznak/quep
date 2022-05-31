@@ -2,6 +2,7 @@
     provider: {
         t: 'Ibmq',
         pythonDir: './python',
+        account_id: '9ee04b444ed1c767fcd01b66027a391d8df5938df51dd27e6eaaed0a45f5da67c19dcfb2f2f46dcff893c3a54d054b4b392e1a54618d8cfea9d70d9f3378ea51',
     },
     circuit: {
         t: 'Mirror',
@@ -11,6 +12,7 @@
     output: {
         t: 'Text',
         ser: 'Json',
+        pretty: true,
     },
     orch: {
         t: 'Lattice',

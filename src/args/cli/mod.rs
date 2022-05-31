@@ -46,6 +46,11 @@ impl CliArgs {
                     .or_else(|| config.provider.python_dir)
                     .unwrap_or_else(|| python_dir),
             )
+            .account_id(
+                clap.provider_account_id
+                    .or_else(|| config.provider.account_id)
+                    .unwrap_or_else(|| "".to_string()),
+            )
             .build();
 
         let output = CliArgsOutput::builder()
@@ -55,6 +60,7 @@ impl CliArgs {
                     .or_else(|| config.output.ser)
                     .unwrap_or_else(|| OutputSerType::Json),
             )
+            .pretty(clap.output_pretty.or_else(|| config.output.pretty).unwrap_or_else(|| true))
             .build();
 
         let circuit = CliArgsCircuit::builder()

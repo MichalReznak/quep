@@ -37,7 +37,7 @@ impl QcProvider for IbmqQcProvider {
             let code = std::fs::read_to_string(&format!("{}/ibmq.py", self.args.python_dir))?;
             let module = PyModule::from_code(py, &code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Ibmq")?.into();
-            let qiskit = qiskit.call0(py)?;
+            let qiskit = qiskit.call1(py, (&self.args.account_id,))?;
 
             qiskit.call_method0(py, "auth")?;
             self.py_instance = Some(qiskit);

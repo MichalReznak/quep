@@ -36,7 +36,7 @@ impl ProgramVisitor for TemplatePrinter {
                 self.visit_decl(decl)?;
             }
         }
-        self.buf.write(format!("\n").as_bytes())?;
+        self.buf.write_all(format!("\n").as_bytes())?;
 
         for decl in &program.decls {
             let decl = decl;
@@ -44,40 +44,40 @@ impl ProgramVisitor for TemplatePrinter {
                 self.visit_decl(decl)?;
             }
         }
-        self.buf.write(format!("\n").as_bytes())?;
+        self.buf.write_all(format!("\n").as_bytes())?;
 
         for decl in &program.decls {
             if matches!(&*decl.inner, Decl::QReg { .. }) {
                 self.visit_decl(decl)?;
             }
         }
-        self.buf.write(format!("\n").as_bytes())?;
+        self.buf.write_all(format!("\n").as_bytes())?;
 
         for decl in &program.decls {
             if matches!(&*decl.inner, Decl::CReg { .. }) {
                 self.visit_decl(decl)?;
             }
         }
-        self.buf.write(format!("\n").as_bytes())?;
+        self.buf.write_all(format!("\n").as_bytes())?;
 
         // Replace statements with predefined strings
-        self.buf.write(format!("%GATES%\n").as_bytes())?;
+        self.buf.write_all(format!("%GATES%\n").as_bytes())?;
 
         // TODO Allow to define based on qreg names
-        self.buf.write(format!("barrier q;\n").as_bytes())?;
+        self.buf.write_all(format!("barrier q;\n").as_bytes())?;
 
-        self.buf.write(format!("%GATES_INV%\n").as_bytes())?;
+        self.buf.write_all(format!("%GATES_INV%\n").as_bytes())?;
 
         // TODO Allow to define based on qreg names
-        self.buf.write(format!("barrier q;\n").as_bytes())?;
+        self.buf.write_all(format!("barrier q;\n").as_bytes())?;
 
-        self.buf.write(format!("measure q -> c;\n").as_bytes())?;
+        self.buf.write_all("measure q -> c;\n".to_string().as_bytes())?;
     }
 
     #[throws(Self::Error)]
     fn visit_include(&mut self, file: &Span<Symbol>) {
         let name = &*file.inner.as_str();
-        self.buf.write(format!("include \"{name}\";\n").as_bytes())?;
+        self.buf.write_all(format!("include \"{name}\";\n").as_bytes())?;
     }
 
     // TODO number is ignored
@@ -88,7 +88,7 @@ impl ProgramVisitor for TemplatePrinter {
         // TODO can fail
         let _i = reg.index.unwrap_or(0);
 
-        self.buf.write(format!("qreg {name}[{}];\n", self.width).as_bytes())?;
+        self.buf.write_all(format!("qreg {name}[{}];\n", self.width).as_bytes())?;
     }
 
     // TODO number is ignored
@@ -98,7 +98,7 @@ impl ProgramVisitor for TemplatePrinter {
         let name = reg.name.as_str();
         let _i = reg.index.unwrap_or(0);
 
-        self.buf.write(format!("creg {name}[{}];\n", self.width).as_bytes())?;
+        self.buf.write_all(format!("creg {name}[{}];\n", self.width).as_bytes())?;
     }
 
     #[throws(Self::Error)]
@@ -118,7 +118,7 @@ impl ProgramVisitor for TemplatePrinter {
         let to_name = &*to.inner.name.as_str();
 
         // TODO support index
-        self.buf.write(format!("measure {from_name} -> {to_name};\n").as_bytes())?;
+        self.buf.write_all(format!("measure {from_name} -> {to_name};\n").as_bytes())?;
     }
 
     // TODO define all other types

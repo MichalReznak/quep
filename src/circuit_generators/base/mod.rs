@@ -95,7 +95,7 @@ pub fn print_circuit(program: &Program, template: String, _size: i32, gates: boo
     }
     else {
         let mut pp = ProgramPrinter::new();
-        pp.visit_program(&program)?;
+        pp.visit_program(program)?;
 
         let mut inv = program.decls.clone();
         inv.reverse();

@@ -1,7 +1,6 @@
 use std::time::Duration;
 
 use async_trait::async_trait;
-
 use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyList};
 use snafu::OptionExt;

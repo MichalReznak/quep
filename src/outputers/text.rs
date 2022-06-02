@@ -99,7 +99,7 @@ impl Outputer for TextOutputer {
         println!("\nResult:");
         print_stdout(table.table())?;
 
-        if let Some(_) = &durations {
+        if durations.is_some() {
             println!("\nRuntime:");
             print_stdout(table_dur.table())?;
         }

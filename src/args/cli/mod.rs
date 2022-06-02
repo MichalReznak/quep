@@ -37,50 +37,37 @@ impl CliArgs {
         let circuit_source = dir("./base.template.qasm")?;
 
         let provider = CliArgsProvider::builder()
-            .t(clap
-                .provider
-                .or_else(|| config.provider.t)
-                .unwrap_or_else(|| ProviderType::Simple))
+            .t(clap.provider.or(config.provider.t).unwrap_or(ProviderType::Simple))
             .python_dir(
-                clap.provider_python_dir
-                    .or_else(|| config.provider.python_dir)
-                    .unwrap_or_else(|| python_dir),
+                clap.provider_python_dir.or(config.provider.python_dir).unwrap_or(python_dir),
             )
             .account_id(
                 clap.provider_account_id
-                    .or_else(|| config.provider.account_id)
-                    .unwrap_or_else(|| "".to_string()),
+                    .or(config.provider.account_id)
+                    .unwrap_or("".to_string()),
             )
             .build();
 
         let output = CliArgsOutput::builder()
-            .t(clap.output.or_else(|| config.output.t).unwrap_or_else(|| OutputType::Text))
-            .ser(
-                clap.output_ser
-                    .or_else(|| config.output.ser)
-                    .unwrap_or_else(|| OutputSerType::Json),
-            )
-            .pretty(clap.output_pretty.or_else(|| config.output.pretty).unwrap_or_else(|| true))
+            .t(clap.output.or(config.output.t).unwrap_or(OutputType::Text))
+            .ser(clap.output_ser.or(config.output.ser).unwrap_or(OutputSerType::Json))
+            .pretty(clap.output_pretty.or(config.output.pretty).unwrap_or(true))
             .build();
 
         let circuit = CliArgsCircuit::builder()
-            .t(clap.circuit.or_else(|| config.circuit.t).unwrap_or_else(|| CircuitType::Basic))
-            .rand(clap.circuit_rand.or_else(|| config.circuit.rand).unwrap_or_else(|| false))
-            .parse(clap.circuit_parse.or_else(|| config.circuit.parse).unwrap_or_else(|| false))
-            .source(
-                clap.circuit_source
-                    .or_else(|| config.circuit.source)
-                    .unwrap_or_else(|| circuit_source),
-            )
+            .t(clap.circuit.or(config.circuit.t).unwrap_or(CircuitType::Basic))
+            .rand(clap.circuit_rand.or(config.circuit.rand).unwrap_or(false))
+            .parse(clap.circuit_parse.or(config.circuit.parse).unwrap_or(false))
+            .source(clap.circuit_source.or(config.circuit.source).unwrap_or(circuit_source))
             .build();
 
         let orch = CliArgsOrch::builder()
-            .t(clap.orch.or_else(|| config.orch.t).unwrap_or_else(|| OrchestratorType::Single))
-            .data(clap.orch_data.or_else(|| config.orch.data).unwrap_or_else(|| orch_data_dir))
-            .iter(clap.orch_iter.or_else(|| config.orch.iter).unwrap_or_else(|| 1))
-            .size(clap.orch_size.or_else(|| config.orch.size).unwrap_or_else(|| 1))
-            .size_2(clap.orch_size_2.or_else(|| config.orch.size_2).unwrap_or_else(|| 1))
-            .collect(clap.orch_collect.or_else(|| config.orch.collect).unwrap_or_else(|| false))
+            .t(clap.orch.or(config.orch.t).unwrap_or(OrchestratorType::Single))
+            .data(clap.orch_data.or(config.orch.data).unwrap_or(orch_data_dir))
+            .iter(clap.orch_iter.or(config.orch.iter).unwrap_or(1))
+            .size(clap.orch_size.or(config.orch.size).unwrap_or(1))
+            .size_2(clap.orch_size_2.or(config.orch.size_2).unwrap_or(1))
+            .collect(clap.orch_collect.or(config.orch.collect).unwrap_or(false))
             .build();
 
         // TODO better?

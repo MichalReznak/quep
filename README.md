@@ -30,3 +30,5 @@ grcov . `
 # TODOs:
 * TODO use thermal relaxation example to create a better noisy simulator
 * TODO extend supported gates with custom defined and their inverse
+* TODO UI?
+* TODO check for valid combinations

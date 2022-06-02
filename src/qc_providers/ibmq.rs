@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use log::debug;
+
 use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyList};
 use pyo3::Python;
@@ -47,13 +47,13 @@ impl QcProvider for IbmqQcProvider {
 
     async fn set_circuit(&mut self, circuit: String) -> Result<(), Error> {
         Python::with_gil(|py| -> Result<_, Error> {
-            self.py_instance.as_ref().context(OutOfBounds)?.call_method1(
-                py,
-                "set_circuit",
-                (circuit, debug()),
-            )?;
+            self.py_instance
+                .as_ref()
+                .context(OutOfBounds)?
+                .call_method0(py, "clear_circuits")?;
             Ok(())
-        })
+        })?;
+        self.append_circuit(circuit).await
     }
 
     async fn append_circuit(&mut self, circuit: String) -> Result<(), Error> {
@@ -68,29 +68,23 @@ impl QcProvider for IbmqQcProvider {
     }
 
     async fn run(&self) -> Result<String, Error> {
-        Python::with_gil(|py| -> Result<_, Error> {
-            let fun = self.py_instance.as_ref().context(OutOfBounds)?.call_method0(py, "run")?;
-            let res = fun.cast_as::<PyDict>(py).map_err(|_| PyDowncastError)?;
-
-            let mut highest = ("".to_string(), 0);
-            for (key, val) in res.iter() {
-                let val: i32 = val.extract()?;
-
-                if val > highest.1 {
-                    highest = (key.to_string(), val);
-                }
-            }
-
-            debug!("{res:#?}");
-            Ok(format!("{}: {}", highest.0, highest.1))
-        })
+        Ok(self.run_all().await?.get(0).unwrap().to_string())
     }
 
     async fn run_all(&self) -> Result<Vec<String>, Error> {
         Python::with_gil(|py| {
             let fun =
                 self.py_instance.as_ref().context(OutOfBounds)?.call_method0(py, "run_all")?;
-            let res = fun.cast_as::<PyList>(py).map_err(|_| PyDowncastError)?;
+
+            // Change to vector
+            // TODO better?
+            let res: Vec<_> = if let Ok(list) = fun.cast_as::<PyList>(py) {
+                list.into_iter().collect()
+            }
+            else {
+                vec![fun.cast_as::<PyDict>(py).map_err(|_| PyDowncastError).unwrap()]
+            };
+
             let res: Vec<_> = res
                 .into_iter()
                 .map(|e| e.cast_as::<PyDict>().map_err(|_| PyDowncastError).unwrap())

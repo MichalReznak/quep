@@ -45,17 +45,13 @@ noise_bit_flip.add_all_qubit_quantum_error(error_gate2_p2, ["cx", "zx"])
 class Noisy:
     def __init__(self):
         self.backend = None
-        self.circuit = None
         self.circuits = []
 
     def auth(self):
         self.backend = AerSimulator(noise_model=noise_bit_flip)
 
-    def set_circuit(self: 'Noisy', circuit: str, log: bool):
-        self.circuit = QuantumCircuit.from_qasm_str(circuit)
-
-        if log:
-            print(self.circuit)
+    def clear_circuits(self: 'Noisy'):
+        self.circuits = []
 
     def append_circuit(self: 'Noisy', circuit: str, log: bool):
         qasm_circuit = QuantumCircuit.from_qasm_str(circuit)
@@ -63,10 +59,6 @@ class Noisy:
 
         if log:
             print(qasm_circuit)
-
-    def run(self: 'Noisy') -> str:
-        job = execute(self.circuit, self.backend, shots=1024, memory=True)
-        return job.result().get_counts(0)
 
     def run_all(self: 'Noisy') -> str:
         job = execute(self.circuits, self.backend, shots=1024, memory=True)

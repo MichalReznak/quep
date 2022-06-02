@@ -1,15 +1,6 @@
 [config]
 default_to_workspace = false
 
-[env]
-TOOLCHAIN_V = "nightly-2022-05-09"
-
-
-[tasks.env]
-script_runner = "@shell"
-script = ['''
-    rustup override set ${TOOLCHAIN_V}
-''']
 
 [tasks.start]
 clear = true
@@ -22,6 +13,7 @@ clear = true
 command = "cargo"
 args = ["watch", "-cx", "clippy"]
 
+
 [tasks.check]
 clear = true
 script_runner = "@shell"
@@ -30,12 +22,14 @@ script = ['''
     cargo fmt -- --check
 ''']
 
+
 [tasks.test]
 clear = true
 script_runner = "@shell"
 script = ['''
     cargo test -- --test-threads=1
 ''']
+
 
 [tasks.clean]
 clear = true

@@ -1,7 +1,6 @@
 use std::time::Duration;
 
 use async_trait::async_trait;
-
 use regex::Regex;
 use snafu::OptionExt;
 use tokio::time::Instant;
@@ -96,7 +95,7 @@ impl Orchestrator for LatticeOrchestrator {
             outputer.output_table(result, None, Instant::now() - runtime).await?;
         }
         else {
-            'main: for i in 0..i {
+            'main2: for i in 0..i {
                 let mut sr = vec![];
 
                 for j in 0..j {
@@ -119,7 +118,7 @@ impl Orchestrator for LatticeOrchestrator {
                         }
                         else {
                             result.push(sr.clone());
-                            break 'main;
+                            break 'main2;
                         }
                     }
 

@@ -5,6 +5,8 @@ use app::CliArgs;
 use fehler::throws;
 use typed_builder::TypedBuilder;
 
+const ACCOUNT_ID: &str = "9ee04b444ed1c767fcd01b66027a391d8df5938df51dd27e6eaaed0a45f5da67c19dcfb2f2f46dcff893c3a54d054b4b392e1a54618d8cfea9d70d9f3378ea51";
+
 #[derive(TypedBuilder)]
 pub struct Config {
     pub orch: OrchestratorType,
@@ -42,7 +44,11 @@ fn get_orch(t: OrchestratorType) -> CliArgsOrch {
 
 #[throws]
 fn get_prov(t: ProviderType) -> CliArgsProvider {
-    CliArgsProvider::builder().t(t).python_dir(get_dir("./python")?).build()
+    CliArgsProvider::builder()
+        .t(t)
+        .python_dir(get_dir("./python")?)
+        .account_id(ACCOUNT_ID.to_string())
+        .build()
 }
 
 #[throws]

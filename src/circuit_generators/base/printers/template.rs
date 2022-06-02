@@ -36,7 +36,7 @@ impl ProgramVisitor for TemplatePrinter {
                 self.visit_decl(decl)?;
             }
         }
-        self.buf.write_all(format!("\n").as_bytes())?;
+        self.buf.write_all("\n".as_bytes())?;
 
         for decl in &program.decls {
             let decl = decl;
@@ -44,34 +44,34 @@ impl ProgramVisitor for TemplatePrinter {
                 self.visit_decl(decl)?;
             }
         }
-        self.buf.write_all(format!("\n").as_bytes())?;
+        self.buf.write_all("\n".as_bytes())?;
 
         for decl in &program.decls {
             if matches!(&*decl.inner, Decl::QReg { .. }) {
                 self.visit_decl(decl)?;
             }
         }
-        self.buf.write_all(format!("\n").as_bytes())?;
+        self.buf.write_all("\n".as_bytes())?;
 
         for decl in &program.decls {
             if matches!(&*decl.inner, Decl::CReg { .. }) {
                 self.visit_decl(decl)?;
             }
         }
-        self.buf.write_all(format!("\n").as_bytes())?;
+        self.buf.write_all("\n".as_bytes())?;
 
         // Replace statements with predefined strings
-        self.buf.write_all(format!("%GATES%\n").as_bytes())?;
+        self.buf.write_all("%GATES%\n".as_bytes())?;
 
         // TODO Allow to define based on qreg names
-        self.buf.write_all(format!("barrier q;\n").as_bytes())?;
+        self.buf.write_all("barrier q;\n".as_bytes())?;
 
-        self.buf.write_all(format!("%GATES_INV%\n").as_bytes())?;
+        self.buf.write_all("%GATES_INV%\n".as_bytes())?;
 
         // TODO Allow to define based on qreg names
-        self.buf.write_all(format!("barrier q;\n").as_bytes())?;
+        self.buf.write_all("barrier q;\n".as_bytes())?;
 
-        self.buf.write_all("measure q -> c;\n".to_string().as_bytes())?;
+        self.buf.write_all("measure q -> c;\n".as_bytes())?;
     }
 
     #[throws(Self::Error)]

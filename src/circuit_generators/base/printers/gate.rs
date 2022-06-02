@@ -42,21 +42,21 @@ impl GateWriter for GatePrinter {
 
         let mut lock = self.buf.lock().unwrap();
         let buf = lock.get_mut();
-        buf.write(format!("cx {copy}, {xor};\n").as_bytes())?;
+        buf.write_all(format!("cx {copy}, {xor};\n").as_bytes())?;
     }
 
     #[throws(Self::Error)]
     fn write_u(&mut self, theta: Value, phi: Value, lambda: Value, reg: usize) {
         let mut lock = self.buf.lock().unwrap();
         let buf = lock.get_mut();
-        buf.write(format!("u({theta}, {phi}, {lambda}) {reg}\n").as_bytes())?;
+        buf.write_all(format!("u({theta}, {phi}, {lambda}) {reg}\n").as_bytes())?;
     }
 
     #[throws(Self::Error)]
     fn write_opaque(&mut self, name: &Symbol, _: &[Value], _: &[usize]) {
         let mut lock = self.buf.lock().unwrap();
         let buf = lock.get_mut();
-        buf.write(format!("opaque gate {name}\n").as_bytes())?;
+        buf.write_all(format!("opaque gate {name}\n").as_bytes())?;
     }
 
     #[throws(Self::Error)]
@@ -64,34 +64,34 @@ impl GateWriter for GatePrinter {
         // TODO
         let mut lock = self.buf.lock().unwrap();
         let buf = lock.get_mut();
-        buf.write("\n".as_bytes())?;
+        buf.write_all("\n".as_bytes())?;
     }
 
     #[throws(Self::Error)]
     fn write_measure(&mut self, from: usize, to: usize) {
         let mut lock = self.buf.lock().unwrap();
         let buf = lock.get_mut();
-        buf.write(format!("measure {from} -> {to}\n").as_bytes())?;
+        buf.write_all(format!("measure {from} -> {to}\n").as_bytes())?;
     }
 
     #[throws(Self::Error)]
     fn write_reset(&mut self, reg: usize) {
         let mut lock = self.buf.lock().unwrap();
         let buf = lock.get_mut();
-        buf.write(format!("reset {reg}\n").as_bytes())?;
+        buf.write_all(format!("reset {reg}\n").as_bytes())?;
     }
 
     #[throws(Self::Error)]
     fn start_conditional(&mut self, reg: usize, count: usize, value: u64) {
         let mut lock = self.buf.lock().unwrap();
         let buf = lock.get_mut();
-        buf.write(format!("if ({reg}:{count} == {value}) {{\n").as_bytes())?;
+        buf.write_all(format!("if ({reg}:{count} == {value}) {{\n").as_bytes())?;
     }
 
     #[throws(Self::Error)]
     fn end_conditional(&mut self) {
         let mut lock = self.buf.lock().unwrap();
         let buf = lock.get_mut();
-        buf.write(format!("}}\n").as_bytes())?;
+        buf.write_all("}}\n".as_bytes())?;
     }
 }

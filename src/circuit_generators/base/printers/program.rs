@@ -4,6 +4,7 @@ use std::io::{BufWriter, Write};
 use fehler::throws;
 use openqasm::{Expr, ProgramVisitor, Reg, Span, Stmt, Symbol};
 use snafu::OptionExt;
+use std::fmt::Write as _;
 
 use crate::error::OutOfBounds;
 use crate::Error;
@@ -56,23 +57,24 @@ impl ProgramVisitor for ProgramPrinter {
         let args: Vec<_> =
             args.into_iter().map(|e| format!("{}[{}]", e.name, e.index.unwrap())).collect();
         let (last, args) = args.split_last().context(OutOfBounds)?;
-        let args: Vec<_> = args.into_iter().map(|e| format!("{e}, ")).collect();
+        let args: Vec<_> = args.iter().map(|e| format!("{e}, ")).collect();
 
         let mut a = String::new();
         for arg in args {
             a += &arg;
         }
-        a += &format!("{last};");
+
+        write!(&mut a, "{last}")?;
 
         let name = (&**name).as_str();
 
         let name = if let Some(ref gates) = self.inverse_gates {
-            gates.get(&name).unwrap_or_else(|| &name)
+            gates.get(&name).unwrap_or(&name)
         }
         else {
             name
         };
 
-        self.buf.write(format!("{} {}\n", &name, a).as_bytes())?;
+        self.buf.write_all(format!("{} {}\n", &name, a).as_bytes())?;
     }
 }

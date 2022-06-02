@@ -94,36 +94,36 @@ impl CircuitGenerator for MirrorCircuitGenerator {
                 else {
                     let mut s = String::new();
                     if c_gate_index < c_len {
-                        write!(&mut half_cir, "{} q[{}];\n", clifford_gates[c_gate_index], ii)?;
-                        write!(&mut s, "{} q[{}];\n", clifford_gates_inv[c_gate_index], ii)?;
+                        writeln!(&mut half_cir, "{} q[{}];", clifford_gates[c_gate_index], ii)?;
+                        writeln!(&mut s, "{} q[{}];", clifford_gates_inv[c_gate_index], ii)?;
                         a += 1;
                     }
                     // NO space for double gate
                     else if ii == i - 1 {
-                        write!(
+                        writeln!(
                             &mut half_cir,
-                            "{} q[{}];\n",
+                            "{} q[{}];",
                             clifford_gates[c_gate_index - c_len],
                             ii
                         )?;
-                        write!(
+                        writeln!(
                             &mut s,
-                            "{} q[{}];\n",
+                            "{} q[{}];",
                             clifford_gates_inv[c_gate_index - c_len],
                             ii
                         )?;
                     }
                     else {
-                        write!(
+                        writeln!(
                             &mut half_cir,
-                            "{} q[{}], q[{}];\n",
+                            "{} q[{}], q[{}];",
                             clifford_gates_2[c_gate_index - c_len],
                             ii,
                             ii + 1
                         )?;
-                        write!(
+                        writeln!(
                             &mut s,
-                            "{} q[{}], q[{}];\n",
+                            "{} q[{}], q[{}];",
                             clifford_gates_2[c_gate_index - c_len],
                             ii,
                             ii + 1
@@ -139,7 +139,7 @@ impl CircuitGenerator for MirrorCircuitGenerator {
                 write!(&mut s, "{} q[{}];\n", pauli_gates[p_gate_index], ii)?;
                 inv_gates.push(s);
             }
-            write!(&mut half_cir, "\n")?;
+            writeln!(&mut half_cir)?;
         }
         let circuit = circuit.replace("%HALF_DEPTH_CIRCUIT%", &half_cir);
 

@@ -52,8 +52,8 @@ fn get_base_circ(path: &str) -> Result<Program, Error> {
 #[throws]
 pub fn parse_circuit(program: &Program, depth: i32, width: i32) -> Vec<Span<Decl>> {
     let mut program_parser = ProgramParser::new(depth, width);
-    program_parser.visit_program(&program)?;
-    dbg!(program_parser.parsed_gates(&program))
+    program_parser.visit_program(program)?;
+    program_parser.parsed_gates(program)
 }
 
 #[throws]
@@ -69,7 +69,7 @@ pub fn print_circuit(program: &Program, template: String, _size: i32, gates: boo
         // TODO cannot be run, does not output runnable circuit
         let buf = Rc::new(Mutex::new(BufWriter::new(vec![])));
         let mut gp = Linearize::new(GatePrinter::new(buf.clone()));
-        gp.visit_program(&program).unwrap();
+        gp.visit_program(program).unwrap();
         let mut lock = buf.lock().unwrap();
         let buf = lock.get_mut();
         let gp_result = String::from_utf8(buf.clone())?;

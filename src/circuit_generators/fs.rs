@@ -56,7 +56,7 @@ impl CircuitGenerator for FsCircuitGenerator {
                 Err(crate::Error::SomeError)
             }
             else {
-                Ok(Some(circuit.to_string()))
+                Ok(Some(circuit))
             }
         }
     }

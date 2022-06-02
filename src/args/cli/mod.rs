@@ -44,7 +44,7 @@ impl CliArgs {
             .account_id(
                 clap.provider_account_id
                     .or(config.provider.account_id)
-                    .unwrap_or("".to_string()),
+                    .unwrap_or_else(|| "".to_string()),
             )
             .build();
 

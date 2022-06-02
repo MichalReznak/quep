@@ -71,7 +71,7 @@ impl CircuitGenerator for VolumeCircuitGenerator {
             Err(crate::Error::SomeError)
         }
         else {
-            Ok(Some(circuit.to_string()))
+            Ok(Some(circuit))
         }
     }
 }

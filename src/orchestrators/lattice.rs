@@ -83,7 +83,7 @@ impl Orchestrator for LatticeOrchestrator {
                     let c = res.get(ci as usize).unwrap();
 
                     let mut val = Value::builder().result("".to_string()).correct(0).build();
-                    let c = re.captures(&c).context(RegexCapture).unwrap();
+                    let c = re.captures(c).context(RegexCapture).unwrap();
                     val.result = c["result"].parse::<String>().unwrap_infallible();
                     val.correct = c["val"].parse::<i32>().unwrap();
                     sr.push(val);

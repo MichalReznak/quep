@@ -14,7 +14,6 @@
 
 use chooser::Chooser;
 use fehler::throws;
-use log::info;
 use traits::Orchestrator;
 
 mod chooser;
@@ -43,7 +42,7 @@ impl Quep {
     #[throws]
     pub async fn new(args: CliArgs) -> Self {
         pyvenv::PyVenv::init(&args.provider.python_dir).await?;
-        info!("Done");
+        println!("Done");
         Self { args }
     }
 
@@ -57,7 +56,7 @@ impl Quep {
 
         pyvenv::PyVenv::init(&args.provider.python_dir).await?;
 
-        info!("Done");
+        println!("Done");
         Self { args }
     }
 

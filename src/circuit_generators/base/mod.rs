@@ -7,6 +7,7 @@ use std::sync::Mutex;
 use async_trait::async_trait;
 use collection_literals::collection;
 use fehler::{throw, throws};
+use log::debug;
 use openqasm::{
     Decl, Errors, GenericError, Linearize, Parser, Program, ProgramVisitor, SourceCache, Span,
 };
@@ -157,12 +158,12 @@ impl CircuitGenerator for BaseCircuitGenerator {
         // TODO create template from base circuit and then include parsed gates
         let mut tp = TemplatePrinter::new(width);
         tp.visit_program(&program2)?;
-        println!("{}", tp.result()?);
+        debug!("{}", tp.result()?);
 
         program2.decls = parse_circuit(&program2, depth, width)?;
 
         let print_program = print_circuit(&program2, tp.result()?, width, self.args.parse)?;
-        println!("{print_program}");
+        debug!("{print_program}");
 
         Ok(Some(print_program))
     }

@@ -1,6 +1,7 @@
 use std::time::Duration;
 
 use async_trait::async_trait;
+use log::info;
 use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyList};
 use snafu::OptionExt;
@@ -92,7 +93,7 @@ impl QcProvider for NoisyQcProvider {
                 .map(|e| {
                     let mut highest = ("".to_string(), 0);
                     for (key, val) in e.into_iter() {
-                        println!("{key:#?}, {val:#?}");
+                        info!("{key:#?}, {val:#?}");
                         let val: i32 = val.extract().unwrap();
 
                         if val > highest.1 {

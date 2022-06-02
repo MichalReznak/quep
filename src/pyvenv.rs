@@ -1,7 +1,6 @@
 use std::path::Path;
 
 use fehler::throws;
-use log::info;
 use pyo3::prelude::*;
 use tokio::process::Command;
 
@@ -19,14 +18,14 @@ impl PyVenv {
 
         if !Path::new(&venv_dir).exists() {
             // install .venv
-            info!("Installing virtualenv...");
+            println!("Installing virtualenv...");
             Command::new("python").args(["-m", "venv", &venv_dir]).spawn()?.wait().await?;
         }
 
         // Check if qiskit exists
         if !Path::new(&format!("{}/cmake", &venv_dir)).exists() {
             // run in venv pip install
-            info!("Installing qiskit...");
+            println!("Installing qiskit...");
             Command::new(&pip).args(["install", "-r", &req]).spawn()?.wait().await?;
         }
 

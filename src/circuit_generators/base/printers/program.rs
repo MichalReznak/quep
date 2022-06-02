@@ -37,7 +37,7 @@ impl ProgramPrinter {
 }
 
 impl ProgramVisitor for ProgramPrinter {
-    type Error = crate::Error;
+    type Error = Error;
 
     #[throws(Self::Error)]
     fn visit_gate_def(
@@ -66,7 +66,7 @@ impl ProgramVisitor for ProgramPrinter {
             a += &arg;
         }
 
-        write!(&mut a, "{last}")?;
+        write!(&mut a, "{last};")?;
 
         let name = (&**name).as_str();
 

@@ -1,6 +1,7 @@
 use std::path::Path;
 
 use async_trait::async_trait;
+use log::error;
 use openqasm as oq;
 use oq::GenericError;
 use walkdir::{DirEntry, WalkDir};
@@ -52,7 +53,7 @@ impl CircuitGenerator for FsCircuitGenerator {
             };
             if let Err(errors) = check {
                 errors.print(&mut cache)?;
-                println!("{errors:#?}");
+                error!("{errors:#?}");
                 Err(crate::Error::SomeError)
             }
             else {

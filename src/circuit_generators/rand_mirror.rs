@@ -76,7 +76,7 @@ impl CircuitGenerator for RandMirrorCircuitGenerator {
 
         let mut resets = String::new();
         for i in 0..i {
-            write!(&mut resets, "reset q[{}];\n", i)?;
+            writeln!(&mut resets, "reset q[{}];", i)?;
         }
         let circuit = circuit.replace("%RESET%", &resets);
 

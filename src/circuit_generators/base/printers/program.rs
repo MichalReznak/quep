@@ -1,10 +1,10 @@
 use std::collections::HashMap;
+use std::fmt::Write as _;
 use std::io::{BufWriter, Write};
 
 use fehler::throws;
 use openqasm::{Expr, ProgramVisitor, Reg, Span, Stmt, Symbol};
 use snafu::OptionExt;
-use std::fmt::Write as _;
 
 use crate::error::OutOfBounds;
 use crate::Error;
@@ -52,10 +52,12 @@ impl ProgramVisitor for ProgramPrinter {
 
     #[throws(Self::Error)]
     fn visit_gate(&mut self, name: &Span<Symbol>, _params: &[Span<Expr>], args: &[Span<Reg>]) {
-        let args: Vec<_> = (*args).iter().map(|e| &**e).collect();
+        let args: Vec<_> = (*args)
+            .iter()
+            .map(|e| &**e)
+            .map(|e| format!("{}[{}]", e.name, e.index.unwrap()))
+            .collect();
 
-        let args: Vec<_> =
-            args.into_iter().map(|e| format!("{}[{}]", e.name, e.index.unwrap())).collect();
         let (last, args) = args.split_last().context(OutOfBounds)?;
         let args: Vec<_> = args.iter().map(|e| format!("{e}, ")).collect();
 

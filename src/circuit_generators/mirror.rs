@@ -69,7 +69,7 @@ impl CircuitGenerator for MirrorCircuitGenerator {
 
         let mut resets = String::new();
         for i in 0..i {
-            write!(&mut resets, "reset q[{}];\n", i)?;
+            writeln!(&mut resets, "reset q[{}];", i)?;
         }
         let circuit = circuit.replace("%RESET%", &resets);
 
@@ -135,8 +135,8 @@ impl CircuitGenerator for MirrorCircuitGenerator {
                 }
 
                 let mut s = String::new();
-                write!(&mut half_cir, "{} q[{}];\n", pauli_gates[p_gate_index], ii)?;
-                write!(&mut s, "{} q[{}];\n", pauli_gates[p_gate_index], ii)?;
+                writeln!(&mut half_cir, "{} q[{}];", pauli_gates[p_gate_index], ii)?;
+                writeln!(&mut s, "{} q[{}];", pauli_gates[p_gate_index], ii)?;
                 inv_gates.push(s);
             }
             writeln!(&mut half_cir)?;

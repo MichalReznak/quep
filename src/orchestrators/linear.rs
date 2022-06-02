@@ -1,6 +1,7 @@
 use std::time::Duration;
 
 use async_trait::async_trait;
+use itertools::Itertools;
 use regex::Regex;
 use snafu::OptionExt;
 use tokio::time::Instant;
@@ -50,19 +51,21 @@ impl Orchestrator for LinearOrchestrator {
             provider.start_measure();
             provider.run().await?;
             provider.stop_measure();
+            provider.clear_circuits()?;
         }
 
         println!("Dummy run done");
         let runtime = Instant::now();
 
         if self.args.collect {
-            // TODO add iterations
             'main: for j in 0..i {
-                if let Some(c) = generator.generate(depth - 1, j, 1 /* TODO */, false).await? {
-                    provider.append_circuit(c.clone()).await?;
-                }
-                else {
-                    break 'main;
+                for ii in 0..iter {
+                    if let Some(c) = generator.generate(depth - 1, j, ii, false).await? {
+                        provider.append_circuit(c.clone()).await?;
+                    }
+                    else {
+                        break 'main;
+                    }
                 }
             }
 
@@ -71,13 +74,18 @@ impl Orchestrator for LinearOrchestrator {
             let res = provider.run_all().await?;
             time += provider.stop_measure();
 
-            result = res
+            let result = res
+                .into_iter()
+                .chunks(iter as usize)
                 .into_iter()
                 .map(|res| {
                     let mut val = Value::builder().result("".to_string()).correct(0).build();
-                    let c = re.captures(&res).context(RegexCapture).unwrap();
-                    val.result = c["result"].parse::<String>().unwrap_infallible();
-                    val.correct = c["val"].parse::<i32>().unwrap();
+                    for r in res {
+                        let c = re.captures(&r).context(RegexCapture).unwrap();
+                        val.result = c["result"].parse::<String>().unwrap_infallible();
+                        val.correct += c["val"].parse::<i32>().unwrap();
+                    }
+                    val.correct /= iter;
                     val
                 })
                 .collect();
@@ -107,16 +115,14 @@ impl Orchestrator for LinearOrchestrator {
                     else {
                         break 'main2;
                     }
+                }
+                val.correct /= iter;
 
-                    val.correct /= iter;
+                durations.push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO
+                result.push(val.clone());
 
-                    durations
-                        .push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO
-                    result.push(val.clone());
-
-                    if (val.correct as f64) <= 1024.0 * (2.0 / 3.0) {
-                        break;
-                    }
+                if (val.correct as f64) <= 1024.0 * (2.0 / 3.0) {
+                    break;
                 }
             }
 

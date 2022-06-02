@@ -49,42 +49,72 @@ impl Orchestrator for SingleOrchestrator {
             provider.start_measure();
             provider.run().await?;
             provider.stop_measure();
+            provider.clear_circuits()?;
         }
 
         println!("Dummy run done");
         let runtime = Instant::now();
 
-        let mut sr = vec![];
-
-        let mut time = Duration::from_micros(0);
-        let mut val = Value::builder().result("".to_string()).correct(0).build();
-        for ii in 0..iter {
-            if let Some(circuit) = generator.generate(i, j, ii, false).await? {
-                // TODO if I do a multiple iterations and one falls below limit, how to
-                // solve this?
-                provider.set_circuit(circuit.clone()).await?;
-
-                provider.start_measure();
-                let res = provider.run().await?;
-                time += provider.stop_measure();
-
-                let c = re.captures(&res).context(RegexCapture)?;
-                // TODO check if result is the same
-                val.result = c["result"].parse::<String>().unwrap_infallible();
-
-                val.correct += c["val"].parse::<i32>()?;
+        if self.args.collect {
+            for ii in 0..iter {
+                if let Some(c) = generator.generate(i, j, ii, false).await? {
+                    provider.append_circuit(c.clone()).await?;
+                }
+                else {
+                    break;
+                }
             }
+
+            let mut time = Duration::from_micros(0);
+
+            provider.start_measure();
+            let res = provider.run_all().await?;
+            time += provider.stop_measure();
+
+            let mut val = Value::builder().result("".to_string()).correct(0).build();
+            for r in res {
+                let c = re.captures(&r).context(RegexCapture).unwrap();
+                val.result = c["result"].parse::<String>().unwrap_infallible();
+                val.correct += c["val"].parse::<i32>().unwrap();
+            }
+            val.correct /= iter;
+
+            // get measured results
+            // output -> Outputer
+            outputer.output_table(vec![vec![val]], None, Instant::now() - runtime).await?;
         }
-        val.correct /= iter;
+        else {
+            let mut sr = vec![];
+            let mut time = Duration::from_micros(0);
+            let mut val = Value::builder().result("".to_string()).correct(0).build();
 
-        durations.push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO
-        sr.push(val.clone());
+            for ii in 0..iter {
+                if let Some(circuit) = generator.generate(i, j, ii, false).await? {
+                    // TODO if I do a multiple iterations and one falls below limit, how to
+                    // solve this?
+                    provider.set_circuit(circuit.clone()).await?;
 
-        result.push(sr.clone());
+                    provider.start_measure();
+                    let res = provider.run().await?;
+                    time += provider.stop_measure();
 
-        // get measured results
-        // output -> Outputer
-        outputer.output_table(result, Some(durations), Instant::now() - runtime).await?; // TODO
+                    let c = re.captures(&res).context(RegexCapture)?;
+                    // TODO check if result is the same
+                    val.result = c["result"].parse::<String>().unwrap_infallible();
+                    val.correct += c["val"].parse::<i32>()?;
+                }
+            }
+            val.correct /= iter;
+
+            durations.push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO
+            sr.push(val.clone());
+
+            result.push(sr.clone());
+
+            // get measured results
+            // output -> Outputer
+            outputer.output_table(result, Some(durations), Instant::now() - runtime).await?;
+        }
 
         Ok(())
     }

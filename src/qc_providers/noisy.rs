@@ -69,6 +69,16 @@ impl QcProvider for NoisyQcProvider {
         })
     }
 
+    fn clear_circuits(&mut self) -> Result<(), Error> {
+        Python::with_gil(|py| -> Result<_, Error> {
+            self.py_instance
+                .as_ref()
+                .context(OutOfBounds)?
+                .call_method0(py, "clear_circuits")?;
+            Ok(())
+        })
+    }
+
     async fn run(&self) -> Result<String, Error> {
         Ok(self.run_all().await?.get(0).unwrap().to_string())
     }

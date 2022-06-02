@@ -24,6 +24,8 @@ pub trait QcProvider {
     async fn set_circuit(&mut self, circuit: String) -> Result<(), Error>;
     async fn append_circuit(&mut self, circuit: String) -> Result<(), Error>;
 
+    fn clear_circuits(&mut self) -> Result<(), Error>;
+
     async fn run(&self) -> Result<String, Error>;
     async fn run_all(&self) -> Result<Vec<String>, Error>;
 

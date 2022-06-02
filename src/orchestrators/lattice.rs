@@ -50,6 +50,7 @@ impl Orchestrator for LatticeOrchestrator {
             provider.start_measure();
             provider.run().await?;
             provider.stop_measure();
+            provider.clear_circuits()?;
         }
 
         println!("Dummy run done");
@@ -61,11 +62,13 @@ impl Orchestrator for LatticeOrchestrator {
             // TODO add iterations
             'main: for i in 0..i {
                 for j in 0..j {
-                    if let Some(c) = generator.generate(i, j, 0 /* TODO iter */, false).await? {
-                        provider.append_circuit(c.clone()).await?;
-                    }
-                    else {
-                        break 'main;
+                    for ii in 0..iter {
+                        if let Some(c) = generator.generate(i, j, ii, false).await? {
+                            provider.append_circuit(c.clone()).await?;
+                        }
+                        else {
+                            break 'main;
+                        }
                     }
                 }
             }
@@ -79,13 +82,17 @@ impl Orchestrator for LatticeOrchestrator {
                 let mut sr = vec![];
 
                 for jj in 0..j {
-                    let ci = (ii * j) + jj;
-                    let c = res.get(ci as usize).unwrap();
+                    let ci = (ii * j * iter) + jj;
+                    let res = res.get((ci as usize)..(ci as usize + (iter as usize))).unwrap();
 
                     let mut val = Value::builder().result("".to_string()).correct(0).build();
-                    let c = re.captures(c).context(RegexCapture).unwrap();
-                    val.result = c["result"].parse::<String>().unwrap_infallible();
-                    val.correct = c["val"].parse::<i32>().unwrap();
+                    for r in res {
+                        let c = re.captures(&r).context(RegexCapture).unwrap();
+                        val.result = c["result"].parse::<String>().unwrap_infallible();
+                        val.correct += c["val"].parse::<i32>().unwrap();
+                    }
+                    val.correct /= iter;
+
                     sr.push(val);
                 }
 

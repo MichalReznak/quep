@@ -84,7 +84,7 @@ impl Orchestrator for VolumeOrchestrator {
         }
         else {
             // TODO for now it generates empty for not computed ones
-            for i in 0..width {
+            'main: for i in 0..width {
                 let mut time = Duration::from_micros(0);
                 let mut val = Value::builder().result("".to_string()).correct(0).build();
                 for ii in 0..iter {
@@ -98,12 +98,15 @@ impl Orchestrator for VolumeOrchestrator {
                         time += provider.stop_measure();
 
                         let c = re.captures(&res).context(RegexCapture)?;
+                        // TODO check if result is the same
                         val.result = c["result"].parse::<String>().unwrap_infallible();
-                        val.correct = c["val"].parse::<i32>()?;
+                        val.correct += c["val"].parse::<i32>()?;
                     }
                     else {
-                        break;
+                        break 'main;
                     }
+
+                    val.correct /= iter;
 
                     durations
                         .push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO

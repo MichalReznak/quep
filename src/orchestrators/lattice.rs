@@ -45,12 +45,12 @@ impl Orchestrator for LatticeOrchestrator {
 
         // TODO fix this
         // It runs dummy circuit to make the speed measurement more precise
-        // if let Some(circuit) = generator.generate(0, 0, 0, false).await? {
-        //     provider.set_circuit(circuit.clone()).await?;
-        //     provider.start_measure();
-        //     provider.run().await?;
-        //     provider.stop_measure();
-        // }
+        if let Some(circuit) = generator.generate(0, 0, 0, false).await? {
+            provider.set_circuit(circuit.clone()).await?;
+            provider.start_measure();
+            provider.run().await?;
+            provider.stop_measure();
+        }
 
         println!("Dummy run done");
 
@@ -113,14 +113,17 @@ impl Orchestrator for LatticeOrchestrator {
 
                             // TODO value is always overwritten in all orch
                             let c = re.captures(&res).context(RegexCapture)?;
+                            // TODO check if result is the same
                             val.result = c["result"].parse::<String>().unwrap_infallible();
-                            val.correct = c["val"].parse::<i32>()?;
+                            val.correct += c["val"].parse::<i32>()?;
                         }
                         else {
                             result.push(sr.clone());
                             break 'main2;
                         }
                     }
+
+                    val.correct /= iter;
 
                     durations
                         .push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO

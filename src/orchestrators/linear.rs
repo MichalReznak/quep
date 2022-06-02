@@ -85,11 +85,11 @@ impl Orchestrator for LinearOrchestrator {
             outputer.output_linear(result, None, depth, Instant::now() - runtime).await?;
         }
         else {
-            for j in 0..i {
-                for ii in 0..iter {
-                    let mut time = Duration::from_micros(0);
-                    let mut val = Value::builder().result("".to_string()).correct(0).build();
+            'main2: for j in 0..i {
+                let mut time = Duration::from_micros(0);
+                let mut val = Value::builder().result("".to_string()).correct(0).build();
 
+                for ii in 0..iter {
                     // TODO somehow better allow to define circuit width
                     // (or if it should increase width instead of depth?)
                     if let Some(circuit) = generator.generate(depth - 1, j, ii, false).await? {
@@ -100,12 +100,15 @@ impl Orchestrator for LinearOrchestrator {
                         time += provider.stop_measure();
 
                         let c = re.captures(&res).context(RegexCapture)?;
+                        // TODO check if result is the same
                         val.result = c["result"].parse::<String>().unwrap_infallible();
-                        val.correct = c["val"].parse::<i32>()?;
+                        val.correct += c["val"].parse::<i32>()?;
                     }
                     else {
-                        break;
+                        break 'main2;
                     }
+
+                    val.correct /= iter;
 
                     durations
                         .push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO

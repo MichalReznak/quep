@@ -93,9 +93,8 @@ impl BaseCircuitGenerator {
             gp.visit_program(program).unwrap();
             let mut lock = buf.lock().unwrap();
             let buf = lock.get_mut();
-            let gp_result = String::from_utf8(buf.clone())?;
+            String::from_utf8(buf.clone())?
 
-            gp_result
             // TODO inverse only gates
             // let mut inv = program.decls.clone();
             // inv.reverse();

@@ -30,10 +30,7 @@ impl ProgramParser {
             .clone()
             .into_iter()
             .filter(|e| match &*e.inner {
-                Decl::Stmt(aa) => match &**aa {
-                    Stmt::Gate { .. } | Stmt::Barrier { .. } => true,
-                    _ => false,
-                },
+                Decl::Stmt(aa) => matches!(&**aa, Stmt::Gate { .. } | Stmt::Barrier { .. }),
                 _ => false,
             })
             .enumerate()

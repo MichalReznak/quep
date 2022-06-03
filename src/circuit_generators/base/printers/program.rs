@@ -67,7 +67,7 @@ impl ProgramVisitor for ProgramPrinter {
             .collect();
 
         let (last, args) = args.split_last().context(OutOfBounds)?;
-        let args: Vec<_> = args.into_iter().map(|e| format!("{e}, ")).collect();
+        let args: Vec<_> = args.iter().map(|e| format!("{e}, ")).collect();
 
         let mut a = String::new();
         for arg in args {

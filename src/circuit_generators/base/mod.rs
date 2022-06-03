@@ -1,11 +1,11 @@
-use std::collections::HashMap;
+
 use std::io::BufWriter;
 use std::path::Path;
 use std::rc::Rc;
 use std::sync::Mutex;
 
 use async_trait::async_trait;
-use collection_literals::collection;
+
 use fehler::{throw, throws};
 use log::debug;
 use openqasm::{
@@ -57,63 +57,6 @@ pub fn parse_circuit(program: &Program, depth: i32, width: i32) -> Vec<Span<Decl
     program_parser.parsed_gates(program)
 }
 
-#[throws]
-pub fn print_circuit(program: &Program, template: String, _size: i32, gates: bool) -> String {
-    // TODO allow dynamic definition
-    let inverse_gates = collection! {
-        HashMap<&str, &str>;
-        "s" => "sdg",
-        "t" => "tdg",
-    };
-
-    if gates {
-        // TODO cannot be run, does not output runnable circuit
-        let buf = Rc::new(Mutex::new(BufWriter::new(vec![])));
-        let mut gp = Linearize::new(GatePrinter::new(buf.clone()));
-        gp.visit_program(program).unwrap();
-        let mut lock = buf.lock().unwrap();
-        let buf = lock.get_mut();
-        let gp_result = String::from_utf8(buf.clone())?;
-
-        gp_result
-        // TODO inverse only gates
-        // let mut inv = program.decls.clone();
-        // inv.reverse();
-        //
-        // let mut program = program.clone();
-        // program.decls = inv; // TODO inverse gates
-        // let buf = Rc::new(Mutex::new(BufWriter::new(vec![])));
-        //
-        // let mut gp_inv = Linearize::new(GatePrinter::new(buf.clone()));
-        // gp_inv.visit_program(&program)?;
-        // let mut lock = buf.lock().unwrap();
-        // let buf = lock.get_mut();
-        // let gp_inv_result = String::from_utf8(buf.clone())?;
-
-        // CIRCUIT_RESULT.replace("%SIZE%", &size.to_string())
-        // .replace("%CIRCUIT%", &gp_result)
-        // .replace("%CIRCUIT_INV%", &gp_inv_result)
-    }
-    else {
-        let mut pp = ProgramPrinter::new();
-        pp.visit_program(program)?;
-
-        let mut inv = program.decls.clone();
-        inv.reverse();
-
-        let mut program = program.clone();
-        program.decls = inv;
-
-        // TODO only inverse gates
-        let mut pp_inv = ProgramPrinter::with_gates(inverse_gates);
-        pp_inv.visit_program(&program)?;
-
-        template
-            .replace("%GATES%", &pp.result()?)
-            .replace("%GATES_INV%", &pp_inv.result()?)
-    }
-}
-
 // NOTES:
 // order of reg defines order in circuit
 // barrier inputs I-gates to unset ones
@@ -135,6 +78,62 @@ pub struct BaseCircuitGenerator {
 impl BaseCircuitGenerator {
     pub fn new(args: &CliArgsCircuit) -> Self {
         Self { args: args.clone() }
+    }
+
+    #[throws]
+    fn print_circuit(
+        &self,
+        program: &Program,
+        template: String,
+        _size: i32,
+        parse: bool,
+    ) -> String {
+        if parse {
+            // TODO cannot be run, does not output runnable circuit
+            let buf = Rc::new(Mutex::new(BufWriter::new(vec![])));
+            let mut gp = Linearize::new(GatePrinter::new(buf.clone()));
+            gp.visit_program(program).unwrap();
+            let mut lock = buf.lock().unwrap();
+            let buf = lock.get_mut();
+            let gp_result = String::from_utf8(buf.clone())?;
+
+            gp_result
+            // TODO inverse only gates
+            // let mut inv = program.decls.clone();
+            // inv.reverse();
+            //
+            // let mut program = program.clone();
+            // program.decls = inv; // TODO inverse gates
+            // let buf = Rc::new(Mutex::new(BufWriter::new(vec![])));
+            //
+            // let mut gp_inv = Linearize::new(GatePrinter::new(buf.clone()));
+            // gp_inv.visit_program(&program)?;
+            // let mut lock = buf.lock().unwrap();
+            // let buf = lock.get_mut();
+            // let gp_inv_result = String::from_utf8(buf.clone())?;
+
+            // CIRCUIT_RESULT.replace("%SIZE%", &size.to_string())
+            // .replace("%CIRCUIT%", &gp_result)
+            // .replace("%CIRCUIT_INV%", &gp_inv_result)
+        }
+        else {
+            let mut pp = ProgramPrinter::new();
+            pp.visit_program(program)?;
+
+            let mut inv = program.decls.clone();
+            inv.reverse();
+
+            let mut program = program.clone();
+            program.decls = inv;
+
+            // TODO only inverse gates
+            let mut pp_inv = ProgramPrinter::with_gates(self.args.inverse_gates.clone());
+            pp_inv.visit_program(&program)?;
+
+            template
+                .replace("%GATES%", &pp.result()?)
+                .replace("%GATES_INV%", &pp_inv.result()?)
+        }
     }
 }
 
@@ -161,7 +160,7 @@ impl CircuitGenerator for BaseCircuitGenerator {
 
         program2.decls = parse_circuit(&program2, depth, width)?;
 
-        let print_program = print_circuit(&program2, tp.result()?, width, self.args.parse)?;
+        let print_program = self.print_circuit(&program2, tp.result()?, width, self.args.parse)?;
         debug!("{print_program}");
 
         Ok(Some(print_program))

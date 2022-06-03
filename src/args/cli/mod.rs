@@ -3,8 +3,11 @@ pub mod config;
 pub mod env;
 pub mod types;
 
+use std::collections::HashMap;
+
 pub use args::*;
 use clap::Parser;
+use collection_literals::collection;
 pub use config::CliArgsConfig;
 pub use env::CliArgsEnv;
 use fehler::throws;
@@ -58,6 +61,11 @@ pub fn parse_circuit(clap: &CliArgsEnv, config: CircuitConfig) -> CliArgsCircuit
         .rand(clap.circuit_rand.or(config.rand).unwrap_or(false))
         .parse(clap.circuit_parse.or(config.parse).unwrap_or(false))
         .source(clap.circuit_source.clone().or(config.source).unwrap_or(circuit_source))
+        .inverse_gates(config.inverse_gates.unwrap_or(collection! {
+            HashMap<String, String>;
+            "s".to_string() => "sdg".to_string(),
+            "t".to_string() => "tdg".to_string(),
+        }))
         .build()
 }
 
@@ -81,7 +89,6 @@ impl CliArgs {
         dotenv::dotenv().ok();
         let clap = CliArgsEnv::parse();
 
-        // TODO define correct combinations
         // parse config file, json for now
         let config = std::fs::read_to_string(&config_path)?;
         let config = json5::from_str::<CliArgsConfig>(&config)?;

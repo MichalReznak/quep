@@ -115,7 +115,6 @@ impl Outputer for TextOutputer {
         runtime: Duration,
     ) -> Result<(), Error> {
         let include_durs = matches!(durations, Some(_));
-        // TODO this hack is not pretty
         let durations = durations.unwrap_or_else(|| {
             vec![Duration::from_millis(0)].into_iter().cycle().take(values.len()).collect()
         });

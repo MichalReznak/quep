@@ -12,7 +12,7 @@ use crate::Error;
 /// Outputs gates in the original format
 pub struct ProgramPrinter {
     buf: BufWriter<Vec<u8>>,
-    inverse_gates: Option<HashMap<&'static str, &'static str>>,
+    inverse_gates: Option<HashMap<String, String>>,
 }
 
 impl ProgramPrinter {
@@ -23,7 +23,7 @@ impl ProgramPrinter {
         }
     }
 
-    pub fn with_gates(inverse_gates: HashMap<&'static str, &'static str>) -> Self {
+    pub fn with_gates(inverse_gates: HashMap<String, String>) -> Self {
         Self {
             buf: BufWriter::new(Vec::new()),
             inverse_gates: Some(inverse_gates),
@@ -71,10 +71,10 @@ impl ProgramVisitor for ProgramPrinter {
         let name = (&**name).as_str();
 
         let name = if let Some(ref gates) = self.inverse_gates {
-            gates.get(&name).unwrap_or(&name)
+            gates.get(&name.to_string()).unwrap_or(&name.to_string()).to_string()
         }
         else {
-            name
+            name.to_string()
         };
 
         self.buf.write_all(format!("{} {}\n", &name, a).as_bytes())?;

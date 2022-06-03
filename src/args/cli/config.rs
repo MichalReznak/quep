@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use fehler::throws;
 use serde::{Deserialize, Deserializer, Serialize};
 
@@ -39,6 +41,7 @@ pub struct CircuitConfig {
     pub rand: Option<bool>,
     pub parse: Option<bool>,
     pub source: Option<String>,
+    pub inverse_gates: Option<HashMap<String, String>>,
 }
 
 #[derive(Serialize, Deserialize, Default, Clone)]

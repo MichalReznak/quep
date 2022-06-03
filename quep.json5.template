@@ -7,7 +7,11 @@
     circuit: {
         t: 'Mirror',
         rand: true,
-        path: './data/base.template.qasm'
+        path: './data/base.template.qasm',
+        inverseGates: {
+            s: 'sdg',
+            t: 'tdg',
+        },
     },
     output: {
         t: 'Text',

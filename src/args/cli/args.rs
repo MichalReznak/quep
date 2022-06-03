@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use typed_builder::TypedBuilder;
 
 use super::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
@@ -36,6 +38,9 @@ pub struct CliArgsCircuit {
 
     /// Base: Source file
     pub source: String,
+
+    /// Base: Inverse gates
+    pub inverse_gates: HashMap<String, String>,
 }
 
 #[derive(Debug, Clone, TypedBuilder)]

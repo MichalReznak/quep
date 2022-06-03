@@ -1,7 +1,10 @@
+use std::collections::HashMap;
+
 use anyhow::{Context, Error};
 use app::args::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
 use app::args::{CliArgsCircuit, CliArgsOrch, CliArgsOutput, CliArgsProvider};
 use app::CliArgs;
+use collection_literals::collection;
 use fehler::throws;
 use typed_builder::TypedBuilder;
 
@@ -63,5 +66,6 @@ fn get_cir(t: CircuitType) -> CliArgsCircuit {
         .rand(true)
         .parse(false)
         .source(get_dir("./base.template.qasm")?)
+        .inverse_gates(collection! { HashMap<String, String>; })
         .build()
 }

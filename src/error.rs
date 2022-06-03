@@ -1,4 +1,4 @@
-use std::num::{ParseFloatError, ParseIntError};
+use std::num::{ParseFloatError, ParseIntError, TryFromIntError};
 use std::string::FromUtf8Error;
 
 use pyo3::PyErr;
@@ -29,6 +29,9 @@ pub enum Error {
 
     #[snafu(display("{}", source), context(false))]
     ParseIntError { source: ParseIntError },
+
+    #[snafu(display("{}", source), context(false))]
+    TryFromIntError { source: TryFromIntError },
 
     #[snafu(display("{}", source), context(false))]
     FmtError { source: std::fmt::Error },

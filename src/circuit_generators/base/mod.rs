@@ -1,11 +1,9 @@
-
 use std::io::BufWriter;
 use std::path::Path;
 use std::rc::Rc;
 use std::sync::Mutex;
 
 use async_trait::async_trait;
-
 use fehler::{throw, throws};
 use log::debug;
 use openqasm::{

@@ -50,12 +50,47 @@ impl ProgramVisitor for ProgramPrinter {
         // ignore definitions
     }
 
+    // TODO index can be undefined
+    #[throws(Self::Error)]
+    fn visit_barrier(&mut self, regs: &[Span<Reg>]) {
+        let args: Vec<_> = (*regs)
+            .iter()
+            .map(|e| &**e)
+            .map(|e| {
+                if let Some(i) = e.index {
+                    format!("{}[{}]", e.name, i)
+                }
+                else {
+                    e.name.to_string()
+                }
+            })
+            .collect();
+
+        let (last, args) = args.split_last().context(OutOfBounds)?;
+        let args: Vec<_> = args.into_iter().map(|e| format!("{e}, ")).collect();
+
+        let mut a = String::new();
+        for arg in args {
+            a += &arg;
+        }
+        write!(&mut a, "{last};")?;
+
+        self.buf.write_all(format!("barrier {a}\n").as_bytes())?;
+    }
+
     #[throws(Self::Error)]
     fn visit_gate(&mut self, name: &Span<Symbol>, _params: &[Span<Expr>], args: &[Span<Reg>]) {
         let args: Vec<_> = (*args)
             .iter()
             .map(|e| &**e)
-            .map(|e| format!("{}[{}]", e.name, e.index.unwrap()))
+            .map(|e| {
+                if let Some(i) = e.index {
+                    format!("{}[{}]", e.name, i)
+                }
+                else {
+                    e.name.to_string()
+                }
+            })
             .collect();
 
         let (last, args) = args.split_last().context(OutOfBounds)?;

@@ -25,36 +25,15 @@ impl ProgramParser {
     }
 
     pub fn parsed_gates(&self, program: &Program) -> Vec<Span<Decl>> {
-        // This keeps all gates intact except inserted gates
-        // let mut i = 0;
-        // let mut res = vec![];
-        //
-        // for decl in program.decls.clone() {
-        //     match &*decl.inner {
-        //         Decl::Stmt(a) => match &**a {
-        //             Stmt::Gate { .. } => {
-        //                 if self.included_gates.contains(&(i as i32)) {
-        //                     res.push(decl);
-        //                 }
-        //                 i += 1;
-        //             }
-        //             _ => {
-        //                 res.push(decl);
-        //             }
-        //         },
-        //         _ => {
-        //             res.push(decl);
-        //         }
-        //     }
-        // }
-        // res
-
         program
             .decls
             .clone()
             .into_iter()
             .filter(|e| match &*e.inner {
-                Decl::Stmt(aa) => matches!(&**aa, Stmt::Gate { .. }),
+                Decl::Stmt(aa) => match &**aa {
+                    Stmt::Gate { .. } | Stmt::Barrier { .. } => true,
+                    _ => false,
+                },
                 _ => false,
             })
             .enumerate()
@@ -76,6 +55,22 @@ impl ProgramVisitor for ProgramParser {
         _body: &[Span<Stmt>],
     ) {
         // ignore definitions
+    }
+
+    #[throws(Self::Error)]
+    fn visit_barrier(&mut self, regs: &[Span<Reg>]) {
+        for reg in regs {
+            if let Some(i) = reg.index {
+                // Skip gates with index out of range
+                if i >= self.width.try_into()? {
+                    self.current_gate_i += 1;
+                    return;
+                }
+            }
+        }
+
+        self.included_gates.insert(self.current_gate_i);
+        self.current_gate_i += 1;
     }
 
     #[throws(Self::Error)]

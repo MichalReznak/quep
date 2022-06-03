@@ -10,8 +10,8 @@ use unwrap_infallible::UnwrapInfallible;
 use crate::args::CliArgsOrch;
 use crate::chooser::Chooser;
 use crate::error::RegexCapture;
-use crate::traits::outputer::Value;
-use crate::traits::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
+use crate::ext::outputer::Value;
+use crate::ext::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
 
 /// Linear iteration from 0 to MAX
 pub struct LinearOrchestrator {

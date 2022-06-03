@@ -2,7 +2,7 @@ use std::path::Path;
 
 use async_trait::async_trait;
 
-use crate::traits::CircuitGenerator;
+use crate::ext::CircuitGenerator;
 use crate::Error;
 
 const CIRCUIT: &str = r#"

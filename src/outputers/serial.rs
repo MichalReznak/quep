@@ -10,8 +10,8 @@ use typed_builder::TypedBuilder;
 use crate::args::types::OutputSerType;
 use crate::args::CliArgsOutput;
 use crate::error::OutOfBounds;
-use crate::traits::outputer::Value;
-use crate::traits::Outputer;
+use crate::ext::outputer::Value;
+use crate::ext::Outputer;
 use crate::Error;
 
 #[skip_serializing_none]

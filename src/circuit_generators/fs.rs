@@ -7,7 +7,7 @@ use oq::GenericError;
 use walkdir::{DirEntry, WalkDir};
 
 use crate::args::CliArgsCircuit;
-use crate::traits::CircuitGenerator;
+use crate::ext::CircuitGenerator;
 use crate::Error;
 
 #[allow(dead_code)]

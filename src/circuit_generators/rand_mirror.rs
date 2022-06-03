@@ -5,7 +5,7 @@ use log::debug;
 use rand::distributions::{Distribution, Uniform};
 
 use crate::args::CliArgsCircuit;
-use crate::traits::CircuitGenerator;
+use crate::ext::CircuitGenerator;
 use crate::Error;
 
 const CIRCUIT_TEMPLATE: &str = r#"

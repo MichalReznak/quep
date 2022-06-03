@@ -5,12 +5,12 @@ use crate::circuit_generators::{
     BaseCircuitGenerator, BasicCircuitGenerator, FsCircuitGenerator, MirrorCircuitGenerator,
     RandMirrorCircuitGenerator, VolumeCircuitGenerator,
 };
+use crate::ext::{CircuitGeneratorDyn, OrchestratorDyn, OutputerDyn, QcProviderDyn};
 use crate::orchestrators::{
     LatticeOrchestrator, LinearOrchestrator, SingleOrchestrator, VolumeOrchestrator,
 };
 use crate::outputers::{SerialOutputer, TextOutputer};
 use crate::qc_providers::{IbmqQcProvider, NoisyQcProvider, SimpleQcProvider};
-use crate::traits::{CircuitGeneratorDyn, OrchestratorDyn, OutputerDyn, QcProviderDyn};
 use crate::{CliArgs, Error};
 
 /// Args based factory

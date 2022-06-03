@@ -4,7 +4,7 @@ use async_trait::async_trait;
 use log::debug;
 
 use crate::args::CliArgsCircuit;
-use crate::traits::CircuitGenerator;
+use crate::ext::CircuitGenerator;
 use crate::Error;
 
 const CIRCUIT_TEMPLATE: &str = r#"

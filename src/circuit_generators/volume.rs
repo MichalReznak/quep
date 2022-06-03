@@ -6,7 +6,7 @@ use openqasm as oq;
 use oq::GenericError;
 
 use crate::args::CliArgsCircuit;
-use crate::traits::CircuitGenerator;
+use crate::ext::CircuitGenerator;
 use crate::Error;
 
 const CIRCUIT_PLACEHOLDER: &str = r#"

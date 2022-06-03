@@ -9,8 +9,8 @@ use unwrap_infallible::UnwrapInfallible;
 use crate::args::CliArgsOrch;
 use crate::chooser::Chooser;
 use crate::error::{OutOfBounds, RegexCapture};
-use crate::traits::outputer::Value;
-use crate::traits::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
+use crate::ext::outputer::Value;
+use crate::ext::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
 
 /// Iterates in all combination for 2D array
 pub struct LatticeOrchestrator {

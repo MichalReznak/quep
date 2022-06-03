@@ -14,7 +14,7 @@
 
 use chooser::Chooser;
 use fehler::throws;
-use traits::Orchestrator;
+use ext::Orchestrator;
 
 mod chooser;
 mod circuit_generators;
@@ -22,10 +22,11 @@ mod error;
 mod orchestrators;
 mod outputers;
 mod qc_providers;
+mod lang_schemas;
 
 pub mod args;
 pub mod pyvenv;
-pub mod traits;
+pub mod ext;
 pub mod utils;
 
 pub use args::CliArgs;

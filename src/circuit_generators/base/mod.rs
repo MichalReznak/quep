@@ -14,7 +14,7 @@ use printers::ProgramPrinter;
 
 use crate::args::CliArgsCircuit;
 use crate::circuit_generators::base::printers::{GatePrinter, TemplatePrinter};
-use crate::traits::CircuitGenerator;
+use crate::ext::CircuitGenerator;
 use crate::Error;
 
 mod parser;

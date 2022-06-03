@@ -8,7 +8,7 @@ use tokio::time::{Duration, Instant};
 
 use crate::args::CliArgsProvider;
 use crate::error::OutOfBounds;
-use crate::traits::QcProvider;
+use crate::ext::QcProvider;
 use crate::utils::debug;
 use crate::Error;
 use crate::Error::PyDowncastError;

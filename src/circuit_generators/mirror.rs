@@ -46,13 +46,7 @@ impl MirrorCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for MirrorCircuitGenerator {
-    async fn generate(
-        &mut self,
-        i: i32,
-        j: i32,
-        iter: i32,
-        _: bool,
-    ) -> Result<Option<String>, Error> {
+    async fn generate(&mut self, i: i32, j: i32, iter: i32) -> Result<Option<String>, Error> {
         let iter = if self.args.rand { iter } else { 0 };
 
         let pauli_gates = ["id", "x", "y", "z"];

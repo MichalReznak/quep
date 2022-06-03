@@ -125,8 +125,18 @@ impl Outputer for TextOutputer {
         for (i, (val, dur)) in values.into_iter().zip(durations).enumerate() {
             let mut row = vec![];
             let i = i + 1;
+
+            let val = val.correct.cell().foreground_color(Some(
+                if (val.correct as f64) > 1024.0 * (2.0 / 3.0) {
+                    Color::Green
+                }
+                else {
+                    Color::Red
+                },
+            ));
+
             row.push(format!("{i} x {i}").cell().background_color(Some(Color::Magenta)));
-            row.push(val.correct.cell());
+            row.push(val);
             if include_durs {
                 row.push(format!("{} ms", dur.as_millis()).cell());
             }
@@ -158,8 +168,18 @@ impl Outputer for TextOutputer {
         let mut table = vec![];
         for (i, (val, dur)) in values.into_iter().zip(durations).enumerate() {
             let mut row = vec![];
+
+            let val = val.correct.cell().foreground_color(Some(
+                if (val.correct as f64) > 1024.0 * (2.0 / 3.0) {
+                    Color::Green
+                }
+                else {
+                    Color::Red
+                },
+            ));
+
             row.push(format!("{} x {width}", i + 1).cell().background_color(Some(Color::Magenta)));
-            row.push(val.correct.cell());
+            row.push(val);
             if include_durs {
                 row.push(format!("{} ms", dur.as_millis()).cell());
             }

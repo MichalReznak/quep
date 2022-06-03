@@ -37,7 +37,7 @@ impl VolumeCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for VolumeCircuitGenerator {
-    async fn generate(&mut self, i: i32, j: i32, _: i32, _: bool) -> Result<Option<String>, Error> {
+    async fn generate(&mut self, i: i32, j: i32, _: i32) -> Result<Option<String>, Error> {
         let gates = vec!["x", "h", "z", "y"];
 
         let i = i + 1;

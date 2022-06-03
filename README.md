@@ -31,10 +31,3 @@ grcov . `
 * TODO use thermal relaxation example to create a better noisy simulator
 * TODO extend supported gates with custom defined and their inverse
 * TODO UI?
-* TODO check for valid combinations
-
-# NOT WORKING:
-* Collected Quantum volume does not stop
-* Missing colors on QV
-* Remove parse argument from generate method
-* 

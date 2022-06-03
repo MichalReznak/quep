@@ -46,7 +46,7 @@ impl Orchestrator for LinearOrchestrator {
 
         // TODO fix this
         // It runs dummy circuit to make the speed measurement more precise
-        if let Some(circuit) = generator.generate(0, 0, 0, false).await? {
+        if let Some(circuit) = generator.generate(0, 0, 0).await? {
             provider.set_circuit(circuit.clone()).await?;
             provider.start_measure();
             provider.run().await?;
@@ -60,7 +60,7 @@ impl Orchestrator for LinearOrchestrator {
         if self.args.collect {
             'main: for j in 0..i {
                 for ii in 0..iter {
-                    if let Some(c) = generator.generate(depth - 1, j, ii, false).await? {
+                    if let Some(c) = generator.generate(depth - 1, j, ii).await? {
                         provider.append_circuit(c.clone()).await?;
                     }
                     else {
@@ -100,7 +100,7 @@ impl Orchestrator for LinearOrchestrator {
                 for ii in 0..iter {
                     // TODO somehow better allow to define circuit width
                     // (or if it should increase width instead of depth?)
-                    if let Some(circuit) = generator.generate(depth - 1, j, ii, false).await? {
+                    if let Some(circuit) = generator.generate(depth - 1, j, ii).await? {
                         provider.set_circuit(circuit.clone()).await?;
 
                         provider.start_measure();

@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use strum_macros::EnumString;
 
-#[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub enum ProviderType {
     Ibmq,
     Simple,

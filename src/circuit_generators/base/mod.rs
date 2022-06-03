@@ -144,8 +144,7 @@ impl CircuitGenerator for BaseCircuitGenerator {
         &mut self,
         depth: i32,
         width: i32,
-        _iter: i32,   // TODO
-        _parse: bool, // TODO
+        _iter: i32, // TODO
     ) -> Result<Option<String>, Error> {
         let depth = depth + 1;
         let width = width + 1;

@@ -44,7 +44,7 @@ impl Orchestrator for SingleOrchestrator {
         provider.connect().await?;
 
         // It runs dummy circuit to make the speed measurement more precise
-        if let Some(circuit) = generator.generate(0, 0, 0, false).await? {
+        if let Some(circuit) = generator.generate(0, 0, 0).await? {
             provider.set_circuit(circuit.clone()).await?;
             provider.start_measure();
             provider.run().await?;
@@ -57,7 +57,7 @@ impl Orchestrator for SingleOrchestrator {
 
         if self.args.collect {
             for ii in 0..iter {
-                if let Some(c) = generator.generate(i, j, ii, false).await? {
+                if let Some(c) = generator.generate(i, j, ii).await? {
                     provider.append_circuit(c.clone()).await?;
                 }
                 else {
@@ -89,7 +89,7 @@ impl Orchestrator for SingleOrchestrator {
             let mut val = Value::builder().result("".to_string()).correct(0).build();
 
             for ii in 0..iter {
-                if let Some(circuit) = generator.generate(i, j, ii, false).await? {
+                if let Some(circuit) = generator.generate(i, j, ii).await? {
                     // TODO if I do a multiple iterations and one falls below limit, how to
                     // solve this?
                     provider.set_circuit(circuit.clone()).await?;

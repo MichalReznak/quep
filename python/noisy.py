@@ -1,3 +1,4 @@
+import time
 from qiskit import *
 from qiskit.providers.aer import AerSimulator
 from qiskit.providers.aer.noise import NoiseModel, pauli_error, depolarizing_error
@@ -43,9 +44,12 @@ noise_bit_flip.add_all_qubit_quantum_error(error_gate2_p2, ["cx", "zx"])
 
 
 class Noisy:
-    def __init__(self):
-        self.backend = None
-        self.circuits = []
+    backend: AerSimulator = None
+    circuits: [QuantumCircuit] = []
+    meta_info: dict[str, any] = None
+
+    def get_meta_info(self):
+        return self.meta_info
 
     def auth(self):
         self.backend = AerSimulator(noise_model=noise_bit_flip)
@@ -61,5 +65,12 @@ class Noisy:
             print(qasm_circuit)
 
     def run_all(self: 'Noisy') -> str:
+        start = time.time()
         job = execute(self.circuits, self.backend, shots=1024, memory=True)
+        end = time.time()
+
+        self.meta_info = {
+            'time': end - start
+        }
+
         return job.result().get_counts()

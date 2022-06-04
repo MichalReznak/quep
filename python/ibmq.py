@@ -1,12 +1,18 @@
+import time
 from qiskit import *
 
 
-# TODO use time_per_step() for time estimates
 class Ibmq:
+    backend: any = None
+    circuits: [QuantumCircuit] = []
+    account_id: str = None
+    meta_info: dict[str, any] = None
+
     def __init__(self, account_id: str):
-        self.backend = None
-        self.circuits = []
         self.account_id = account_id
+
+    def get_meta_info(self):
+        return self.meta_info
 
     def auth(self):
         IBMQ.enable_account(self.account_id)
@@ -24,5 +30,14 @@ class Ibmq:
 
     def run_all(self: 'Ibmq') -> str:
         print("Waiting for execution...")
+
+        # TODO use time_per_step() for time estimates
+        start = time.time()
         job = execute(self.circuits, self.backend, shots=1024, memory=True)
+        end = time.time()
+
+        self.meta_info = {
+            'time': end - start
+        }
+
         return job.result().get_counts()

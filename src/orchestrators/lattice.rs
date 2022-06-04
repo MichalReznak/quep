@@ -46,11 +46,8 @@ impl Orchestrator for LatticeOrchestrator {
         // TODO fix this
         // It runs dummy circuit to make the speed measurement more precise
         if let Some(circuit) = generator.generate(0, 0, 0).await? {
-            provider.set_circuit(circuit.clone()).await?;
-            provider.start_measure();
+            provider.append_circuit(circuit.clone()).await?;
             provider.run().await?;
-            provider.stop_measure();
-            provider.clear_circuits()?;
         }
 
         println!("Dummy run done");
@@ -73,10 +70,7 @@ impl Orchestrator for LatticeOrchestrator {
                 }
             }
 
-            let mut time = Duration::from_micros(0);
-            provider.start_measure();
-            let res = provider.run_all().await?;
-            time += provider.stop_measure();
+            let res = provider.run().await?;
 
             for ii in 0..i {
                 let mut sr = vec![];
@@ -112,11 +106,10 @@ impl Orchestrator for LatticeOrchestrator {
                         if let Some(circuit) = generator.generate(i, j, ii).await? {
                             // TODO if I do a multiple iterations and one falls below limit, how to
                             // solve this?
-                            provider.set_circuit(circuit.clone()).await?;
+                            provider.append_circuit(circuit.clone()).await?;
 
-                            provider.start_measure();
-                            let res = provider.run().await?;
-                            time += provider.stop_measure();
+                            let res = provider.run().await?.get(0).unwrap().to_string();
+                            time += provider.meta_info().await?.time;
 
                             // TODO value is always overwritten in all orch
                             let c = re.captures(&res).context(RegexCapture)?;

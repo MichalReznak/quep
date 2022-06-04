@@ -1,13 +1,16 @@
+import time
 from qiskit import *
 
 
 class Simple:
-    def __init__(self):
-        self.backend = None
-        self.circuits = []
+    meta_info: dict[str, any] = None
+    backend: any = None
+    circuits: [QuantumCircuit] = []
+
+    def get_meta_info(self):
+        return self.meta_info
 
     def auth(self):
-        # self.backend = Aer.get_backend('statevector_simulator')
         self.backend = Aer.get_backend('aer_simulator')
 
     def clear_circuits(self: 'Simple'):
@@ -28,6 +31,13 @@ class Simple:
             print(qasm_circuit)
 
     def run_all(self: 'Simple') -> str:
+        start = time.time()
         job = execute(self.circuits, self.backend, shots=1024, memory=True)
+        end = time.time()
+
+        self.meta_info = {
+            'time': end - start
+        }
+
         print(job.result().get_counts())
         return job.result().get_counts()

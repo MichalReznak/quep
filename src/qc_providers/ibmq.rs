@@ -4,10 +4,11 @@ use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyList};
 use pyo3::Python;
 use snafu::OptionExt;
-use tokio::time::{Duration, Instant};
+use tokio::time::Duration;
 
 use crate::args::CliArgsProvider;
 use crate::error::OutOfBounds;
+use crate::ext::types::MetaInfo;
 use crate::ext::QcProvider;
 use crate::utils::debug;
 use crate::Error;
@@ -16,14 +17,12 @@ use crate::Error::PyDowncastError;
 pub struct IbmqQcProvider {
     args: CliArgsProvider,
 
-    dur: Option<Instant>,
     py_instance: Option<PyObject>,
 }
 
 impl IbmqQcProvider {
     pub fn new(args: &CliArgsProvider) -> Self {
         Self {
-            dur: None,
             py_instance: None,
             args: args.clone(),
         }
@@ -45,17 +44,6 @@ impl QcProvider for IbmqQcProvider {
         })
     }
 
-    async fn set_circuit(&mut self, circuit: String) -> Result<(), Error> {
-        Python::with_gil(|py| -> Result<_, Error> {
-            self.py_instance
-                .as_ref()
-                .context(OutOfBounds)?
-                .call_method0(py, "clear_circuits")?;
-            Ok(())
-        })?;
-        self.append_circuit(circuit).await
-    }
-
     async fn append_circuit(&mut self, circuit: String) -> Result<(), Error> {
         Python::with_gil(|py| -> Result<_, Error> {
             self.py_instance.as_ref().context(OutOfBounds)?.call_method1(
@@ -67,22 +55,8 @@ impl QcProvider for IbmqQcProvider {
         })
     }
 
-    fn clear_circuits(&mut self) -> Result<(), Error> {
-        Python::with_gil(|py| -> Result<_, Error> {
-            self.py_instance
-                .as_ref()
-                .context(OutOfBounds)?
-                .call_method0(py, "clear_circuits")?;
-            Ok(())
-        })
-    }
-
-    async fn run(&self) -> Result<String, Error> {
-        Ok(self.run_all().await?.get(0).unwrap().to_string())
-    }
-
-    async fn run_all(&self) -> Result<Vec<String>, Error> {
-        Python::with_gil(|py| {
+    async fn run(&self) -> Result<Vec<String>, Error> {
+        let res = Python::with_gil(|py| -> Result<_, Error> {
             let fun =
                 self.py_instance.as_ref().context(OutOfBounds)?.call_method0(py, "run_all")?;
 
@@ -112,19 +86,32 @@ impl QcProvider for IbmqQcProvider {
                 })
                 .collect();
             Ok(res)
+        })?;
+
+        Python::with_gil(|py| -> Result<_, Error> {
+            self.py_instance
+                .as_ref()
+                .context(OutOfBounds)?
+                .call_method0(py, "clear_circuits")?;
+            Ok(())
+        })?;
+
+        Ok(res)
+    }
+
+    async fn meta_info(&self) -> Result<MetaInfo, Error> {
+        Python::with_gil(|py| -> Result<_, Error> {
+            let res = self
+                .py_instance
+                .as_ref()
+                .context(OutOfBounds)?
+                .call_method0(py, "get_meta_info")?;
+            let res = res.cast_as::<PyDict>(py).map_err(|_| PyDowncastError).unwrap();
+
+            let time: f64 = res.get_item("time").unwrap().extract()?;
+            let time = Duration::from_secs_f64(time);
+
+            Ok(MetaInfo::builder().time(time).build())
         })
-    }
-
-    fn start_measure(&mut self) {
-        self.dur = Some(Instant::now());
-    }
-
-    fn stop_measure(&mut self) -> Duration {
-        if let Some(dur) = self.dur {
-            Instant::now() - dur
-        }
-        else {
-            unreachable!()
-        }
     }
 }

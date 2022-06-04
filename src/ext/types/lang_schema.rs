@@ -5,6 +5,7 @@ use typed_builder::TypedBuilder;
 use crate::Error;
 
 // TODO better?
+#[derive(Copy, Clone)]
 pub enum LangGateType {
     Id,
     X,
@@ -24,24 +25,25 @@ pub struct LangGate {
 
     i: i32,
 
-    #[builder(setter(strip_option))]
+    #[builder(default, setter(strip_option))]
     other: Option<i32>,
 }
 
 impl ToString for LangGate {
     // TODO remove fixed q
+    // TODO should not implement openqasm directly
     fn to_string(&self) -> String {
         match self.t {
-            LangGateType::Id => format!("id q[{}]", self.i),
-            LangGateType::X => format!("x q[{}]", self.i),
-            LangGateType::Y => format!("y q[{}]", self.i),
-            LangGateType::Z => format!("z q[{}]", self.i),
-            LangGateType::H => format!("h q[{}]", self.i),
-            LangGateType::S => format!("s q[{}]", self.i),
-            LangGateType::Sdg => format!("sdg q[{}]", self.i),
-            LangGateType::Cx => format!("cx q[{}], q[{}]", self.i, self.other.unwrap()),
-            LangGateType::Cz => format!("cz q[{}], q[{}]", self.i, self.other.unwrap()),
-            LangGateType::Swap => format!("swap q[{}], q[{}]", self.i, self.other.unwrap()),
+            LangGateType::Id => format!("id q[{}];", self.i),
+            LangGateType::X => format!("x q[{}];", self.i),
+            LangGateType::Y => format!("y q[{}];", self.i),
+            LangGateType::Z => format!("z q[{}];", self.i),
+            LangGateType::H => format!("h q[{}];", self.i),
+            LangGateType::S => format!("s q[{}];", self.i),
+            LangGateType::Sdg => format!("sdg q[{}];", self.i),
+            LangGateType::Cx => format!("cx q[{}], q[{}];", self.i, self.other.unwrap()),
+            LangGateType::Cz => format!("cz q[{}], q[{}];", self.i, self.other.unwrap()),
+            LangGateType::Swap => format!("swap q[{}], q[{}];", self.i, self.other.unwrap()),
         }
     }
 }

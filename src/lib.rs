@@ -33,6 +33,7 @@ pub use args::CliArgs;
 pub use error::Error;
 
 use crate::args::config;
+use crate::args::types::ProviderType;
 use crate::utils::dir;
 
 pub struct Quep {
@@ -42,23 +43,29 @@ pub struct Quep {
 impl Quep {
     #[throws]
     pub async fn new(args: CliArgs) -> Self {
-        pyvenv::PyVenv::init(&args.provider.python_dir).await?;
-        println!("Done");
+        // Use python only when needed
+        use ProviderType::*;
+        if matches!(args.provider.t, Simple | Ibmq | Noisy) {
+            pyvenv::PyVenv::init(&args.provider.python_dir).await?;
+            println!("Done");
+        }
         Self { args }
     }
 
     #[throws]
     pub async fn from_env() -> Self {
-        let config_path = dir("./quep.json5")?;
-        println!("Config path: {config_path}");
+        let args = if let Ok(config_path) = dir("./quep.json5") {
+            println!("Config path: {config_path}");
 
-        let args = CliArgs::parse_with_config(&config_path)?;
+            CliArgs::parse_with_config(&config_path)?
+        }
+        else {
+            println!("No config file found");
+            CliArgs::parse()?
+        };
         println!("{args:#?}");
 
-        pyvenv::PyVenv::init(&args.provider.python_dir).await?;
-
-        println!("Done");
-        Self { args }
+        Self::new(args).await?
     }
 
     #[throws]

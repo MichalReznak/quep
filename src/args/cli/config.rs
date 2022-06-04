@@ -6,7 +6,7 @@ use serde::{Deserialize, Deserializer, Serialize};
 use super::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
 use crate::utils::dir;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct CliArgsConfig {
     #[serde(default)]

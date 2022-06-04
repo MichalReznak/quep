@@ -32,4 +32,4 @@ grcov . `
 * TODO extend supported gates with custom defined and their inverse
 * TODO UI?
 * Use JobManager to Ibmq https://qiskit.org/documentation/stubs/qiskit.providers.ibmq.managed.IBMQJobManager.html#qiskit.providers.ibmq.managed.IBMQJobManager
-* 
+* Generate documentation

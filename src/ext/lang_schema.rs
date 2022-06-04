@@ -5,7 +5,7 @@
 use async_trait::async_trait;
 use enum_dispatch::enum_dispatch;
 
-use crate::lang_schemas::OpenQasmSchema;
+use crate::lang_schemas::{LangCircuit, OpenQasmSchema};
 use crate::Error;
 
 #[enum_dispatch]
@@ -16,6 +16,7 @@ pub enum LangSchemaDyn {
 #[async_trait]
 #[enum_dispatch(LangSchemaDyn)]
 pub trait LangSchema {
-    // TODO
-    async fn parse(&mut self, file: String) -> Result<(), Error>;
+    // TODO rename
+    /// Outputs circuit as string
+    async fn as_string(&mut self, circ: LangCircuit) -> Result<String, Error>;
 }

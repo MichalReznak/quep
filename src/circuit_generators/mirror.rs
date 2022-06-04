@@ -128,10 +128,8 @@ impl CircuitGenerator for MirrorCircuitGenerator {
 
         let oqs = LangCircuit::builder().width(oqs_i).gates(oqs_gates).inv_gates(oqs_inv_gates).build();
 
-        let circuit2 = OpenQasmSchema::new().as_string(oqs).await?;
-        println!("{circuit2}");
-        unimplemented!();
+        let circuit = OpenQasmSchema::new().as_string(oqs).await?;
 
-        // Ok(Some(circuit))
+        Ok(Some(circuit))
     }
 }

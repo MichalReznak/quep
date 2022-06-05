@@ -1,9 +1,12 @@
+use std::collections::HashMap;
 use std::io::BufWriter;
+use std::ops::Index;
 use std::path::Path;
 use std::rc::Rc;
 use std::sync::Mutex;
 
 use async_trait::async_trait;
+use collection_literals::collection;
 use fehler::{throw, throws};
 use log::debug;
 use openqasm::{
@@ -14,9 +17,11 @@ use printers::ProgramPrinter;
 
 use crate::args::CliArgsCircuit;
 use crate::circuit_generators::base::printers::{GatePrinter, TemplatePrinter};
+use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::CircuitGenerator;
+use crate::lang_schemas::{LangCircuit, OpenQasmSchema};
 use crate::Error;
-
+use crate::ext::LangSchema;
 mod parser;
 mod printers;
 
@@ -49,6 +54,82 @@ pub fn parse_circuit(program: &Program, depth: i32, width: i32) -> Vec<Span<Decl
     program_parser.visit_program(program)?;
     program_parser.parsed_gates(program)
 }
+
+
+#[throws]
+fn oqs_parse_circuit(
+    oqs: &OpenQasmSchema,
+    depth: i32,
+    width: i32,
+) -> (Vec<LangGate>, Vec<LangGate>) {
+    let mut counts = HashMap::<i32, i32>::new();
+    let mut gates = vec![];
+    let mut inv_gates = vec![];
+
+
+    for gate in &oqs.gates {
+        let mut first_ok = true;
+        let mut second_ok = true;
+
+        let count = if let Some(c) = counts.get_mut(&gate.i) {
+            *c
+        }
+        else {
+            0
+        };
+
+        first_ok = count + 1 < depth && gate.i < width; // <= ??
+
+        use LangGateType::*;
+        match gate.t {
+            Cx |
+            Cz |
+            Swap => {
+                let count = if let Some(c) = counts.get_mut(&gate.other.unwrap()) {
+                    *c
+                }
+                else {
+                    0
+                };
+
+                second_ok = count + 1 < depth; // <= ??
+            }
+            _ => {}
+        }
+
+        // Do all indices fulfill the limit?
+        if first_ok && second_ok {
+            // Add limits for the next gate
+            if let Some(c) = counts.get_mut(&gate.i) {
+                *c += 1;
+            }
+            else {
+                counts.insert(gate.i, 1);
+            }
+
+            match gate.t {
+                Cx |
+                Cz |
+                Swap => {
+                    if let Some(c) = counts.get_mut(&gate.other.unwrap()) {
+                        *c += 1;
+                    }
+                    else {
+                        counts.insert(gate.other.unwrap(), 1);
+                    }
+                }
+                _ => {}
+            }
+
+            gates.push(gate.clone());
+            inv_gates.push(gate.inverse()); // TODO push inverse
+        }
+    }
+
+    inv_gates.reverse();
+    (gates, inv_gates)
+}
+
 
 // NOTES:
 // order of reg defines order in circuit
@@ -143,18 +224,13 @@ impl CircuitGenerator for BaseCircuitGenerator {
         // TODO barriers support
         // TODO different order of operations
 
-        let mut program2 = get_base_circ(&self.args.source)?;
+        let mut oqs = OpenQasmSchema::from_path(&self.args.source)?;
 
-        // TODO create template from base circuit and then include parsed gates
-        let mut tp = TemplatePrinter::new(width);
-        tp.visit_program(&program2)?;
-        debug!("{}", tp.result()?);
+        let (gates, inv_gates) = oqs_parse_circuit(&oqs, depth, width)?;
 
-        program2.decls = parse_circuit(&program2, depth, width)?;
+        let lang_circuit = LangCircuit::builder().width(width).gates(gates).inv_gates(inv_gates).build();
+        let circuit = oqs.as_string(lang_circuit).await?;
 
-        let print_program = self.print_circuit(&program2, tp.result()?, width, self.args.parse)?;
-        debug!("{print_program}");
-
-        Ok(Some(print_program))
+        Ok(Some(circuit))
     }
 }

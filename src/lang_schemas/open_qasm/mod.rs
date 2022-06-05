@@ -1,12 +1,17 @@
 use std::fmt::Write;
+use std::path::Path;
 
 use async_trait::async_trait;
 use derive_more::Constructor;
+use fehler::{throw, throws};
+use openqasm::{Errors, GenericError, Parser, ProgramVisitor, SourceCache};
 
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::LangSchema;
 use crate::lang_schemas::LangCircuit;
 use crate::Error;
+
+mod parser;
 
 // TODO do it gate independent
 const CIRCUIT_TEMPLATE: &str = r#"
@@ -48,23 +53,54 @@ fn gate_to_string(gate: &LangGate) -> String {
         Cx => format!("cx q[{}], q[{}];", gate.i, gate.other.unwrap()),
         Cz => format!("cz q[{}], q[{}];", gate.i, gate.other.unwrap()),
         Swap => format!("swap q[{}], q[{}];", gate.i, gate.other.unwrap()),
+        Barrier => format!("barrier q;"), // TODO allow indices
     }
 }
 
-#[derive(Constructor)]
-pub struct OpenQasmSchema;
+pub struct OpenQasmSchema {
+    pub gates: Vec<LangGate>,
+}
+
+impl OpenQasmSchema {
+    pub fn new() -> Self {
+        Self {
+            gates: vec![],
+        }
+    }
+}
 
 impl OpenQasmSchema {
     #[throws]
-    fn from_path(path: &str) -> Self {
-        // TODO type check
-        // TODO parse from path
-        todo!()
-    }
+    pub fn from_path(path: &str) -> Self {
+        // Type check
+        let mut circuit = std::fs::read_to_string(path)?;
+        circuit.remove_matches("\r");
 
-    #[throws]
-    fn to_lang_circuit(&self) -> LangCircuit {
-        todo!()
+        let mut cache = SourceCache::new();
+        let mut parser = Parser::new(&mut cache);
+        parser.parse_source(circuit, Some(&Path::new(".")));
+
+        let check: Result<_, Errors> = try {
+            let res = parser.done().to_errors()?;
+            res.type_check().to_errors()?;
+            res
+        };
+
+        let program = {
+            if let Err(errors) = check {
+                errors.print(&mut cache)?;
+                throw!(crate::Error::SomeError)
+            }
+
+            check.unwrap()
+        };
+
+        let mut pp = parser::ProgramParser::new();
+        pp.visit_program(&program)?;
+
+        Self {
+            gates: pp.gates,
+        }
     }
 }
 

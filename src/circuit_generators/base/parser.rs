@@ -74,7 +74,7 @@ impl ProgramVisitor for ProgramParser {
     fn visit_gate(&mut self, _name: &Span<Symbol>, _params: &[Span<Expr>], args: &[Span<Reg>]) {
         let args: Vec<_> = (*args).iter().map(|e| &**e).collect();
         // Newly inserted gates
-        let mut inserts = collection! { HashMap<i32, i32> };
+        let mut inserts = HashMap::new();
 
         // TODO do not depend on index
         // Count number of indices

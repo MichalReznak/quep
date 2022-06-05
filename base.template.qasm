@@ -12,15 +12,11 @@ creg c[12];
 
 cx q[0], q[1];
 
-barrier q[1];
-
 // x q[1];
 
 // s q[2];
 
 cx q[2], q[1];
-
-barrier q[2];
 
 // s q[2];
 
@@ -32,13 +28,11 @@ barrier q[2];
 
 x q[2];
 
-barrier q[5];
+barrier q;
 
 x q[0];
 
 cx q[0], q[1];
-
-barrier q[3];
 
 s q[2];
 

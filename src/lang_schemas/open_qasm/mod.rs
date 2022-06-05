@@ -110,6 +110,8 @@ impl OpenQasmSchema {
 
 #[async_trait]
 impl LangSchema for OpenQasmSchema {
+    // TODO check if is valid
+    // TODO when openqasm lib is removed it can be as wasm module
     async fn as_string(&mut self, circ: LangCircuit) -> Result<String, Error> {
         // Add width
         let res = CIRCUIT_TEMPLATE.replace("%WIDTH%", &circ.width.to_string());
@@ -130,8 +132,10 @@ impl LangSchema for OpenQasmSchema {
 
         // Add inverse gates
         let mut gates = String::new();
-        for gate in circ.inv_gates {
-            writeln!(&mut gates, "{}", gate_to_string(&gate))?;
+        if let Some(inv_gates) = circ.inv_gates {
+            for gate in inv_gates {
+                writeln!(&mut gates, "{}", gate_to_string(&gate))?;
+            }
         }
         let res = res.replace("%INV_GATES%", &gates);
 

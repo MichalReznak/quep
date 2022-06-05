@@ -1,34 +1,10 @@
-use std::path::Path;
-
 use async_trait::async_trait;
 
-use crate::ext::CircuitGenerator;
-use crate::Error;
-
-const CIRCUIT: &str = r#"
-OPENQASM 2.0;
-include "qelib1.inc";
-
-qreg q[1];
-creg c[1];
-
-reset q[0];
-x q[0];
-h q[0];
-s q[0];
-sdg q[0];
-h q[0];
-x q[0];
-
-barrier q;
-
-measure q -> c;
-"#;
-
-use openqasm as oq;
-use oq::GenericError;
-
 use crate::args::CliArgsCircuit;
+use crate::ext::types::lang_schema::{LangGate, LangGateType};
+use crate::ext::{CircuitGenerator, LangSchema};
+use crate::lang_schemas::{LangCircuit, OpenQasmSchema};
+use crate::Error;
 
 #[allow(dead_code)]
 pub struct BasicCircuitGenerator {
@@ -44,25 +20,19 @@ impl BasicCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for BasicCircuitGenerator {
-    async fn generate(&mut self, i: i32, j: i32, _: i32) -> Result<Option<String>, Error> {
-        if i > 0 || j > 0 {
-            Ok(None)
-        }
-        else {
-            let mut cache = oq::SourceCache::new();
-            let mut parser = oq::Parser::new(&mut cache);
+    async fn generate(&mut self, _: i32, _: i32, _: i32) -> Result<Option<String>, Error> {
+        use LangGateType::*;
+        let gates = vec![
+            LangGate::builder().t(X).i(0).build(),
+            LangGate::builder().t(H).i(0).build(),
+            LangGate::builder().t(S).i(1).build(),
+            LangGate::builder().t(Sdg).i(1).build(),
+            LangGate::builder().t(H).i(0).build(),
+            LangGate::builder().t(X).i(0).build(),
+        ];
 
-            let check: Result<_, oq::Errors> = try {
-                parser.parse_source(CIRCUIT.to_string(), Some(&Path::new(".")));
-                parser.done().to_errors()?.type_check().to_errors()?;
-            };
-            if let Err(errors) = check {
-                errors.print(&mut cache)?;
-                Err(crate::Error::SomeError)
-            }
-            else {
-                Ok(Some(CIRCUIT.to_string()))
-            }
-        }
+        let c = LangCircuit::builder().gates(gates).width(2).build();
+        println!("{}", OpenQasmSchema::new().as_string(c.clone()).await?);
+        Ok(Some(OpenQasmSchema::new().as_string(c).await?))
     }
 }

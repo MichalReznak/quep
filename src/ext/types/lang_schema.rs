@@ -62,5 +62,7 @@ impl LangGate {
 pub struct LangCircuit {
     pub width: i32,
     pub gates: Vec<LangGate>,
-    pub inv_gates: Vec<LangGate>,
+
+    #[builder(default, setter(strip_option))]
+    pub inv_gates: Option<Vec<LangGate>>,
 }

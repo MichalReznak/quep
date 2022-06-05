@@ -2,27 +2,12 @@ use std::fmt::Write;
 use std::path::Path;
 
 use async_trait::async_trait;
-use openqasm as oq;
-use oq::GenericError;
 
 use crate::args::CliArgsCircuit;
-use crate::ext::CircuitGenerator;
+use crate::ext::{CircuitGenerator, LangSchema};
 use crate::Error;
-
-const CIRCUIT_PLACEHOLDER: &str = r#"
-OPENQASM 2.0;
-include "qelib1.inc";
-
-qreg q[%SIZE%];
-creg c[%SIZE%];
-
-%RESET%
-%DEPTH%
-
-barrier q;
-
-measure q -> c;
-"#;
+use crate::ext::types::lang_schema::{LangGate, LangGateType};
+use crate::lang_schemas::{LangCircuit, OpenQasmSchema};
 
 #[allow(dead_code)]
 pub struct VolumeCircuitGenerator {
@@ -38,40 +23,24 @@ impl VolumeCircuitGenerator {
 #[async_trait]
 impl CircuitGenerator for VolumeCircuitGenerator {
     async fn generate(&mut self, i: i32, j: i32, _: i32) -> Result<Option<String>, Error> {
-        let gates = vec!["x", "h", "z", "y"];
-
         let i = i + 1;
         let j = j + 1;
-        let circuit = CIRCUIT_PLACEHOLDER.replace("%SIZE%", &i.to_string());
 
-        let mut resets = String::new();
-        for i in 0..i {
-            writeln!(&mut resets, "reset q[{}];", i)?;
-        }
-        let circuit = circuit.replace("%RESET%", &resets);
+        use LangGateType::*;
+        let gates = vec![X, H, Z, Y];
+        let mut result = vec![];
 
-        let mut depth = String::new();
         for j in 0..j {
             for i in 0..i {
-                writeln!(&mut depth, "{} q[{}];", gates[(i + j) as usize % gates.len()], i)?;
+                let gate = LangGate::builder().t(gates[(i + j) as usize % gates.len()]).i(i).build();
+                result.push(gate);
             }
-            writeln!(&mut depth)?;
         }
-        let circuit = circuit.replace("%DEPTH%", &depth);
 
-        let mut cache = oq::SourceCache::new();
-        let mut parser = oq::Parser::new(&mut cache);
+        let mut inv_result = result.clone();
+        inv_result.reverse();
 
-        let check: Result<_, oq::Errors> = try {
-            parser.parse_source(circuit.to_string(), Some(&Path::new(".")));
-            parser.done().to_errors()?.type_check().to_errors()?;
-        };
-        if let Err(errors) = check {
-            errors.print(&mut cache)?;
-            Err(crate::Error::SomeError)
-        }
-        else {
-            Ok(Some(circuit))
-        }
+        let c = LangCircuit::builder().gates(result).inv_gates(inv_result).width(i).build();
+        Ok(Some(OpenQasmSchema::new().as_string(c).await?))
     }
 }

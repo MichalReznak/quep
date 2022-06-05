@@ -1,13 +1,10 @@
-use std::fmt::Write;
-use std::path::Path;
-
 use async_trait::async_trait;
 
 use crate::args::CliArgsCircuit;
-use crate::ext::{CircuitGenerator, LangSchema};
-use crate::Error;
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
+use crate::ext::{CircuitGenerator, LangSchema};
 use crate::lang_schemas::{LangCircuit, OpenQasmSchema};
+use crate::Error;
 
 #[allow(dead_code)]
 pub struct VolumeCircuitGenerator {
@@ -32,7 +29,8 @@ impl CircuitGenerator for VolumeCircuitGenerator {
 
         for j in 0..j {
             for i in 0..i {
-                let gate = LangGate::builder().t(gates[(i + j) as usize % gates.len()]).i(i).build();
+                let gate =
+                    LangGate::builder().t(gates[(i + j) as usize % gates.len()]).i(i).build();
                 result.push(gate);
             }
         }

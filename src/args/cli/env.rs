@@ -5,6 +5,7 @@ use fehler::throws;
 use snafu::OptionExt;
 
 use super::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
+use crate::args::types::CircuitSchemaType;
 pub use crate::config::CliArgsConfig;
 use crate::error::{Error, Utf16};
 
@@ -31,6 +32,9 @@ pub struct CliArgsEnv {
 
     #[clap(long, env = "QUEP_CIRCUIT")]
     pub circuit: Option<CircuitType>,
+
+    #[clap(long, env = "QUEP_CIRCUIT_SCHEMA")]
+    pub circuit_schema: Option<CircuitSchemaType>,
 
     #[clap(long, env = "QUEP_CIRCUIT_RAND")]
     pub circuit_rand: Option<bool>,

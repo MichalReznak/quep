@@ -20,7 +20,7 @@ fn oqs_parse_circuit(
     let mut inv_gates = vec![];
 
     for gate in &oqs.gates {
-        if matches!(gate.t, LangGateType::Barrier) {
+        if matches!(gate.t, LangGateType::Barrier) && gate.i < width {
             gates.push(gate.clone());
             inv_gates.push(gate.inverse());
             continue;
@@ -35,7 +35,7 @@ fn oqs_parse_circuit(
             0
         };
 
-        let first_ok = count + 1 < depth && gate.i < width; // <= ??
+        let first_ok = count + 1 < depth && gate.i < width; // TODO <= ??
 
         use LangGateType::*;
         match gate.t {
@@ -47,7 +47,7 @@ fn oqs_parse_circuit(
                     0
                 };
 
-                second_ok = count + 1 < depth; // <= ??
+                second_ok = count + 1 < depth && gate.other.unwrap() < width; // TODO <= ??
             }
             _ => {}
         }

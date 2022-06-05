@@ -1,13 +1,14 @@
 use std::collections::HashMap;
 
 use anyhow::{Context, Error};
-use app::args::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
+use app::args::types::{
+    CircuitSchemaType, CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType,
+};
 use app::args::{CliArgsCircuit, CliArgsOrch, CliArgsOutput, CliArgsProvider};
 use app::CliArgs;
 use collection_literals::collection;
 use fehler::throws;
 use typed_builder::TypedBuilder;
-
 const ACCOUNT_ID: &str = "9ee04b444ed1c767fcd01b66027a391d8df5938df51dd27e6eaaed0a45f5da67c19dcfb2f2f46dcff893c3a54d054b4b392e1a54618d8cfea9d70d9f3378ea51";
 
 #[derive(TypedBuilder)]
@@ -63,6 +64,7 @@ fn get_out(t: OutputType) -> CliArgsOutput {
 fn get_cir(t: CircuitType) -> CliArgsCircuit {
     CliArgsCircuit::builder()
         .t(t)
+        .schema(CircuitSchemaType::OpenQasm)
         .rand(true)
         .parse(false)
         .source(get_dir("./base.template.qasm")?)

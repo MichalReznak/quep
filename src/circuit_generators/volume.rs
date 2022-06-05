@@ -3,8 +3,8 @@ use async_trait::async_trait;
 use crate::args::CliArgsCircuit;
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::{CircuitGenerator, LangSchema};
-use crate::lang_schemas::{LangCircuit, OpenQasmSchema};
-use crate::Error;
+use crate::lang_schemas::LangCircuit;
+use crate::{Chooser, Error};
 
 #[allow(dead_code)]
 pub struct VolumeCircuitGenerator {
@@ -39,6 +39,6 @@ impl CircuitGenerator for VolumeCircuitGenerator {
         inv_result.reverse();
 
         let c = LangCircuit::builder().gates(result).inv_gates(inv_result).width(i).build();
-        Ok(Some(OpenQasmSchema::new().as_string(c).await?))
+        Ok(Some(Chooser::get_lang_schema(self.args.schema).as_string(c).await?))
     }
 }

@@ -14,6 +14,7 @@ use fehler::throws;
 use typed_builder::TypedBuilder;
 use types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
 
+use crate::args::types::CircuitSchemaType;
 use crate::config::{CircuitConfig, OrchConfig, OutputConfig, ProviderConfig};
 use crate::{dir, Error};
 
@@ -58,6 +59,7 @@ pub fn parse_circuit(clap: &CliArgsEnv, config: CircuitConfig) -> CliArgsCircuit
 
     CliArgsCircuit::builder()
         .t(clap.circuit.or(config.t).unwrap_or(CircuitType::Basic))
+        .schema(clap.circuit_schema.or(config.schema).unwrap_or(CircuitSchemaType::OpenQasm))
         .rand(clap.circuit_rand.or(config.rand).unwrap_or(false))
         .parse(clap.circuit_parse.or(config.parse).unwrap_or(false))
         .source(clap.circuit_source.clone().or(config.source).unwrap_or(circuit_source))

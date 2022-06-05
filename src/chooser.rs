@@ -5,7 +5,8 @@ use crate::circuit_generators::{
     BaseCircuitGenerator, BasicCircuitGenerator, FsCircuitGenerator, MirrorCircuitGenerator,
     RandMirrorCircuitGenerator, VolumeCircuitGenerator,
 };
-use crate::ext::{CircuitGeneratorDyn, OrchestratorDyn, OutputerDyn, QcProviderDyn};
+use crate::ext::{CircuitGeneratorDyn, LangSchemaDyn, OrchestratorDyn, OutputerDyn, QcProviderDyn};
+use crate::lang_schemas::OpenQasmSchema;
 use crate::orchestrators::{
     LatticeOrchestrator, LinearOrchestrator, SingleOrchestrator, VolumeOrchestrator,
 };
@@ -21,6 +22,13 @@ pub struct Chooser {
 impl Chooser {
     pub fn new(args: CliArgs) -> Self {
         Self { args }
+    }
+
+    pub fn get_lang_schema(t: CircuitSchemaType) -> LangSchemaDyn {
+        use CircuitSchemaType::*;
+        match t {
+            OpenQasm => LangSchemaDyn::from(OpenQasmSchema::new()),
+        }
     }
 
     #[throws]

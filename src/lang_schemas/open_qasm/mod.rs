@@ -53,8 +53,6 @@ fn gate_to_string(gate: &LangGate) -> String {
         Cz => format!("cz q[{}], q[{}];", gate.i, gate.other.unwrap()),
         Swap => format!("swap q[{}], q[{}];", gate.i, gate.other.unwrap()),
         Barrier => {
-            println!("{gate:?}");
-
             if gate.i >= 0 {
                 format!("barrier q[{}];", gate.i)
             }

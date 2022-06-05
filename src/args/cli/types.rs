@@ -40,3 +40,8 @@ pub enum OutputSerType {
     Toml,
     Ron,
 }
+
+#[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize)]
+pub enum CircuitSchemaType {
+    OpenQasm,
+}

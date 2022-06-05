@@ -34,7 +34,15 @@ impl ProgramVisitor for ProgramParser {
 
     #[throws(Self::Error)]
     fn visit_barrier(&mut self, regs: &[Span<Reg>]) {
-        // TODO
+        let regs: Vec<_> = (*regs).iter().map(|e| &**e).collect();
+
+        let i = if let Some(i) = regs[0].index {
+            i as i32
+        }
+        else {
+            -1
+        };
+        self.gates.push(LangGate::builder().t(LangGateType::Barrier).i(i).build());
     }
 
     #[throws(Self::Error)]

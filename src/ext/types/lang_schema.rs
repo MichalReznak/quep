@@ -1,6 +1,6 @@
 use typed_builder::TypedBuilder;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub enum LangGateType {
     Id,
     X,
@@ -31,12 +31,12 @@ impl LangGateType {
             Cx => Cx,
             Cz => Cz,
             Swap => Swap,
-            Barrier => Barrier,
+            Barrier => Barrier, // TODO support with multiple definitions -1 is with no index
         }
     }
 }
 
-#[derive(TypedBuilder, Clone)]
+#[derive(TypedBuilder, Clone, Debug)]
 pub struct LangGate {
     pub t: LangGateType,
 

@@ -34,6 +34,9 @@ x q[0];
 
 cx q[0], q[1];
 
+barrier q[1];
+barrier q[2];
+
 s q[2];
 
 measure q -> c;

@@ -53,7 +53,16 @@ fn gate_to_string(gate: &LangGate) -> String {
         Cx => format!("cx q[{}], q[{}];", gate.i, gate.other.unwrap()),
         Cz => format!("cz q[{}], q[{}];", gate.i, gate.other.unwrap()),
         Swap => format!("swap q[{}], q[{}];", gate.i, gate.other.unwrap()),
-        Barrier => format!("barrier q;"), // TODO allow indices
+        Barrier => {
+            println!("{gate:?}");
+
+            if gate.i >= 0 {
+                format!("barrier q[{}];", gate.i)
+            }
+            else {
+                format!("barrier q;")
+            }
+        },
     }
 }
 

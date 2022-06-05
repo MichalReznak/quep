@@ -68,6 +68,12 @@ fn oqs_parse_circuit(
 
 
     for gate in &oqs.gates {
+        if matches!(gate.t, LangGateType::Barrier) {
+            gates.push(gate.clone());
+            inv_gates.push(gate.inverse());
+            continue;
+        }
+
         let mut first_ok = true;
         let mut second_ok = true;
 
@@ -122,7 +128,7 @@ fn oqs_parse_circuit(
             }
 
             gates.push(gate.clone());
-            inv_gates.push(gate.inverse()); // TODO push inverse
+            inv_gates.push(gate.inverse());
         }
     }
 
@@ -231,6 +237,7 @@ impl CircuitGenerator for BaseCircuitGenerator {
         let lang_circuit = LangCircuit::builder().width(width).gates(gates).inv_gates(inv_gates).build();
         let circuit = oqs.as_string(lang_circuit).await?;
 
+        println!("{circuit}");
         Ok(Some(circuit))
     }
 }

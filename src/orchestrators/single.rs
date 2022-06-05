@@ -44,10 +44,10 @@ impl Orchestrator for SingleOrchestrator {
         provider.connect().await?;
 
         // It runs dummy circuit to make the speed measurement more precise
-        if let Some(circuit) = generator.generate(0, 0, 0).await? {
-            provider.append_circuit(circuit.clone()).await?;
-            provider.run().await?;
-        }
+        // if let Some(circuit) = generator.generate(0, 0, 0).await? {
+        //     provider.append_circuit(circuit.clone()).await?;
+        //     provider.run().await?;
+        // }
 
         println!("Dummy run done");
         let runtime = Instant::now();

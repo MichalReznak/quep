@@ -2,7 +2,6 @@ use std::fmt::Write;
 use std::path::Path;
 
 use async_trait::async_trait;
-use derive_more::Constructor;
 use fehler::{throw, throws};
 use openqasm::{Errors, GenericError, Parser, ProgramVisitor, SourceCache};
 
@@ -62,7 +61,7 @@ fn gate_to_string(gate: &LangGate) -> String {
             else {
                 format!("barrier q;")
             }
-        },
+        }
     }
 }
 
@@ -72,9 +71,7 @@ pub struct OpenQasmSchema {
 
 impl OpenQasmSchema {
     pub fn new() -> Self {
-        Self {
-            gates: vec![],
-        }
+        Self { gates: vec![] }
     }
 }
 
@@ -107,9 +104,7 @@ impl OpenQasmSchema {
         let mut pp = parser::ProgramParser::new();
         pp.visit_program(&program)?;
 
-        Self {
-            gates: pp.gates,
-        }
+        Self { gates: pp.gates }
     }
 }
 

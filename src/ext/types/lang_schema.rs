@@ -49,16 +49,10 @@ pub struct LangGate {
 impl LangGate {
     pub fn inverse(&self) -> Self {
         if let Some(o) = self.other {
-            Self::builder()
-                .t(self.t.inverse())
-                .i(self.i)
-                .other(o)
-                .build()
-        }else {
-            Self::builder()
-                .t(self.t.inverse())
-                .i(self.i)
-                .build()
+            Self::builder().t(self.t.inverse()).i(self.i).other(o).build()
+        }
+        else {
+            Self::builder().t(self.t.inverse()).i(self.i).build()
         }
     }
 }

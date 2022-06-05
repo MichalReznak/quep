@@ -1,8 +1,6 @@
-use std::collections::{HashMap, HashSet};
-
-use collection_literals::collection;
 use fehler::throws;
-use openqasm::{Decl, Expr, Program, ProgramVisitor, Reg, Span, Stmt, Symbol};
+use openqasm::{Expr, ProgramVisitor, Reg, Span, Stmt, Symbol};
+
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
 
 /// Parses gates to some size
@@ -12,9 +10,7 @@ pub struct ProgramParser {
 
 impl ProgramParser {
     pub fn new() -> Self {
-        Self {
-            gates: vec![],
-        }
+        Self { gates: vec![] }
     }
 }
 
@@ -67,12 +63,12 @@ impl ProgramVisitor for ProgramParser {
         };
 
         let gate = match t {
-            Cx|Cz|Swap => {
-                LangGate::builder().t(t).i(args[0].index.unwrap() as i32).other(args[1].index.unwrap() as i32).build()
-            },
-            _ => {
-                LangGate::builder().t(t).i(args[0].index.unwrap() as i32).build()
-            }
+            Cx | Cz | Swap => LangGate::builder()
+                .t(t)
+                .i(args[0].index.unwrap() as i32)
+                .other(args[1].index.unwrap() as i32)
+                .build(),
+            _ => LangGate::builder().t(t).i(args[0].index.unwrap() as i32).build(),
         };
 
         self.gates.push(gate);

@@ -31,12 +31,11 @@ barrier q;
 measure q -> c;
 "#;
 
-#[derive(Constructor)]
-pub struct OpenQasmSchema;
-
 // TODO remove fixed q
 // TODO should not implement openqasm directly
 fn gate_to_string(gate: &LangGate) -> String {
+    // TODO add barrier
+
     use LangGateType::*;
     match gate.t {
         Id => format!("id q[{}];", gate.i),
@@ -49,6 +48,23 @@ fn gate_to_string(gate: &LangGate) -> String {
         Cx => format!("cx q[{}], q[{}];", gate.i, gate.other.unwrap()),
         Cz => format!("cz q[{}], q[{}];", gate.i, gate.other.unwrap()),
         Swap => format!("swap q[{}], q[{}];", gate.i, gate.other.unwrap()),
+    }
+}
+
+#[derive(Constructor)]
+pub struct OpenQasmSchema;
+
+impl OpenQasmSchema {
+    #[throws]
+    fn from_path(path: &str) -> Self {
+        // TODO type check
+        // TODO parse from path
+        todo!()
+    }
+
+    #[throws]
+    fn to_lang_circuit(&self) -> LangCircuit {
+        todo!()
     }
 }
 

@@ -24,11 +24,6 @@ fn get_base_circ(path: &str) -> Result<Program, Error> {
     let mut circuit = std::fs::read_to_string(path)?;
     circuit.remove_matches("\r");
 
-    // TODO allow to define size, or increase until circuit can be parsed?
-    // let circuit = CIRCUIT_PLACEHOLDER
-    //     .replace("%SIZE%", &64.to_string())
-    //     .replace("%CIRCUIT%", &circuit);
-
     let mut cache = SourceCache::new();
     let mut parser = Parser::new(&mut cache);
     parser.parse_source(circuit, Some(&Path::new(".")));

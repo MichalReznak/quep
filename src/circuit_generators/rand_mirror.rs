@@ -1,34 +1,15 @@
-use std::fmt::Write;
+
 
 use async_trait::async_trait;
 use log::debug;
 use rand::distributions::{Distribution, Uniform};
+use rand::SeedableRng;
 
 use crate::args::CliArgsCircuit;
-use crate::ext::CircuitGenerator;
+use crate::ext::types::lang_schema::{LangGate, LangGateType};
+use crate::ext::{CircuitGenerator, LangSchema};
+use crate::lang_schemas::{LangCircuit, OpenQasmSchema};
 use crate::Error;
-
-const CIRCUIT_TEMPLATE: &str = r#"
-OPENQASM 2.0;
-include "qelib1.inc";
-
-qreg q[%WIDTH%];
-creg c[%WIDTH%];
-
-%RESET%
-
-barrier q;
-
-%HALF_DEPTH_CIRCUIT%
-
-barrier q;
-
-%HALF_DEPTH_INVERSE_CIRCUIT%
-
-barrier q;
-
-measure q -> c;
-"#;
 
 #[allow(dead_code)]
 pub struct RandMirrorCircuitGenerator {
@@ -47,38 +28,27 @@ impl RandMirrorCircuitGenerator {
 // Length is counted as 2d.
 // It is using **uniform sampling**
 
-// TODO missing rand
-
 #[async_trait]
 impl CircuitGenerator for RandMirrorCircuitGenerator {
     async fn generate(&mut self, i: i32, j: i32, _iter: i32) -> Result<Option<String>, Error> {
-        let pauli_gates = ["id", "x", "y", "z"];
+        use LangGateType::*;
+        let pauli_gates = [Id, X, Y, Z];
+        let clifford_gates = [H, S, Id, X, Y, Z];
+        let clifford_gates_inv = [H, Sdg, Id, X, Y, Z];
+        let clifford_gates_2 = [Cx, Cz, Swap];
 
-        let clifford_gates = ["h", "s", "id", "x", "y", "z"];
-
-        let clifford_gates_inv = ["h", "sdg", "id", "x", "y", "z"];
-
-        let clifford_gates_2 = ["cx", "cz", "swap"];
-
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rngs::SmallRng::from_entropy();
         let p_rand: Uniform<usize> = Uniform::from(0..4);
         let c_rand: Uniform<usize> = Uniform::from(0..9);
 
         let i = i + 1;
         let j = j + 1;
-        let circuit = CIRCUIT_TEMPLATE.replace("%WIDTH%", &i.to_string());
-
-        let mut resets = String::new();
-        for i in 0..i {
-            writeln!(&mut resets, "reset q[{}];", i)?;
-        }
-        let circuit = circuit.replace("%RESET%", &resets);
-
-        let mut inv_gates = vec![];
+        let mut oqs_gates = vec![];
+        let mut oqs_inv_gates = vec![];
+        let oqs_width = i;
 
         let c_len = clifford_gates.len();
 
-        let mut half_cir = String::new();
         let mut skip = false;
         for _ in 0..j {
             for ii in 0..i {
@@ -89,65 +59,63 @@ impl CircuitGenerator for RandMirrorCircuitGenerator {
                     skip = false;
                 }
                 else {
-                    let mut s = String::new();
                     if c_gate_index < c_len {
-                        writeln!(&mut half_cir, "{} q[{}];", clifford_gates[c_gate_index], ii)?;
-                        writeln!(&mut s, "{} q[{}];", clifford_gates_inv[c_gate_index], ii)?;
+                        oqs_gates.push(
+                            LangGate::builder().t(clifford_gates[c_gate_index]).i(ii).build(),
+                        );
+                        oqs_inv_gates.push(
+                            LangGate::builder().t(clifford_gates_inv[c_gate_index]).i(ii).build(),
+                        );
                     }
                     // NO space for double gate
                     else if ii == i - 1 {
-                        writeln!(
-                            &mut half_cir,
-                            "{} q[{}];",
-                            clifford_gates[c_gate_index - c_len],
-                            ii
-                        )?;
-                        writeln!(
-                            &mut s,
-                            "{} q[{}];",
-                            clifford_gates_inv[c_gate_index - c_len],
-                            ii
-                        )?;
+                        oqs_gates.push(
+                            LangGate::builder()
+                                .t(clifford_gates[c_gate_index - c_len])
+                                .i(ii)
+                                .build(),
+                        );
+                        oqs_inv_gates.push(
+                            LangGate::builder()
+                                .t(clifford_gates_inv[c_gate_index - c_len])
+                                .i(ii)
+                                .build(),
+                        );
                     }
                     else {
-                        writeln!(
-                            &mut half_cir,
-                            "{} q[{}], q[{}];",
-                            clifford_gates_2[c_gate_index - c_len],
-                            ii,
-                            ii + 1
-                        )?;
-                        writeln!(
-                            &mut s,
-                            "{} q[{}], q[{}];",
-                            clifford_gates_2[c_gate_index - c_len],
-                            ii,
-                            ii + 1
-                        )?;
+                        oqs_gates.push(
+                            LangGate::builder()
+                                .t(clifford_gates_2[c_gate_index - c_len])
+                                .i(ii)
+                                .other(ii + 1)
+                                .build(),
+                        );
+                        oqs_inv_gates.push(
+                            LangGate::builder()
+                                .t(clifford_gates_2[c_gate_index - c_len])
+                                .i(ii)
+                                .other(ii + 1)
+                                .build(),
+                        );
                         skip = true;
                     }
-                    inv_gates.push(s);
                 }
 
-                let mut s = String::new();
-                writeln!(&mut half_cir, "{} q[{}];", pauli_gates[p_gate_index], ii)?;
-                writeln!(&mut s, "{} q[{}];", pauli_gates[p_gate_index], ii)?;
-                inv_gates.push(s);
+                oqs_gates.push(LangGate::builder().t(pauli_gates[p_gate_index]).i(ii).build());
+                oqs_inv_gates.push(LangGate::builder().t(pauli_gates[p_gate_index]).i(ii).build());
             }
-            writeln!(&mut half_cir)?;
-        }
-        let circuit = circuit.replace("%HALF_DEPTH_CIRCUIT%", &half_cir);
-
-        let mut half_cir_inv = String::new();
-        inv_gates.reverse();
-        for ss in inv_gates {
-            write!(&mut half_cir_inv, "{}", ss)?;
         }
 
-        let circuit = circuit.replace("%HALF_DEPTH_INVERSE_CIRCUIT%", &half_cir_inv);
+        oqs_inv_gates.reverse();
 
-        debug!("{circuit}");
+        let oqs = LangCircuit::builder()
+            .width(oqs_width)
+            .gates(oqs_gates)
+            .inv_gates(oqs_inv_gates)
+            .build();
+        let c = OpenQasmSchema::new().as_string(oqs).await?;
+        debug!("{c}");
 
-        Ok(Some(circuit))
+        Ok(Some(c))
     }
 }

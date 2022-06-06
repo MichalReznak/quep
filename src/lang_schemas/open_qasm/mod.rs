@@ -59,12 +59,13 @@ fn gate_to_string(gate: &LangGate) -> String {
                 format!("barrier q[{}];", gate.i)
             }
             else {
-                format!("barrier q;")
+                "barrier q;".to_string()
             }
         }
     }
 }
 
+#[derive(Default)]
 pub struct OpenQasmSchema {
     pub gates: Vec<LangGate>,
 }

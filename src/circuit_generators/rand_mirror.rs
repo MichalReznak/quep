@@ -57,47 +57,41 @@ impl CircuitGenerator for RandMirrorCircuitGenerator {
                 if skip {
                     skip = false;
                 }
+                else if c_gate_index < c_len {
+                    oqs_gates
+                        .push(LangGate::builder().t(clifford_gates[c_gate_index]).i(ii).build());
+                    oqs_inv_gates.push(
+                        LangGate::builder().t(clifford_gates_inv[c_gate_index]).i(ii).build(),
+                    );
+                }
+                // NO space for double gate
+                else if ii == i - 1 {
+                    oqs_gates.push(
+                        LangGate::builder().t(clifford_gates[c_gate_index - c_len]).i(ii).build(),
+                    );
+                    oqs_inv_gates.push(
+                        LangGate::builder()
+                            .t(clifford_gates_inv[c_gate_index - c_len])
+                            .i(ii)
+                            .build(),
+                    );
+                }
                 else {
-                    if c_gate_index < c_len {
-                        oqs_gates.push(
-                            LangGate::builder().t(clifford_gates[c_gate_index]).i(ii).build(),
-                        );
-                        oqs_inv_gates.push(
-                            LangGate::builder().t(clifford_gates_inv[c_gate_index]).i(ii).build(),
-                        );
-                    }
-                    // NO space for double gate
-                    else if ii == i - 1 {
-                        oqs_gates.push(
-                            LangGate::builder()
-                                .t(clifford_gates[c_gate_index - c_len])
-                                .i(ii)
-                                .build(),
-                        );
-                        oqs_inv_gates.push(
-                            LangGate::builder()
-                                .t(clifford_gates_inv[c_gate_index - c_len])
-                                .i(ii)
-                                .build(),
-                        );
-                    }
-                    else {
-                        oqs_gates.push(
-                            LangGate::builder()
-                                .t(clifford_gates_2[c_gate_index - c_len])
-                                .i(ii)
-                                .other(ii + 1)
-                                .build(),
-                        );
-                        oqs_inv_gates.push(
-                            LangGate::builder()
-                                .t(clifford_gates_2[c_gate_index - c_len])
-                                .i(ii)
-                                .other(ii + 1)
-                                .build(),
-                        );
-                        skip = true;
-                    }
+                    oqs_gates.push(
+                        LangGate::builder()
+                            .t(clifford_gates_2[c_gate_index - c_len])
+                            .i(ii)
+                            .other(ii + 1)
+                            .build(),
+                    );
+                    oqs_inv_gates.push(
+                        LangGate::builder()
+                            .t(clifford_gates_2[c_gate_index - c_len])
+                            .i(ii)
+                            .other(ii + 1)
+                            .build(),
+                    );
+                    skip = true;
                 }
 
                 oqs_gates.push(LangGate::builder().t(pauli_gates[p_gate_index]).i(ii).build());

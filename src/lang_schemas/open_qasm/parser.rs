@@ -4,6 +4,7 @@ use openqasm::{Expr, ProgramVisitor, Reg, Span, Stmt, Symbol};
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
 
 /// Parses gates to some size
+#[derive(Default)]
 pub struct ProgramParser {
     pub gates: Vec<LangGate>,
 }

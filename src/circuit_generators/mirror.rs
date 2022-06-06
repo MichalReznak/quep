@@ -3,8 +3,10 @@ use async_trait::async_trait;
 use crate::args::CliArgsCircuit;
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::{CircuitGenerator, LangSchema};
-use crate::lang_schemas::{LangCircuit, OpenQasmSchema};
+use crate::lang_schemas::{LangCircuit};
 use crate::Error;
+use crate::Chooser;
+use crate::ext::types::circuit_generator::GenCircuit;
 
 pub struct MirrorCircuitGenerator {
     args: CliArgsCircuit,
@@ -23,7 +25,7 @@ impl MirrorCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for MirrorCircuitGenerator {
-    async fn generate(&mut self, i: i32, j: i32, iter: i32) -> Result<Option<String>, Error> {
+    async fn generate(&mut self, i: i32, j: i32, iter: i32) -> Result<Option<GenCircuit>, Error> {
         let iter = if self.args.rand { iter } else { 0 };
 
         use LangGateType::*;
@@ -111,7 +113,7 @@ impl CircuitGenerator for MirrorCircuitGenerator {
             .gates(oqs_gates)
             .inv_gates(oqs_inv_gates)
             .build();
-        let circuit = OpenQasmSchema::new().as_string(oqs).await?;
+        let circuit = Chooser::get_lang_schema(self.args.schema).as_string(oqs).await?;
         Ok(Some(circuit))
     }
 }

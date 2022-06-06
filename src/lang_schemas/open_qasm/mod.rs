@@ -4,11 +4,13 @@ use std::path::Path;
 use async_trait::async_trait;
 use fehler::{throw, throws};
 use openqasm::{Errors, GenericError, Parser, ProgramVisitor, SourceCache};
+use crate::args::types::CircuitSchemaType;
 
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::LangSchema;
 use crate::lang_schemas::LangCircuit;
 use crate::Error;
+use crate::ext::types::circuit_generator::GenCircuit;
 
 mod parser;
 
@@ -110,7 +112,7 @@ impl OpenQasmSchema {
 impl LangSchema for OpenQasmSchema {
     // TODO check if is valid
     // TODO when openqasm lib is removed it can be as wasm module
-    async fn as_string(&mut self, circ: LangCircuit) -> Result<String, Error> {
+    async fn as_string(&mut self, circ: LangCircuit) -> Result<GenCircuit, Error> {
         // Add width
         let res = CIRCUIT_TEMPLATE.replace("%WIDTH%", &circ.width.to_string());
 
@@ -137,6 +139,6 @@ impl LangSchema for OpenQasmSchema {
         }
         let res = res.replace("%INV_GATES%", &gates);
 
-        Ok(res)
+        Ok(GenCircuit::builder().circuit(res).t(CircuitSchemaType::OpenQasm).build())
     }
 }

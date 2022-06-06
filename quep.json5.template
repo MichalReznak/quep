@@ -6,6 +6,7 @@
     },
     circuit: {
         t: 'Mirror',
+        schema: 'OpenQasm',
         rand: true,
         path: './data/base.template.qasm',
         inverseGates: {

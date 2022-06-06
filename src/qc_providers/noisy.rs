@@ -13,6 +13,7 @@ use crate::ext::QcProvider;
 use crate::utils::debug;
 use crate::Error;
 use crate::Error::PyDowncastError;
+use crate::ext::types::circuit_generator::GenCircuit;
 
 pub struct NoisyQcProvider {
     args: CliArgsProvider,
@@ -45,12 +46,12 @@ impl QcProvider for NoisyQcProvider {
         })
     }
 
-    async fn append_circuit(&mut self, circuit: String) -> Result<(), Error> {
+    async fn append_circuit(&mut self, circuit: GenCircuit) -> Result<(), Error> {
         Python::with_gil(|py| {
             self.py_instance.as_ref().context(OutOfBounds)?.call_method1(
                 py,
                 "append_circuit",
-                (circuit, debug()),
+                (circuit.circuit, circuit.t.to_string(), debug()),
             )?;
             Ok(())
         })

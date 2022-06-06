@@ -6,7 +6,7 @@ use crate::circuit_generators::{
     RandMirrorCircuitGenerator, VolumeCircuitGenerator,
 };
 use crate::ext::{CircuitGeneratorDyn, LangSchemaDyn, OrchestratorDyn, OutputerDyn, QcProviderDyn};
-use crate::lang_schemas::OpenQasmSchema;
+use crate::lang_schemas::{OpenQasmSchema, QiskitSchema};
 use crate::orchestrators::{
     LatticeOrchestrator, LinearOrchestrator, SingleOrchestrator, VolumeOrchestrator,
 };
@@ -28,6 +28,7 @@ impl Chooser {
         use CircuitSchemaType::*;
         match t {
             OpenQasm => LangSchemaDyn::from(OpenQasmSchema::new()),
+            Qiskit => LangSchemaDyn::from(QiskitSchema::new()),
         }
     }
 

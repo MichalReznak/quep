@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use strum_macros::EnumString;
+use strum_macros::{EnumString, Display};
 
 #[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 pub enum ProviderType {
@@ -41,7 +41,8 @@ pub enum OutputSerType {
     Ron,
 }
 
-#[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, EnumString, Display, Clone, Copy, Serialize, Deserialize)]
 pub enum CircuitSchemaType {
     OpenQasm,
+    Qiskit,
 }

@@ -6,8 +6,10 @@ use rand::SeedableRng;
 use crate::args::CliArgsCircuit;
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::{CircuitGenerator, LangSchema};
-use crate::lang_schemas::{LangCircuit, OpenQasmSchema};
+use crate::lang_schemas::{LangCircuit};
 use crate::Error;
+use crate::Chooser;
+use crate::ext::types::circuit_generator::GenCircuit;
 
 #[allow(dead_code)]
 pub struct RandMirrorCircuitGenerator {
@@ -28,7 +30,7 @@ impl RandMirrorCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for RandMirrorCircuitGenerator {
-    async fn generate(&mut self, i: i32, j: i32, _iter: i32) -> Result<Option<String>, Error> {
+    async fn generate(&mut self, i: i32, j: i32, _iter: i32) -> Result<Option<GenCircuit>, Error> {
         use LangGateType::*;
         let pauli_gates = [Id, X, Y, Z];
         let clifford_gates = [H, S, Id, X, Y, Z];
@@ -111,8 +113,8 @@ impl CircuitGenerator for RandMirrorCircuitGenerator {
             .gates(oqs_gates)
             .inv_gates(oqs_inv_gates)
             .build();
-        let c = OpenQasmSchema::new().as_string(oqs).await?;
-        debug!("{c}");
+        let c = Chooser::get_lang_schema(self.args.schema).as_string(oqs).await?;
+        debug!("{}", c.circuit);
 
         Ok(Some(c))
     }

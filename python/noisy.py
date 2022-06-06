@@ -57,12 +57,21 @@ class Noisy:
     def clear_circuits(self: 'Noisy'):
         self.circuits = []
 
-    def append_circuit(self: 'Noisy', circuit: str, log: bool):
-        qasm_circuit = QuantumCircuit.from_qasm_str(circuit)
-        self.circuits.append(qasm_circuit)
+    def append_circuit(self: 'Noisy', circuit: str, t: str, log: bool):
+        parsed_c = None
+
+        if t == 'OpenQasm':
+            parsed_c = QuantumCircuit.from_qasm_str(circuit)
+
+        elif t == 'Qiskit':
+            exec_res = {}
+            exec(circuit, None, exec_res)
+            parsed_c = exec_res["circ"]
+
+        self.circuits.append(parsed_c)
 
         if log:
-            print(qasm_circuit)
+            print(parsed_c)
 
     def run_all(self: 'Noisy') -> str:
         start = time.time()

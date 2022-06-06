@@ -7,7 +7,8 @@ use crate::args::CliArgsCircuit;
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::{CircuitGenerator, LangSchema};
 use crate::lang_schemas::{LangCircuit, OpenQasmSchema};
-use crate::Error;
+use crate::{Chooser, Error};
+use crate::ext::types::circuit_generator::GenCircuit;
 
 #[throws]
 fn oqs_parse_circuit(
@@ -114,7 +115,7 @@ impl CircuitGenerator for BaseCircuitGenerator {
         depth: i32,
         width: i32,
         _iter: i32, // TODO
-    ) -> Result<Option<String>, Error> {
+    ) -> Result<Option<GenCircuit>, Error> {
         let depth = depth + 1;
         let width = width + 1;
         // TODO check circuit size
@@ -127,7 +128,7 @@ impl CircuitGenerator for BaseCircuitGenerator {
 
         let lang_circuit =
             LangCircuit::builder().width(width).gates(gates).inv_gates(inv_gates).build();
-        let circuit = oqs.as_string(lang_circuit).await?;
+        let circuit = Chooser::get_lang_schema(self.args.schema).as_string(lang_circuit).await?;
 
         Ok(Some(circuit))
     }

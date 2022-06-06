@@ -8,6 +8,7 @@ use enum_dispatch::enum_dispatch;
 use super::types::MetaInfo;
 use crate::qc_providers::{IbmqQcProvider, NoisyQcProvider, SimpleQcProvider};
 use crate::Error;
+use crate::ext::types::circuit_generator::GenCircuit;
 
 #[enum_dispatch]
 pub enum QcProviderDyn {
@@ -23,7 +24,7 @@ pub trait QcProvider {
     async fn connect(&mut self) -> Result<(), Error>;
 
     /// Add circuit to the queue
-    async fn append_circuit(&mut self, circuit: String) -> Result<(), Error>;
+    async fn append_circuit(&mut self, circuit: GenCircuit) -> Result<(), Error>;
 
     /// Run all circuits from queue and remove them
     async fn run(&self) -> Result<Vec<String>, Error>;

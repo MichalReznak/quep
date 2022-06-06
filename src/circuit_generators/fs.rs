@@ -7,8 +7,10 @@ use oq::GenericError;
 use walkdir::{DirEntry, WalkDir};
 
 use crate::args::CliArgsCircuit;
+use crate::args::types::CircuitSchemaType;
 use crate::ext::CircuitGenerator;
 use crate::Error;
+use crate::ext::types::circuit_generator::GenCircuit;
 
 #[allow(dead_code)]
 #[derive(Debug)]
@@ -35,7 +37,7 @@ impl FsCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for FsCircuitGenerator {
-    async fn generate(&mut self, _: i32, j: i32, _: i32) -> Result<Option<String>, Error> {
+    async fn generate(&mut self, _: i32, j: i32, _: i32) -> Result<Option<GenCircuit>, Error> {
         if j >= self.entries.len() as i32 {
             Ok(None)
         }
@@ -57,7 +59,7 @@ impl CircuitGenerator for FsCircuitGenerator {
                 Err(crate::Error::SomeError)
             }
             else {
-                Ok(Some(circuit))
+                Ok(Some(GenCircuit::builder().circuit(circuit).t(CircuitSchemaType::OpenQasm).build())) // TODO openqasm only for now
             }
         }
     }

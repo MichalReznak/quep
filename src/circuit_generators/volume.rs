@@ -5,6 +5,7 @@ use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::{CircuitGenerator, LangSchema};
 use crate::lang_schemas::LangCircuit;
 use crate::{Chooser, Error};
+use crate::ext::types::circuit_generator::GenCircuit;
 
 #[allow(dead_code)]
 pub struct VolumeCircuitGenerator {
@@ -19,7 +20,7 @@ impl VolumeCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for VolumeCircuitGenerator {
-    async fn generate(&mut self, i: i32, j: i32, _: i32) -> Result<Option<String>, Error> {
+    async fn generate(&mut self, i: i32, j: i32, _: i32) -> Result<Option<GenCircuit>, Error> {
         let i = i + 1;
         let j = j + 1;
 

@@ -4,11 +4,11 @@ use async_trait::async_trait;
 use fehler::throws;
 
 use crate::args::CliArgsCircuit;
+use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::{CircuitGenerator, LangSchema};
 use crate::lang_schemas::{LangCircuit, OpenQasmSchema};
 use crate::{Chooser, Error};
-use crate::ext::types::circuit_generator::GenCircuit;
 
 #[throws]
 fn oqs_parse_circuit(
@@ -122,7 +122,7 @@ impl CircuitGenerator for BaseCircuitGenerator {
         // TODO barriers support
         // TODO different order of operations
 
-        let mut oqs = OpenQasmSchema::from_path(&self.args.source)?;
+        let oqs = OpenQasmSchema::from_path(&self.args.source)?;
 
         let (gates, inv_gates) = oqs_parse_circuit(&oqs, depth, width)?;
 

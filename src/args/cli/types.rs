@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use strum_macros::{EnumString, Display};
+use strum_macros::{Display, EnumString};
 
 #[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 pub enum ProviderType {

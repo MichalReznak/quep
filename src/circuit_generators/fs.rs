@@ -6,11 +6,11 @@ use openqasm as oq;
 use oq::GenericError;
 use walkdir::{DirEntry, WalkDir};
 
-use crate::args::CliArgsCircuit;
 use crate::args::types::CircuitSchemaType;
+use crate::args::CliArgsCircuit;
+use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::CircuitGenerator;
 use crate::Error;
-use crate::ext::types::circuit_generator::GenCircuit;
 
 #[allow(dead_code)]
 #[derive(Debug)]
@@ -59,7 +59,9 @@ impl CircuitGenerator for FsCircuitGenerator {
                 Err(crate::Error::SomeError)
             }
             else {
-                Ok(Some(GenCircuit::builder().circuit(circuit).t(CircuitSchemaType::OpenQasm).build())) // TODO openqasm only for now
+                Ok(Some(
+                    GenCircuit::builder().circuit(circuit).t(CircuitSchemaType::OpenQasm).build(),
+                )) // TODO openqasm only for now
             }
         }
     }

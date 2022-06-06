@@ -1,12 +1,11 @@
 use async_trait::async_trait;
 
 use crate::args::CliArgsCircuit;
+use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::{CircuitGenerator, LangSchema};
-use crate::lang_schemas::{LangCircuit};
-use crate::Error;
-use crate::Chooser;
-use crate::ext::types::circuit_generator::GenCircuit;
+use crate::lang_schemas::LangCircuit;
+use crate::{Chooser, Error};
 
 pub struct MirrorCircuitGenerator {
     args: CliArgsCircuit,

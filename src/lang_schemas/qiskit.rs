@@ -1,16 +1,13 @@
 use std::fmt::Write;
-use std::path::Path;
 
 use async_trait::async_trait;
-use fehler::{throw, throws};
-use openqasm::{Errors, GenericError, Parser, ProgramVisitor, SourceCache};
-use crate::args::types::CircuitSchemaType;
 
+use crate::args::types::CircuitSchemaType;
+use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::LangSchema;
 use crate::lang_schemas::LangCircuit;
 use crate::Error;
-use crate::ext::types::circuit_generator::GenCircuit;
 
 // TODO do it gate independent
 const CIRCUIT_TEMPLATE: &str = r#"

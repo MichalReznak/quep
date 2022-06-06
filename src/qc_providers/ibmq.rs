@@ -8,12 +8,12 @@ use tokio::time::Duration;
 
 use crate::args::CliArgsProvider;
 use crate::error::OutOfBounds;
+use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::MetaInfo;
 use crate::ext::QcProvider;
 use crate::utils::debug;
 use crate::Error;
 use crate::Error::PyDowncastError;
-use crate::ext::types::circuit_generator::GenCircuit;
 
 pub struct IbmqQcProvider {
     args: CliArgsProvider,

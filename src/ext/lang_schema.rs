@@ -5,9 +5,9 @@
 use async_trait::async_trait;
 use enum_dispatch::enum_dispatch;
 
+use crate::ext::types::circuit_generator::GenCircuit;
 use crate::lang_schemas::{LangCircuit, OpenQasmSchema, QiskitSchema};
 use crate::Error;
-use crate::ext::types::circuit_generator::GenCircuit;
 
 #[enum_dispatch]
 pub enum LangSchemaDyn {

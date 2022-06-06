@@ -1,5 +1,6 @@
-use crate::args::types::CircuitSchemaType;
 use typed_builder::TypedBuilder;
+
+use crate::args::types::CircuitSchemaType;
 
 #[derive(TypedBuilder, Clone)]
 pub struct GenCircuit {

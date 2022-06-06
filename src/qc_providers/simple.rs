@@ -8,11 +8,11 @@ use snafu::OptionExt;
 
 use crate::args::CliArgsProvider;
 use crate::error::OutOfBounds;
+use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::QcProvider;
 use crate::utils::debug;
 use crate::Error::PyDowncastError;
 use crate::{ext, Error};
-use crate::ext::types::circuit_generator::GenCircuit;
 
 pub struct SimpleQcProvider {
     args: CliArgsProvider,

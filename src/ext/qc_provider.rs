@@ -6,9 +6,9 @@ use async_trait::async_trait;
 use enum_dispatch::enum_dispatch;
 
 use super::types::MetaInfo;
+use crate::ext::types::circuit_generator::GenCircuit;
 use crate::qc_providers::{IbmqQcProvider, NoisyQcProvider, SimpleQcProvider};
 use crate::Error;
-use crate::ext::types::circuit_generator::GenCircuit;
 
 #[enum_dispatch]
 pub enum QcProviderDyn {

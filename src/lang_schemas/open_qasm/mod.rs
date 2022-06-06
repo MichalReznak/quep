@@ -2,7 +2,7 @@ use std::fmt::Write;
 use std::path::Path;
 
 use async_trait::async_trait;
-use fehler::{throw, throws};
+use fehler::throw;
 use openqasm::{Errors, GenericError, Parser, ProgramVisitor, SourceCache};
 
 use crate::args::types::CircuitSchemaType;

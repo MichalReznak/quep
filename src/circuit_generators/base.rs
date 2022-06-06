@@ -7,7 +7,7 @@ use crate::args::CliArgsCircuit;
 use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::{CircuitGenerator, LangSchema, LangSchemaDyn};
-use crate::lang_schemas::{LangCircuit, OpenQasmSchema};
+use crate::lang_schemas::LangCircuit;
 use crate::{Chooser, Error};
 
 #[throws]

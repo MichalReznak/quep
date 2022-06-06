@@ -108,7 +108,7 @@ impl LangSchema for QiskitSchema {
         self.gates.clone()
     }
 
-    async fn parse_file(&mut self, path: &str) -> Result<(), Error> {
+    async fn parse_file(&mut self, _path: &str) -> Result<(), Error> {
         todo!("Cannot parse qiskit circuit")
     }
 

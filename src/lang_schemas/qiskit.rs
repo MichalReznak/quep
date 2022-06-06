@@ -104,6 +104,14 @@ impl QiskitSchema {
 
 #[async_trait]
 impl LangSchema for QiskitSchema {
+    fn get_gates(&self) -> Vec<LangGate> {
+        self.gates.clone()
+    }
+
+    async fn parse_file(&mut self, path: &str) -> Result<(), Error> {
+        todo!("Cannot parse qiskit circuit")
+    }
+
     // TODO check if is valid
     // TODO when openqasm lib is removed it can be as wasm module
     async fn as_string(&mut self, circ: LangCircuit) -> Result<GenCircuit, Error> {

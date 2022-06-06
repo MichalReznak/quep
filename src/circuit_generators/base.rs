@@ -6,13 +6,13 @@ use fehler::throws;
 use crate::args::CliArgsCircuit;
 use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
-use crate::ext::{CircuitGenerator, LangSchema};
+use crate::ext::{CircuitGenerator, LangSchema, LangSchemaDyn};
 use crate::lang_schemas::{LangCircuit, OpenQasmSchema};
 use crate::{Chooser, Error};
 
 #[throws]
 fn oqs_parse_circuit(
-    oqs: &OpenQasmSchema,
+    oqs: &LangSchemaDyn,
     depth: i32,
     width: i32,
 ) -> (Vec<LangGate>, Vec<LangGate>) {
@@ -20,7 +20,7 @@ fn oqs_parse_circuit(
     let mut gates = vec![];
     let mut inv_gates = vec![];
 
-    for gate in &oqs.gates {
+    for gate in &oqs.get_gates() {
         if matches!(gate.t, LangGateType::Barrier) && gate.i < width {
             gates.push(gate.clone());
             inv_gates.push(gate.inverse());
@@ -36,7 +36,7 @@ fn oqs_parse_circuit(
             0
         };
 
-        let first_ok = count + 1 < depth && gate.i < width; // TODO <= ??
+        let first_ok = count < depth && gate.i < width; // TODO <= ??
 
         use LangGateType::*;
         match gate.t {
@@ -48,7 +48,7 @@ fn oqs_parse_circuit(
                     0
                 };
 
-                second_ok = count + 1 < depth && gate.other.unwrap() < width; // TODO <= ??
+                second_ok = count < depth && gate.other.unwrap() < width; // TODO <= ??
             }
             _ => {}
         }
@@ -122,13 +122,15 @@ impl CircuitGenerator for BaseCircuitGenerator {
         // TODO barriers support
         // TODO different order of operations
 
-        let oqs = OpenQasmSchema::from_path(&self.args.source)?;
+        let mut lang_schema = Chooser::get_lang_schema(self.args.schema);
 
-        let (gates, inv_gates) = oqs_parse_circuit(&oqs, depth, width)?;
+        lang_schema.parse_file(&self.args.source).await?;
+
+        let (gates, inv_gates) = oqs_parse_circuit(&lang_schema, depth, width)?;
 
         let lang_circuit =
             LangCircuit::builder().width(width).gates(gates).inv_gates(inv_gates).build();
-        let circuit = Chooser::get_lang_schema(self.args.schema).as_string(lang_circuit).await?;
+        let circuit = lang_schema.as_string(lang_circuit).await?;
 
         Ok(Some(circuit))
     }

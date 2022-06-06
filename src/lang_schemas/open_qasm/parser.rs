@@ -59,7 +59,7 @@ impl ProgramVisitor for ProgramParser {
             "cz" => Cz,
             "swap" => Swap,
 
-            _ => panic!("Invalid gate"),
+            _ => panic!("Invalid gate: {}", name.as_str()),
         };
 
         let gate = match t {

@@ -75,11 +75,15 @@ impl OpenQasmSchema {
     }
 }
 
-impl OpenQasmSchema {
-    #[throws]
-    pub fn from_path(path: &str) -> Self {
+#[async_trait]
+impl LangSchema for OpenQasmSchema {
+    fn get_gates(&self) -> Vec<LangGate> {
+        self.gates.clone()
+    }
+
+    async fn parse_file(&mut self, path: &str) -> Result<(), Error> {
         // Type check
-        let mut circuit = std::fs::read_to_string(path)?;
+        let mut circuit = tokio::fs::read_to_string(path).await?;
         circuit.remove_matches("\r");
 
         let mut cache = SourceCache::new();
@@ -104,12 +108,10 @@ impl OpenQasmSchema {
         let mut pp = parser::ProgramParser::new();
         pp.visit_program(&program)?;
 
-        Self { gates: pp.gates }
+        self.gates = pp.gates;
+        Ok(())
     }
-}
 
-#[async_trait]
-impl LangSchema for OpenQasmSchema {
     // TODO check if is valid
     // TODO when openqasm lib is removed it can be as wasm module
     async fn as_string(&mut self, circ: LangCircuit) -> Result<GenCircuit, Error> {

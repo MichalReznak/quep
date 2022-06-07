@@ -1,6 +1,11 @@
 use std::fmt::Write;
+use std::path::Path;
 
 use async_trait::async_trait;
+use regex::Regex;
+use tokio::fs::File;
+use tokio::io::{AsyncBufReadExt, BufReader};
+use unwrap_infallible::UnwrapInfallible;
 
 use crate::args::types::CircuitSchemaType;
 use crate::ext::types::circuit_generator::GenCircuit;
@@ -59,6 +64,27 @@ fn gate_to_string(gate: &LangGate) -> String {
     }
 }
 
+fn string_to_gate(str: &str) -> Option<LangGateType> {
+    use LangGateType::*;
+    match str {
+        "id" => Some(Id),
+        "x" => Some(X),
+        "y" => Some(Y),
+        "z" => Some(Z),
+        "h" => Some(H),
+        "s" => Some(S),
+        "sdg" => Some(Sdg),
+        "cx" => Some(Cx),
+        "cz" => Some(Cz),
+        "swap" => Some(Swap),
+        "barrier" => Some(Barrier),
+        val => {
+            println!("{val}");
+            None
+        }
+    }
+}
+
 #[derive(Default)]
 pub struct QiskitSchema {
     pub gates: Vec<LangGate>,
@@ -76,12 +102,49 @@ impl LangSchema for QiskitSchema {
         self.gates.clone()
     }
 
-    async fn parse_file(&mut self, _path: &str) -> Result<(), Error> {
-        todo!("Cannot parse qiskit circuit")
+    async fn parse_file(&mut self, path: &str) -> Result<(), Error> {
+        let re =
+            Regex::new(r"circ\.(?P<name>[a-zA-Z0-9]+)\((?P<index>\d+)(,\s*(?P<other>\d+))*\)")?;
+
+        let file = File::open(Path::new(&path)).await?;
+
+        let reader = BufReader::new(file);
+        let mut lines = reader.lines();
+
+        let mut gates = vec![];
+
+        while let Some(l) = lines.next_line().await? {
+            let c = re.captures(&l);
+            if c.is_none() {
+                continue;
+            };
+            let c = c.unwrap();
+
+            let name = c["name"].parse::<String>().unwrap_infallible();
+            let i = c["index"].parse::<i32>().unwrap();
+
+            let other = c.name("other");
+
+            if let Some(gate_type) = string_to_gate(&name) {
+                let gate = if let Some(o) = other {
+                    LangGate::builder()
+                        .t(gate_type)
+                        .i(i)
+                        .other(o.as_str().parse::<i32>().unwrap())
+                        .build()
+                }
+                else {
+                    LangGate::builder().t(gate_type).i(i).build()
+                };
+
+                gates.push(gate);
+            }
+        }
+
+        self.gates = gates;
+        Ok(())
     }
 
-    // TODO check if is valid
-    // TODO when openqasm lib is removed it can be as wasm module
     async fn as_string(&mut self, circ: LangCircuit) -> Result<GenCircuit, Error> {
         // Add width
         let res = CIRCUIT_TEMPLATE.replace("%WIDTH%", &circ.width.to_string());

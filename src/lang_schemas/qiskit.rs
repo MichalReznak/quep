@@ -37,10 +37,8 @@ circ.barrier()
 
 // TODO add all measures
 
-// TODO remove fixed 0
+// TODO remove fixed reg name
 fn gate_to_string(gate: &LangGate) -> String {
-    // TODO add barrier
-
     use LangGateType::*;
     match gate.t {
         Id => format!("circ.id({})", gate.i),

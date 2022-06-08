@@ -38,10 +38,7 @@ measure q -> c;
 "#;
 
 // TODO remove fixed q
-// TODO should not implement openqasm directly
 fn gate_to_string(gate: &LangGate) -> String {
-    // TODO add barrier
-
     use LangGateType::*;
     match gate.t {
         Id => format!("id q[{}];", gate.i),
@@ -114,7 +111,6 @@ impl LangSchema for OpenQasmSchema {
     }
 
     // TODO check if is valid
-    // TODO when openqasm lib is removed it can be as wasm module
     async fn as_string(&mut self, circ: LangCircuit) -> Result<GenCircuit, Error> {
         // Add width
         let res = CIRCUIT_TEMPLATE.replace("%WIDTH%", &circ.width.to_string());

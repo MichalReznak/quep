@@ -33,3 +33,4 @@ grcov . `
 * TODO UI?
 * Use JobManager to Ibmq https://qiskit.org/documentation/stubs/qiskit.providers.ibmq.managed.IBMQJobManager.html#qiskit.providers.ibmq.managed.IBMQJobManager
 * Generate documentation
+* Add arg to have dummy run

@@ -36,7 +36,7 @@ fn oqs_parse_circuit(
             0
         };
 
-        let first_ok = count < depth && gate.i < width; // TODO <= ??
+        let first_ok = count < depth && gate.i < width;
 
         use LangGateType::*;
         match gate.t {
@@ -48,7 +48,7 @@ fn oqs_parse_circuit(
                     0
                 };
 
-                second_ok = count < depth && gate.other.unwrap() < width; // TODO <= ??
+                second_ok = count < depth && gate.other.unwrap() < width;
             }
             _ => {}
         }

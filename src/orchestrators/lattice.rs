@@ -56,7 +56,6 @@ impl Orchestrator for LatticeOrchestrator {
         let runtime = Instant::now();
 
         if self.args.collect {
-            // TODO add iterations
             'main: for i in 0..i {
                 for j in 0..j {
                     for ii in 0..iter {

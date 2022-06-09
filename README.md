@@ -34,3 +34,5 @@ grcov . `
 * Use JobManager to Ibmq https://qiskit.org/documentation/stubs/qiskit.providers.ibmq.managed.IBMQJobManager.html#qiskit.providers.ibmq.managed.IBMQJobManager
 * Generate documentation
 * Add arg to have dummy run
+* Let orchestrator first check constraints in the configuration if they are fulfilled
+* Add arg to say whether circuits should be mirrored or computed on a simulator

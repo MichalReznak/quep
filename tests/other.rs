@@ -1,5 +1,5 @@
 use anyhow::Error;
-use app::Quep;
+use quep_core::Quep;
 use fehler::throws;
 use tokio::test;
 

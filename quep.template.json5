@@ -1,0 +1,29 @@
+{
+    provider: {
+        t: 'Noisy', // Simple, Noisy, Ibmq
+        pythonDir: './python', // Python providers implementation
+        accountId: '', // IbmQ only
+    },
+    circuit: {
+        t: 'Base', // Base, Mirror, RandMirror, Fs, Volume, Basic
+        schema: 'Qiskit', // OpenQasm, Qiskit
+        rand: true, // Outputs different circuits for each iteration
+        source: './data_qiskit/example.py', // Base circuit source
+        inverse_gates: { // Custom defined inverse gates
+            's': 'sdg',
+        },
+    },
+    output: {
+        t: 'Text', // Serial, Text
+        ser: 'Json', // Json, Xml, Yaml, Toml, Ron, ...
+        pretty: true, // Pretty format
+    },
+    orch: {
+        t: 'Single', // Lattice, Volume, Linear, Single
+        size: 4, // Width most of the time
+        size2: 4, // Depth most of the time
+        iter: 1, // Iterations of circuits of the same size
+        data: './data', // Fs: Circuits source
+        collect: false, // Run all circuits in a bunch
+    },
+}

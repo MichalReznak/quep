@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 
 use anyhow::{Context, Error};
-use app::args::types::{
+use quep_core::args::types::{
     CircuitSchemaType, CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType,
 };
-use app::args::{CliArgsCircuit, CliArgsOrch, CliArgsOutput, CliArgsProvider};
-use app::CliArgs;
+use quep_core::args::{CliArgsCircuit, CliArgsOrch, CliArgsOutput, CliArgsProvider};
+use quep_core::CliArgs;
 use collection_literals::collection;
 use fehler::throws;
 use typed_builder::TypedBuilder;

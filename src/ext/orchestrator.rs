@@ -9,7 +9,7 @@ use enum_dispatch::enum_dispatch;
 use crate::orchestrators::{
     LatticeOrchestrator, LinearOrchestrator, SingleOrchestrator, VolumeOrchestrator,
 };
-use crate::{Chooser, Error};
+use crate::{Chooser, CliArgs, Error};
 
 #[enum_dispatch]
 pub enum OrchestratorDyn {
@@ -21,6 +21,7 @@ pub enum OrchestratorDyn {
 
 #[async_trait]
 #[enum_dispatch(OrchestratorDyn)]
-pub trait Orchestrator {
+pub trait Orchestrator
+{
     async fn run(&self, chooser: &Chooser) -> Result<(), Error>;
 }

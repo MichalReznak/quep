@@ -57,6 +57,9 @@ pub enum Error {
     #[snafu(display("{}", source), context(false))]
     SerdeRonError { source: ron::Error },
 
+    #[snafu(display("Constraint error: {}", reason))]
+    ConstraintError { reason: String },
+
     #[snafu(display("Py downcast error has lifetime"))]
     PyDowncastError,
 

@@ -1,10 +1,10 @@
 use std::time::Duration;
-
 use async_trait::async_trait;
 use log::info;
 use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyList};
 use snafu::OptionExt;
+use fehler::throws;
 
 use crate::args::CliArgsProvider;
 use crate::error::OutOfBounds;
@@ -12,7 +12,7 @@ use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::MetaInfo;
 use crate::ext::QcProvider;
 use crate::utils::debug;
-use crate::Error;
+use crate::{CliArgs, Error};
 use crate::Error::PyDowncastError;
 
 pub struct NoisyQcProvider {
@@ -32,6 +32,11 @@ impl NoisyQcProvider {
 
 #[async_trait]
 impl QcProvider for NoisyQcProvider {
+    fn check_constraints(&self, args: &CliArgs) -> Result<(), Error> {
+        // TODO
+        Ok(())
+    }
+
     async fn connect(&mut self) -> Result<(), Error> {
         Python::with_gil(|py| {
             let code = std::fs::read_to_string(&format!("{}/noisy.py", &self.args.python_dir))?;

@@ -8,7 +8,7 @@ use enum_dispatch::enum_dispatch;
 use super::types::MetaInfo;
 use crate::ext::types::circuit_generator::GenCircuit;
 use crate::qc_providers::{IbmqQcProvider, NoisyQcProvider, SimpleQcProvider};
-use crate::Error;
+use crate::{CliArgs, Error};
 
 #[enum_dispatch]
 pub enum QcProviderDyn {
@@ -20,6 +20,8 @@ pub enum QcProviderDyn {
 #[async_trait]
 #[enum_dispatch(QcProviderDyn)]
 pub trait QcProvider {
+    fn check_constraints(&self, args: &CliArgs) -> Result<(), Error>;
+
     /// Authorize provider
     async fn connect(&mut self) -> Result<(), Error>;
 

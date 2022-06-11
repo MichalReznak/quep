@@ -13,6 +13,7 @@ use crate::orchestrators::{
 use crate::outputers::{SerialOutputer, TextOutputer};
 use crate::qc_providers::{IbmqQcProvider, NoisyQcProvider, SimpleQcProvider};
 use crate::{CliArgs, Error};
+use crate::ext::QcProvider;
 
 /// Args based factory
 pub struct Chooser {
@@ -35,11 +36,13 @@ impl Chooser {
     #[throws]
     pub fn get_provider(&self) -> QcProviderDyn {
         use ProviderType::*;
-        match self.args.provider.t {
+        let prov = match self.args.provider.t {
             Ibmq => QcProviderDyn::from(IbmqQcProvider::new(&self.args.provider)),
             Simple => QcProviderDyn::from(SimpleQcProvider::new(&self.args.provider)),
             Noisy => QcProviderDyn::from(NoisyQcProvider::new(&self.args.provider)),
-        }
+        };
+        prov.check_constraints(&self.args)?;
+        prov
     }
 
     #[throws]

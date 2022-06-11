@@ -5,6 +5,7 @@ use ext::types::MetaInfo;
 use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyList};
 use snafu::OptionExt;
+use fehler::throws;
 
 use crate::args::CliArgsProvider;
 use crate::error::OutOfBounds;
@@ -12,7 +13,7 @@ use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::QcProvider;
 use crate::utils::debug;
 use crate::Error::PyDowncastError;
-use crate::{ext, Error};
+use crate::{ext, Error, CliArgs};
 
 pub struct SimpleQcProvider {
     args: CliArgsProvider,
@@ -31,6 +32,11 @@ impl SimpleQcProvider {
 
 #[async_trait]
 impl QcProvider for SimpleQcProvider {
+    fn check_constraints(&self, args: &CliArgs) -> Result<(), Error> {
+        // TODO
+        Ok(())
+    }
+
     async fn connect(&mut self) -> Result<(), Error> {
         Python::with_gil(|py| {
             let code = std::fs::read_to_string(&format!("{}/simple.py", &self.args.python_dir))?;

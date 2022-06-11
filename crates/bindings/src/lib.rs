@@ -1,17 +1,7 @@
-///! Example usage
-// import asyncio
-// import quepy
-//
-// async def main():
-//     c = quepy.QuepyConfig(a=42)
-//     print(await quepy.run(c))
-//
-// asyncio.run(main())
-
 use pyo3::prelude::*;
 use pyo3_asyncio::tokio::future_into_py;
-use quep_core::args::CliArgsConfig;
 use quep_core::args::types::OutputType;
+use quep_core::args::CliArgsConfig;
 use quep_core::CliArgs;
 
 #[pyclass]
@@ -25,12 +15,9 @@ struct QuepyConfig {
 impl QuepyConfig {
     #[new]
     fn new(a: i32) -> Self {
-        Self {
-            a,
-        }
+        Self { a }
     }
 }
-
 
 /// Run new Quep instance and use configuration from arg
 #[pyfunction]

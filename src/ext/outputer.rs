@@ -11,12 +11,6 @@ use typed_builder::TypedBuilder;
 use crate::outputers::{SerialOutputer, TextOutputer};
 use crate::Error;
 
-#[enum_dispatch]
-pub enum OutputerDyn {
-    TextOutputer,
-    SerialOutputer,
-}
-
 // TODO rename
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct Value {
@@ -24,9 +18,16 @@ pub struct Value {
     pub correct: i32,
 }
 
+#[enum_dispatch]
+pub enum OutputerDyn {
+    TextOutputer,
+    SerialOutputer,
+}
+
 #[async_trait]
 #[enum_dispatch(OutputerDyn)]
 pub trait Outputer {
+    /// Create a lattice or results
     async fn output_table(
         &self,
         value: Vec<Vec<Value>>,
@@ -34,6 +35,7 @@ pub trait Outputer {
         runtime: Duration,
     ) -> Result<String, Error>;
 
+    /// Output with increasing width and depth always by one
     async fn output_volume(
         &self,
         values: Vec<Value>,
@@ -41,6 +43,7 @@ pub trait Outputer {
         runtime: Duration,
     ) -> Result<String, Error>;
 
+    /// Output as a linear list of values
     async fn output_linear(
         &self,
         values: Vec<Value>,

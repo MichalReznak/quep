@@ -22,5 +22,6 @@ pub enum OrchestratorDyn {
 #[async_trait]
 #[enum_dispatch(OrchestratorDyn)]
 pub trait Orchestrator {
+    /// Execute algorithm using the chosen extensions
     async fn run(&self, chooser: &Chooser) -> Result<String, Error>;
 }

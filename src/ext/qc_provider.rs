@@ -20,6 +20,7 @@ pub enum QcProviderDyn {
 #[async_trait]
 #[enum_dispatch(QcProviderDyn)]
 pub trait QcProvider {
+    /// Check whether arguments are correct
     fn check_constraints(&self, args: &CliArgs) -> Result<(), Error>;
 
     /// Authorize provider

@@ -120,9 +120,7 @@ impl Orchestrator for VolumeOrchestrator {
                 }
             }
 
-            outputer
-                .output_volume(result, Some(durations), Instant::now() - runtime)
-                .await
+            outputer.output_volume(result, Some(durations), Instant::now() - runtime).await
         }
     }
 }

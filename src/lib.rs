@@ -32,7 +32,7 @@ pub mod utils;
 pub use args::CliArgs;
 pub use error::Error;
 
-use crate::args::{CliArgsConfig, config};
+use crate::args::config;
 use crate::args::types::ProviderType;
 use crate::utils::dir;
 

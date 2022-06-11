@@ -144,7 +144,11 @@ impl Outputer for SerialOutputer {
             table.push(record);
         }
 
-        let table = Output::builder().records(table).runtime_ms(runtime.as_millis() as i32).quantum_volume(len.try_into()?).build();
+        let table = Output::builder()
+            .records(table)
+            .runtime_ms(runtime.as_millis() as i32)
+            .quantum_volume(len.try_into()?)
+            .build();
         serialize(self.args.ser, &table, self.args.pretty)
     }
 

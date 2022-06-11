@@ -82,6 +82,7 @@ pub fn parse_orch(clap: &CliArgsEnv, config: OrchConfig) -> CliArgsOrch {
         .size(clap.orch_size.or(config.size).unwrap_or(1))
         .size_2(clap.orch_size_2.or(config.size_2).unwrap_or(1))
         .collect(clap.orch_collect.or(config.collect).unwrap_or(false))
+        .preheat(clap.orch_preheat.or(config.preheat).unwrap_or(true))
         .build()
 }
 

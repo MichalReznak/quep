@@ -67,4 +67,7 @@ pub struct CliArgsOrch {
 
     /// Collect all circuits first and then run them
     pub collect: bool,
+
+    /// Do a dummy run
+    pub preheat: bool,
 }

@@ -68,6 +68,9 @@ pub struct CliArgsEnv {
     #[clap(long, env = "QUEP_ORCH_COLLECT")]
     pub orch_collect: Option<bool>,
 
+    #[clap(long, env = "QUEP_ORCH_PREHEAT")]
+    pub orch_preheat: Option<bool>,
+
     // TODO just for testing only
     #[clap(long)]
     pub test_threads: Option<i32>,

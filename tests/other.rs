@@ -1,6 +1,6 @@
 use anyhow::Error;
-use quep_core::Quep;
 use fehler::throws;
+use quep_core::Quep;
 use tokio::test;
 
 #[throws]

@@ -25,5 +25,6 @@
         iter: 1, // Iterations of circuits of the same size
         data: './data', // Fs: Circuits source
         collect: false, // Run all circuits in a bunch
+        preheat: true, // Do a dummy run
     },
 }

@@ -28,11 +28,12 @@ grcov . `
 ```
 
 # TODOs:
+* Let extensions first check constraints in the configuration if they are fulfilled
+
 * TODO use thermal relaxation example to create a better noisy simulator
 * TODO extend supported gates with custom defined and their inverse
-* TODO UI?
+* TODO C/Python-API to the library, C-API for extensions
 * Use JobManager to Ibmq https://qiskit.org/documentation/stubs/qiskit.providers.ibmq.managed.IBMQJobManager.html#qiskit.providers.ibmq.managed.IBMQJobManager
 * Generate documentation
-* Add arg to have dummy run
-* Let orchestrator first check constraints in the configuration if they are fulfilled
 * Add arg to say whether circuits should be mirrored or computed on a simulator
+* Split results from correct shots

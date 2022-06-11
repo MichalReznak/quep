@@ -1,7 +1,7 @@
 use anyhow::Error;
+use fehler::throws;
 use quep_core::args::types::{CircuitType, OrchestratorType, OutputType, ProviderType};
 use quep_core::Quep;
-use fehler::throws;
 
 use crate::common::{get_args, Config};
 

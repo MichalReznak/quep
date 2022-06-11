@@ -5,17 +5,15 @@ use pyo3::types::{PyDict, PyList};
 use pyo3::Python;
 use snafu::OptionExt;
 use tokio::time::Duration;
-use fehler::throws;
 
 use crate::args::CliArgsProvider;
-use crate::error::OutOfBounds;
+use crate::error::{Constraint, OutOfBounds};
 use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::MetaInfo;
 use crate::ext::QcProvider;
 use crate::utils::debug;
+use crate::Error::PyDowncastError;
 use crate::{CliArgs, Error};
-use crate::error::Constraint;
-use crate::Error::{PyDowncastError};
 
 pub struct IbmqQcProvider {
     args: CliArgsProvider,
@@ -36,7 +34,10 @@ impl IbmqQcProvider {
 impl QcProvider for IbmqQcProvider {
     fn check_constraints(&self, args: &CliArgs) -> Result<(), Error> {
         if args.provider.account_id.is_empty() {
-            Constraint { reason: "Account ID needed".to_string() }.fail()?;
+            Constraint {
+                reason: "Account ID needed".to_string(),
+            }
+            .fail()?;
         }
         Ok(())
     }

@@ -5,7 +5,9 @@ use crate::circuit_generators::{
     BaseCircuitGenerator, BasicCircuitGenerator, FsCircuitGenerator, MirrorCircuitGenerator,
     RandMirrorCircuitGenerator, VolumeCircuitGenerator,
 };
-use crate::ext::{CircuitGeneratorDyn, LangSchemaDyn, OrchestratorDyn, OutputerDyn, QcProviderDyn};
+use crate::ext::{
+    CircuitGeneratorDyn, LangSchemaDyn, OrchestratorDyn, OutputerDyn, QcProvider, QcProviderDyn,
+};
 use crate::lang_schemas::{OpenQasmSchema, QiskitSchema};
 use crate::orchestrators::{
     LatticeOrchestrator, LinearOrchestrator, SingleOrchestrator, VolumeOrchestrator,
@@ -13,7 +15,6 @@ use crate::orchestrators::{
 use crate::outputers::{SerialOutputer, TextOutputer};
 use crate::qc_providers::{IbmqQcProvider, NoisyQcProvider, SimpleQcProvider};
 use crate::{CliArgs, Error};
-use crate::ext::QcProvider;
 
 /// Args based factory
 pub struct Chooser {

@@ -26,7 +26,7 @@ impl LinearOrchestrator {
 
 #[async_trait]
 impl Orchestrator for LinearOrchestrator {
-    async fn run(&self, chooser: &Chooser) -> Result<(), crate::Error> {
+    async fn run(&self, chooser: &Chooser) -> Result<String, crate::Error> {
         let i = self.args.size;
         let depth = self.args.size_2;
         let iter = self.args.iter;
@@ -86,7 +86,7 @@ impl Orchestrator for LinearOrchestrator {
                 })
                 .collect();
 
-            outputer.output_linear(result, None, depth, Instant::now() - runtime).await?;
+            outputer.output_linear(result, None, depth, Instant::now() - runtime).await
         }
         else {
             'main2: for j in 0..i {
@@ -123,9 +123,7 @@ impl Orchestrator for LinearOrchestrator {
 
             outputer
                 .output_linear(result, Some(durations), depth, Instant::now() - runtime)
-                .await?;
+                .await
         }
-
-        Ok(())
     }
 }

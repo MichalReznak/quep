@@ -25,7 +25,7 @@ impl LatticeOrchestrator {
 
 #[async_trait]
 impl Orchestrator for LatticeOrchestrator {
-    async fn run(&self, chooser: &Chooser) -> Result<(), crate::Error> {
+    async fn run(&self, chooser: &Chooser) -> Result<String, crate::Error> {
         let i = self.args.size;
         let j = self.args.size_2;
         let iter = self.args.iter;
@@ -93,7 +93,7 @@ impl Orchestrator for LatticeOrchestrator {
                 result.push(sr);
             }
 
-            outputer.output_table(result, None, Instant::now() - runtime).await?;
+            outputer.output_table(result, None, Instant::now() - runtime).await
         }
         else {
             'main2: for i in 0..i {
@@ -141,9 +141,7 @@ impl Orchestrator for LatticeOrchestrator {
                 }
             }
 
-            outputer.output_table(result, Some(durations), Instant::now() - runtime).await?;
+            outputer.output_table(result, Some(durations), Instant::now() - runtime).await
         }
-
-        Ok(())
     }
 }

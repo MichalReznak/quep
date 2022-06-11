@@ -20,6 +20,9 @@ struct Output {
     records: Vec<Record>,
     #[builder(setter(into))]
     runtime_ms: i32,
+
+    #[builder(default, setter(strip_option))]
+    quantum_volume: Option<i32>,
 }
 
 #[skip_serializing_none]
@@ -78,7 +81,7 @@ impl Outputer for SerialOutputer {
         values: Vec<Vec<Value>>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
-    ) -> Result<(), Error> {
+    ) -> Result<String, Error> {
         let mut table = Vec::new();
 
         for (i, value) in values.iter().enumerate() {
@@ -104,11 +107,7 @@ impl Outputer for SerialOutputer {
         }
 
         let table = Output::builder().records(table).runtime_ms(runtime.as_millis() as i32).build();
-        let res = serialize(self.args.ser, &table, self.args.pretty)?;
-
-        println!("\nResult:");
-        println!("{res}");
-        Ok(())
+        serialize(self.args.ser, &table, self.args.pretty)
     }
 
     async fn output_volume(
@@ -116,7 +115,7 @@ impl Outputer for SerialOutputer {
         values: Vec<Value>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
-    ) -> Result<(), Error> {
+    ) -> Result<String, Error> {
         let include_durs = matches!(durations, Some(_));
         // TODO this hack is not pretty
         let durations = durations.unwrap_or_else(|| {
@@ -145,14 +144,8 @@ impl Outputer for SerialOutputer {
             table.push(record);
         }
 
-        let table = Output::builder().records(table).runtime_ms(runtime.as_millis() as i32).build();
-        let res = serialize(self.args.ser, &table, self.args.pretty)?;
-
-        println!("\nResult:");
-        println!("{res}");
-
-        println!("\nQuantum Volume: {}", len);
-        Ok(())
+        let table = Output::builder().records(table).runtime_ms(runtime.as_millis() as i32).quantum_volume(len.try_into()?).build();
+        serialize(self.args.ser, &table, self.args.pretty)
     }
 
     async fn output_linear(
@@ -161,7 +154,7 @@ impl Outputer for SerialOutputer {
         durations: Option<Vec<Duration>>,
         width: i32,
         runtime: Duration,
-    ) -> Result<(), Error> {
+    ) -> Result<String, Error> {
         let include_durs = matches!(durations, Some(_));
         // TODO this hack is not pretty
         let durations = durations.unwrap_or_else(|| {
@@ -190,10 +183,6 @@ impl Outputer for SerialOutputer {
         }
 
         let table = Output::builder().records(table).runtime_ms(runtime.as_millis() as i32).build();
-        let res = serialize(self.args.ser, &table, self.args.pretty)?;
-
-        println!("\nResult:");
-        println!("{res}");
-        Ok(())
+        serialize(self.args.ser, &table, self.args.pretty)
     }
 }

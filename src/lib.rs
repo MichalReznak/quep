@@ -32,7 +32,7 @@ pub mod utils;
 pub use args::CliArgs;
 pub use error::Error;
 
-use crate::args::config;
+use crate::args::{CliArgsConfig, config};
 use crate::args::types::ProviderType;
 use crate::utils::dir;
 
@@ -69,9 +69,9 @@ impl Quep {
     }
 
     #[throws]
-    pub async fn run(self) {
+    pub async fn run(self) -> String {
         let chooser = Chooser::new(self.args.clone());
         let orch = chooser.get_orchestrator()?;
-        orch.run(&chooser).await?;
+        orch.run(&chooser).await?
     }
 }

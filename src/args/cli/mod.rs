@@ -102,6 +102,18 @@ impl CliArgs {
     }
 
     #[throws]
+    pub fn parse_with_config_no_env(config: CliArgsConfig) -> CliArgs {
+        let clap = CliArgsEnv::default();
+
+        CliArgs::builder()
+            .provider(parse_provider(&clap, config.provider)?)
+            .output(parse_output(&clap, config.output)?)
+            .circuit(parse_circuit(&clap, config.circuit)?)
+            .orch(parse_orch(&clap, config.orch)?)
+            .build()
+    }
+
+    #[throws]
     pub fn parse_with_config(config_path: &str) -> CliArgs {
         dotenv::dotenv().ok();
         let clap = CliArgsEnv::parse();

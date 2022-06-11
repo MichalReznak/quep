@@ -26,7 +26,7 @@ impl VolumeOrchestrator {
 
 #[async_trait]
 impl Orchestrator for VolumeOrchestrator {
-    async fn run(&self, chooser: &Chooser) -> Result<(), crate::Error> {
+    async fn run(&self, chooser: &Chooser) -> Result<String, crate::Error> {
         let width = self.args.size;
         let iter = self.args.iter;
         let mut result = vec![];
@@ -85,7 +85,7 @@ impl Orchestrator for VolumeOrchestrator {
                 })
                 .collect();
 
-            outputer.output_volume(result, None, Instant::now() - runtime).await?;
+            outputer.output_volume(result, None, Instant::now() - runtime).await
         }
         else {
             // TODO for now it generates empty for not computed ones
@@ -122,8 +122,7 @@ impl Orchestrator for VolumeOrchestrator {
 
             outputer
                 .output_volume(result, Some(durations), Instant::now() - runtime)
-                .await?;
+                .await
         }
-        Ok(())
     }
 }

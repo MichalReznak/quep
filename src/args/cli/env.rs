@@ -9,7 +9,7 @@ use crate::args::types::CircuitSchemaType;
 pub use crate::config::CliArgsConfig;
 use crate::error::{Error, Utf16};
 
-#[derive(Parser, Debug, Clone)]
+#[derive(Parser, Debug, Clone, Default)]
 #[clap(author, version, about, long_about = None)]
 pub struct CliArgsEnv {
     #[clap(long, env = "QUEP_PROVIDER")]

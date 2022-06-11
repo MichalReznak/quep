@@ -1138,6 +1138,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "pyo3-asyncio"
+version = "0.16.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cb097197d88c0d24df47fcf43c1f7eadde27b17a558cf8875123d60cee2cbba8"
+dependencies = [
+ "futures",
+ "once_cell",
+ "pin-project-lite",
+ "pyo3",
+ "tokio",
+]
+
+[[package]]
 name = "pyo3-build-config"
 version = "0.16.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1227,6 +1240,16 @@ dependencies = [
  "unwrap-infallible",
  "walkdir",
  "wchar",
+]
+
+[[package]]
+name = "quep_bindings"
+version = "0.1.0"
+dependencies = [
+ "pyo3",
+ "pyo3-asyncio",
+ "quep",
+ "tokio",
 ]
 
 [[package]]
@@ -1631,9 +1654,9 @@ dependencies = [
 
 [[package]]
 name = "tokio"
-version = "1.18.2"
+version = "1.19.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4903bf0427cf68dddd5aa6a93220756f8be0c34fcfa9f5e6191e103e15a31395"
+checksum = "c51a52ed6686dd62c320f9b89299e9dfb46f730c7a48e635c19f21d116cb1439"
 dependencies = [
  "bytes",
  "libc",

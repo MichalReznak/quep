@@ -25,7 +25,7 @@ impl SingleOrchestrator {
 
 #[async_trait]
 impl Orchestrator for SingleOrchestrator {
-    async fn run(&self, chooser: &Chooser) -> Result<(), crate::Error> {
+    async fn run(&self, chooser: &Chooser) -> Result<String, crate::Error> {
         let i = self.args.size;
         let j = self.args.size_2;
         let iter = self.args.iter;
@@ -76,7 +76,7 @@ impl Orchestrator for SingleOrchestrator {
 
             // get measured results
             // output -> Outputer
-            outputer.output_table(vec![vec![val]], None, Instant::now() - runtime).await?;
+            outputer.output_table(vec![vec![val]], None, Instant::now() - runtime).await
         }
         else {
             let mut sr = vec![];
@@ -107,9 +107,7 @@ impl Orchestrator for SingleOrchestrator {
 
             // get measured results
             // output -> Outputer
-            outputer.output_table(result, Some(durations), Instant::now() - runtime).await?;
+            outputer.output_table(result, Some(durations), Instant::now() - runtime).await
         }
-
-        Ok(())
     }
 }

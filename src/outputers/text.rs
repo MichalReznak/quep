@@ -40,13 +40,13 @@ impl Outputer for TextOutputer {
                 i.cell()
                     .justify(Justify::Center)
                     .bold(true)
-                    .background_color(Some(Color::Magenta)),
+                    .background_color(Some(Color::Cyan)),
             );
             row_dur.push(
                 i.cell()
                     .justify(Justify::Center)
                     .bold(true)
-                    .background_color(Some(Color::Magenta)),
+                    .background_color(Some(Color::Cyan)),
             );
         }
         table.push(row);
@@ -60,14 +60,14 @@ impl Outputer for TextOutputer {
                     .cell()
                     .justify(Justify::Center)
                     .bold(true)
-                    .background_color(Some(Color::Magenta)),
+                    .background_color(Some(Color::Cyan)),
             );
             row_dur.push(
                 (i + 1)
                     .cell()
                     .justify(Justify::Center)
                     .bold(true)
-                    .background_color(Some(Color::Magenta)),
+                    .background_color(Some(Color::Cyan)),
             );
 
             for (j, col) in value.iter().enumerate() {
@@ -134,7 +134,7 @@ impl Outputer for TextOutputer {
                 },
             ));
 
-            row.push(format!("{i} x {i}").cell().background_color(Some(Color::Magenta)));
+            row.push(format!("{i} x {i}").cell().background_color(Some(Color::Cyan)));
             row.push(val);
             if include_durs {
                 row.push(format!("{} ms", dur.as_millis()).cell());
@@ -177,7 +177,7 @@ impl Outputer for TextOutputer {
                 },
             ));
 
-            row.push(format!("{} x {width}", i + 1).cell().background_color(Some(Color::Magenta)));
+            row.push(format!("{} x {width}", i + 1).cell().background_color(Some(Color::Cyan)));
             row.push(val);
             if include_durs {
                 row.push(format!("{} ms", dur.as_millis()).cell());

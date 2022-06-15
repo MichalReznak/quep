@@ -35,7 +35,7 @@ grcov . `
 * Add arg to say whether circuits should be mirrored or computed on a simulator
 * Split results from correct shots if mirror is not used
 * TODO Allow to change mirror to output all ones
-
+* TODO do nto compare only the most common number when no mirror is turn on
 
 #### Changes after image inserted:
 * Added mirror flag

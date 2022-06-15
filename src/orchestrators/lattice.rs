@@ -29,6 +29,7 @@ impl Orchestrator for LatticeOrchestrator {
         let i = self.args.size;
         let j = self.args.size_2;
         let iter = self.args.iter;
+        let mirror = self.args.mirror;
 
         let mut result = vec![];
         let mut durations = vec![];
@@ -42,6 +43,15 @@ impl Orchestrator for LatticeOrchestrator {
         // connect to the provider -> QcProvider
         let mut provider = chooser.get_provider()?;
         provider.connect().await?;
+
+        let mut simulator = if !mirror {
+            let mut a = chooser.get_simulator()?;
+            a.connect().await?;
+            Some(a)
+        }
+        else {
+            None
+        };
 
         // It runs dummy circuit to make the speed measurement more precise
         if self.args.preheat {
@@ -62,6 +72,10 @@ impl Orchestrator for LatticeOrchestrator {
                     for ii in 0..iter {
                         if let Some(c) = generator.generate(i, j, ii, self.args.mirror).await? {
                             provider.append_circuit(c.clone()).await?;
+
+                            if !mirror {
+                                simulator.as_mut().unwrap().append_circuit(c.clone()).await?;
+                            }
                         }
                         else {
                             break 'main;
@@ -79,13 +93,32 @@ impl Orchestrator for LatticeOrchestrator {
                     let ci = ((ii * j) + jj) * iter;
                     let res = res.get((ci as usize)..(ci as usize + (iter as usize))).unwrap();
 
-                    let mut val = Value::builder().result("".to_string()).correct(0).build();
+                    let mut val = Value::builder().result("".to_string()).correct(0).is_correct(false).build();
                     for r in res {
                         let c = re.captures(r).context(RegexCapture).unwrap();
                         val.result = c["result"].parse::<String>().unwrap_infallible();
                         val.correct += c["val"].parse::<i32>().unwrap();
                     }
                     val.correct /= iter;
+
+                    val.is_correct = if !mirror {
+                        let res = simulator.as_mut().unwrap().run().await?;
+
+                        let mut sim_val =
+                            Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+                        for r in res {
+                            let c = re.captures(&r).context(RegexCapture).unwrap();
+                            sim_val.result = c["result"].parse::<String>().unwrap_infallible();
+                            sim_val.correct += c["val"].parse::<i32>().unwrap();
+                        }
+                        sim_val.correct /= iter;
+
+                        let d = (sim_val.correct as f64) * (1.0 / 3.0);
+                        sim_val.result == val.result && (sim_val.correct - val.correct) as f64 <= d
+                    }
+                    else {
+                        (val.correct as f64) > 1024.0 * (2.0 / 3.0)
+                    };
 
                     sr.push(val);
                 }
@@ -101,9 +134,13 @@ impl Orchestrator for LatticeOrchestrator {
 
                 for j in 0..j {
                     let mut time = Duration::from_micros(0);
-                    let mut val = Value::builder().result("".to_string()).correct(0).build();
+                    let mut val = Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+                    let mut sim_val = Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+
                     for ii in 0..iter {
-                        if let Some(circuit) = generator.generate(i, j, ii, self.args.mirror).await? {
+                        if let Some(circuit) =
+                            generator.generate(i, j, ii, self.args.mirror).await?
+                        {
                             // TODO if I do a multiple iterations and one falls below limit, how to
                             // solve this?
                             provider.append_circuit(circuit.clone()).await?;
@@ -116,6 +153,9 @@ impl Orchestrator for LatticeOrchestrator {
                             // TODO check if result is the same
                             val.result = c["result"].parse::<String>().unwrap_infallible();
                             val.correct += c["val"].parse::<i32>()?;
+
+                            sim_val.result = c["result"].parse::<String>().unwrap_infallible();
+                            sim_val.correct += c["val"].parse::<i32>()?;
                         }
                         else {
                             result.push(sr.clone());
@@ -124,10 +164,18 @@ impl Orchestrator for LatticeOrchestrator {
                     }
 
                     val.correct /= iter;
+                    sim_val.correct /= iter;
+
+                    val.is_correct = if !mirror {
+                        let d = (sim_val.correct as f64) * (1.0 / 3.0);
+                        sim_val.result == val.result && (sim_val.correct - val.correct) as f64 <= d
+                    }
+                    else {
+                        (val.correct as f64) > 1024.0 * (2.0 / 3.0)
+                    };
 
                     durations
-                        .push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO
-                    sr.push(val.clone());
+                        .push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO             sr.push(val.clone());
 
                     if (val.correct as f64) <= 1024.0 * (2.0 / 3.0) {
                         break;

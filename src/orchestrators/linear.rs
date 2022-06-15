@@ -30,6 +30,7 @@ impl Orchestrator for LinearOrchestrator {
         let i = self.args.size;
         let depth = self.args.size_2;
         let iter = self.args.iter;
+        let mirror = self.args.mirror;
 
         let mut result = vec![];
         let mut durations = vec![];
@@ -43,6 +44,15 @@ impl Orchestrator for LinearOrchestrator {
         // connect to the provider -> QcProvider
         let mut provider = chooser.get_provider()?;
         provider.connect().await?;
+
+        let mut simulator = if !mirror {
+            let mut a = chooser.get_simulator()?;
+            a.connect().await?;
+            Some(a)
+        }
+        else {
+            None
+        };
 
         // TODO fix this
         // It runs dummy circuit to make the speed measurement more precise
@@ -61,6 +71,10 @@ impl Orchestrator for LinearOrchestrator {
                 for ii in 0..iter {
                     if let Some(c) = generator.generate(depth - 1, j, ii, self.args.mirror).await? {
                         provider.append_circuit(c.clone()).await?;
+
+                        if !mirror {
+                            simulator.as_mut().unwrap().append_circuit(c.clone()).await?;
+                        }
                     }
                     else {
                         break 'main;
@@ -70,18 +84,42 @@ impl Orchestrator for LinearOrchestrator {
 
             let res = provider.run().await?;
 
+            let sim_res = if !mirror {
+                simulator.as_mut().unwrap().run().await?
+            }
+                else { vec![] };
+
+
             let result = res
                 .into_iter()
                 .chunks(iter as usize)
                 .into_iter()
                 .map(|res| {
-                    let mut val = Value::builder().result("".to_string()).correct(0).build();
+                    let mut val = Value::builder().result("".to_string()).correct(0).is_correct(false).build();
                     for r in res {
                         let c = re.captures(&r).context(RegexCapture).unwrap();
                         val.result = c["result"].parse::<String>().unwrap_infallible();
                         val.correct += c["val"].parse::<i32>().unwrap();
                     }
                     val.correct /= iter;
+
+                    val.is_correct = if !mirror {
+                        let mut sim_val =
+                            Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+                        for r in &sim_res {
+                            let c = re.captures(&r).context(RegexCapture).unwrap();
+                            sim_val.result = c["result"].parse::<String>().unwrap_infallible();
+                            sim_val.correct += c["val"].parse::<i32>().unwrap();
+                        }
+                        sim_val.correct /= iter;
+
+                        let d = (sim_val.correct as f64) * (1.0 / 3.0);
+                        sim_val.result == val.result && (sim_val.correct - val.correct) as f64 <= d
+                    }
+                    else {
+                        (val.correct as f64) > 1024.0 * (2.0 / 3.0)
+                    };
+
                     val
                 })
                 .collect();
@@ -91,7 +129,9 @@ impl Orchestrator for LinearOrchestrator {
         else {
             'main2: for j in 0..i {
                 let mut time = Duration::from_micros(0);
-                let mut val = Value::builder().result("".to_string()).correct(0).build();
+                let mut val = Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+                let mut sim_val =
+                    Value::builder().result("".to_string()).correct(0).is_correct(false).build();
 
                 for ii in 0..iter {
                     // TODO somehow better allow to define circuit width
@@ -106,12 +146,24 @@ impl Orchestrator for LinearOrchestrator {
                         // TODO check if result is the same
                         val.result = c["result"].parse::<String>().unwrap_infallible();
                         val.correct += c["val"].parse::<i32>()?;
+
+                        sim_val.result = c["result"].parse::<String>().unwrap_infallible();
+                        sim_val.correct += c["val"].parse::<i32>()?;
                     }
                     else {
                         break 'main2;
                     }
                 }
                 val.correct /= iter;
+                sim_val.correct /= iter;
+
+                val.is_correct = if !mirror {
+                    let d = (sim_val.correct as f64) * (1.0 / 3.0);
+                    sim_val.result == val.result && (sim_val.correct - val.correct) as f64 <= d
+                }
+                else {
+                    (val.correct as f64) > 1024.0 * (2.0 / 3.0)
+                };
 
                 durations.push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO
                 result.push(val.clone());

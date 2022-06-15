@@ -65,7 +65,7 @@ impl Outputer for TextOutputer {
             );
 
             for (j, col) in value.iter().enumerate() {
-                let res = if (col.correct as f64) > 1024.0 * (2.0 / 3.0) {
+                let res = if col.is_correct {
                     format!("{}: {}", col.result, col.correct)
                         .cell()
                         .foreground_color(Some(Color::Green))

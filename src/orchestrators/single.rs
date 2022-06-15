@@ -1,6 +1,7 @@
 use std::time::Duration;
 
 use async_trait::async_trait;
+use num_traits::abs;
 use regex::Regex;
 use snafu::OptionExt;
 use tokio::time::Instant;
@@ -11,6 +12,7 @@ use crate::chooser::Chooser;
 use crate::error::RegexCapture;
 use crate::ext::outputer::Value;
 use crate::ext::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
+use crate::qc_providers::SimpleQcProvider;
 
 /// Does a single run of some specific size
 pub struct SingleOrchestrator {
@@ -29,6 +31,7 @@ impl Orchestrator for SingleOrchestrator {
         let i = self.args.size;
         let j = self.args.size_2;
         let iter = self.args.iter;
+        let mirror = self.args.mirror;
 
         let mut result = vec![];
         let mut durations = vec![];
@@ -43,6 +46,15 @@ impl Orchestrator for SingleOrchestrator {
         let mut provider = chooser.get_provider()?;
         provider.connect().await?;
 
+        let mut simulator = if !mirror {
+            let mut a = chooser.get_simulator()?;
+            a.connect().await?;
+            Some(a)
+        }
+        else {
+            None
+        };
+
         // It runs dummy circuit to make the speed measurement more precise
         if self.args.preheat {
             if let Some(circuit) = generator.generate(0, 0, 0, false).await? {
@@ -56,8 +68,12 @@ impl Orchestrator for SingleOrchestrator {
 
         if self.args.collect {
             for ii in 0..iter {
-                if let Some(c) = generator.generate(i, j, ii, self.args.mirror).await? {
+                if let Some(c) = generator.generate(i, j, ii, mirror).await? {
                     provider.append_circuit(c.clone()).await?;
+
+                    if !mirror {
+                        simulator.as_mut().unwrap().append_circuit(c.clone()).await?;
+                    }
                 }
                 else {
                     break;
@@ -66,13 +82,33 @@ impl Orchestrator for SingleOrchestrator {
 
             let res = provider.run().await?;
 
-            let mut val = Value::builder().result("".to_string()).correct(0).build();
+            let mut val =
+                Value::builder().result("".to_string()).correct(0).is_correct(false).build();
             for r in res {
                 let c = re.captures(&r).context(RegexCapture).unwrap();
                 val.result = c["result"].parse::<String>().unwrap_infallible();
                 val.correct += c["val"].parse::<i32>().unwrap();
             }
             val.correct /= iter;
+
+            val.is_correct = if !mirror {
+                let res = simulator.as_mut().unwrap().run().await?;
+
+                let mut sim_val =
+                    Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+                for r in res {
+                    let c = re.captures(&r).context(RegexCapture).unwrap();
+                    sim_val.result = c["result"].parse::<String>().unwrap_infallible();
+                    sim_val.correct += c["val"].parse::<i32>().unwrap();
+                }
+                sim_val.correct /= iter;
+
+                let d = (sim_val.correct as f64) * (1.0 / 3.0);
+                sim_val.result == val.result && (sim_val.correct - val.correct) as f64 <= d
+            }
+            else {
+                (val.correct as f64) > 1024.0 * (2.0 / 3.0)
+            };
 
             // get measured results
             // output -> Outputer
@@ -81,10 +117,13 @@ impl Orchestrator for SingleOrchestrator {
         else {
             let mut sr = vec![];
             let mut time = Duration::from_micros(0);
-            let mut val = Value::builder().result("".to_string()).correct(0).build();
+            let mut val =
+                Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+            let mut sim_val =
+                Value::builder().result("".to_string()).correct(0).is_correct(false).build();
 
             for ii in 0..iter {
-                if let Some(circuit) = generator.generate(i, j, ii, self.args.mirror).await? {
+                if let Some(circuit) = generator.generate(i, j, ii, mirror).await? {
                     // TODO if I do a multiple iterations and one falls below limit, how to
                     // solve this?
                     provider.append_circuit(circuit.clone()).await?;
@@ -96,9 +135,21 @@ impl Orchestrator for SingleOrchestrator {
                     // TODO check if result is the same
                     val.result = c["result"].parse::<String>().unwrap_infallible();
                     val.correct += c["val"].parse::<i32>()?;
+
+                    sim_val.result = c["result"].parse::<String>().unwrap_infallible();
+                    sim_val.correct += c["val"].parse::<i32>()?;
                 }
             }
             val.correct /= iter;
+            sim_val.correct /= iter;
+
+            val.is_correct = if !mirror {
+                let d = (sim_val.correct as f64) * (1.0 / 3.0);
+                sim_val.result == val.result && (sim_val.correct - val.correct) as f64 <= d
+            }
+            else {
+                (val.correct as f64) > 1024.0 * (2.0 / 3.0)
+            };
 
             durations.push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO
             sr.push(val.clone());

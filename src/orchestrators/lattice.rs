@@ -86,6 +86,13 @@ impl Orchestrator for LatticeOrchestrator {
 
             let res = provider.run().await?;
 
+            let sim_res = if !mirror {
+                simulator.as_mut().unwrap().run().await?
+            }
+            else {
+                vec![]
+            };
+
             for ii in 0..i {
                 let mut sr = vec![];
 
@@ -93,7 +100,11 @@ impl Orchestrator for LatticeOrchestrator {
                     let ci = ((ii * j) + jj) * iter;
                     let res = res.get((ci as usize)..(ci as usize + (iter as usize))).unwrap();
 
-                    let mut val = Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+                    let mut val = Value::builder()
+                        .result("".to_string())
+                        .correct(0)
+                        .is_correct(false)
+                        .build();
                     for r in res {
                         let c = re.captures(r).context(RegexCapture).unwrap();
                         val.result = c["result"].parse::<String>().unwrap_infallible();
@@ -102,11 +113,15 @@ impl Orchestrator for LatticeOrchestrator {
                     val.correct /= iter;
 
                     val.is_correct = if !mirror {
-                        let res = simulator.as_mut().unwrap().run().await?;
+                        let sim_res =
+                            sim_res.get((ci as usize)..(ci as usize + (iter as usize))).unwrap();
 
-                        let mut sim_val =
-                            Value::builder().result("".to_string()).correct(0).is_correct(false).build();
-                        for r in res {
+                        let mut sim_val = Value::builder()
+                            .result("".to_string())
+                            .correct(0)
+                            .is_correct(false)
+                            .build();
+                        for r in sim_res.into_iter() {
                             let c = re.captures(&r).context(RegexCapture).unwrap();
                             sim_val.result = c["result"].parse::<String>().unwrap_infallible();
                             sim_val.correct += c["val"].parse::<i32>().unwrap();
@@ -134,8 +149,16 @@ impl Orchestrator for LatticeOrchestrator {
 
                 for j in 0..j {
                     let mut time = Duration::from_micros(0);
-                    let mut val = Value::builder().result("".to_string()).correct(0).is_correct(false).build();
-                    let mut sim_val = Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+                    let mut val = Value::builder()
+                        .result("".to_string())
+                        .correct(0)
+                        .is_correct(false)
+                        .build();
+                    let mut sim_val = Value::builder()
+                        .result("".to_string())
+                        .correct(0)
+                        .is_correct(false)
+                        .build();
 
                     for ii in 0..iter {
                         if let Some(circuit) =
@@ -175,16 +198,17 @@ impl Orchestrator for LatticeOrchestrator {
                     };
 
                     durations
-                        .push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO             sr.push(val.clone());
+                        .push(Duration::from_millis((time.as_millis() as u64) / (iter as u64)));
+                    sr.push(val.clone());
 
-                    if (val.correct as f64) <= 1024.0 * (2.0 / 3.0) {
+                    if !val.is_correct {
                         break;
                     }
                 }
 
                 result.push(sr.clone());
-                let c = sr.get(0).context(OutOfBounds)?.correct;
-                if (c as f64) <= 1024.0 * (2.0 / 3.0) && sr.len() == 1 {
+                let c = sr.get(0).context(OutOfBounds)?.is_correct;
+                if c && sr.len() == 1 {
                     break;
                 }
             }

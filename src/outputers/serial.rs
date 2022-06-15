@@ -98,7 +98,7 @@ impl Outputer for SerialOutputer {
                     .depth(cast(j + 1).context(OutOfBounds)?)
                     .output(&col.result)
                     .result(col.correct)
-                    .correct((col.correct as f64) > 1024.0 * (2.0 / 3.0))
+                    .correct(col.is_correct)
                     .time_ms(time_ms)
                     .build();
 
@@ -180,7 +180,7 @@ impl Outputer for SerialOutputer {
                 .depth(cast(width).context(OutOfBounds)?)
                 .result(val.correct)
                 .output(&val.result)
-                .correct(val.correct as f64 > 1024.0 * (2.0 / 3.0))
+                .correct(val.is_correct)
                 .time_ms(time_ms)
                 .build();
             table.push(record);

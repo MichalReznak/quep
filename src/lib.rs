@@ -45,7 +45,7 @@ impl Quep {
     pub async fn new(args: CliArgs) -> Self {
         // Use python only when needed
         use ProviderType::*;
-        if matches!(args.provider.t, Simple | Ibmq | Noisy) || args.orch.mirror {
+        if matches!(args.provider.t, Simple | Ibmq | Noisy) || !args.orch.mirror {
             pyvenv::PyVenv::init(&args.provider.python_dir).await?;
             println!("Done");
         }

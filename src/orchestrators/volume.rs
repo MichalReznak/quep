@@ -86,14 +86,21 @@ impl Orchestrator for VolumeOrchestrator {
             let sim_res = if !mirror {
                 simulator.as_mut().unwrap().run().await?
             }
-            else { vec![] };
+            else {
+                vec![]
+            };
 
             let result = res
                 .into_iter()
                 .chunks(iter as usize)
                 .into_iter()
-                .map(|res| {
-                    let mut val = Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+                .enumerate()
+                .map(|(i, res)| {
+                    let mut val = Value::builder()
+                        .result("".to_string())
+                        .correct(0)
+                        .is_correct(false)
+                        .build();
                     for r in res {
                         let c = re.captures(&r).context(RegexCapture).unwrap();
                         val.result = c["result"].parse::<String>().unwrap_infallible();
@@ -102,9 +109,16 @@ impl Orchestrator for VolumeOrchestrator {
                     val.correct /= iter;
 
                     val.is_correct = if !mirror {
-                        let mut sim_val =
-                            Value::builder().result("".to_string()).correct(0).is_correct(false).build();
-                        for r in &sim_res {
+                        let ci = i * (iter as usize);
+                        let res =
+                            sim_res.get((ci as usize)..(ci as usize + (iter as usize))).unwrap();
+
+                        let mut sim_val = Value::builder()
+                            .result("".to_string())
+                            .correct(0)
+                            .is_correct(false)
+                            .build();
+                        for r in res.into_iter() {
                             let c = re.captures(&r).context(RegexCapture).unwrap();
                             sim_val.result = c["result"].parse::<String>().unwrap_infallible();
                             sim_val.correct += c["val"].parse::<i32>().unwrap();
@@ -128,8 +142,10 @@ impl Orchestrator for VolumeOrchestrator {
             // TODO for now it generates empty for not computed ones
             'main2: for i in 0..width {
                 let mut time = Duration::from_micros(0);
-                let mut val = Value::builder().result("".to_string()).correct(0).is_correct(false).build();
-                let mut sim_val = Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+                let mut val =
+                    Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+                let mut sim_val =
+                    Value::builder().result("".to_string()).correct(0).is_correct(false).build();
 
                 for ii in 0..iter {
                     if let Some(circuit) = generator.generate(i, i, ii, self.args.mirror).await? {

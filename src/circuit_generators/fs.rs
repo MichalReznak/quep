@@ -43,7 +43,7 @@ impl CircuitGenerator for FsCircuitGenerator {
         _: i32,
         j: i32,
         _: i32,
-        mirror: bool,
+        _mirror: bool,
     ) -> Result<Option<GenCircuit>, Error> {
         if j >= self.entries.len() as i32 {
             Ok(None)

@@ -87,15 +87,21 @@ impl Orchestrator for LinearOrchestrator {
             let sim_res = if !mirror {
                 simulator.as_mut().unwrap().run().await?
             }
-                else { vec![] };
-
+            else {
+                vec![]
+            };
 
             let result = res
                 .into_iter()
                 .chunks(iter as usize)
                 .into_iter()
-                .map(|res| {
-                    let mut val = Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+                .enumerate()
+                .map(|(i, res)| {
+                    let mut val = Value::builder()
+                        .result("".to_string())
+                        .correct(0)
+                        .is_correct(false)
+                        .build();
                     for r in res {
                         let c = re.captures(&r).context(RegexCapture).unwrap();
                         val.result = c["result"].parse::<String>().unwrap_infallible();
@@ -104,14 +110,23 @@ impl Orchestrator for LinearOrchestrator {
                     val.correct /= iter;
 
                     val.is_correct = if !mirror {
-                        let mut sim_val =
-                            Value::builder().result("".to_string()).correct(0).is_correct(false).build();
-                        for r in &sim_res {
+                        let ci = i * (iter as usize);
+                        let res =
+                            sim_res.get((ci as usize)..(ci as usize + (iter as usize))).unwrap();
+                        println!("{res:?}");
+
+                        let mut sim_val = Value::builder()
+                            .result("".to_string())
+                            .correct(0)
+                            .is_correct(false)
+                            .build();
+                        for r in res.into_iter() {
                             let c = re.captures(&r).context(RegexCapture).unwrap();
                             sim_val.result = c["result"].parse::<String>().unwrap_infallible();
                             sim_val.correct += c["val"].parse::<i32>().unwrap();
                         }
                         sim_val.correct /= iter;
+                        println!("{sim_val:#?}");
 
                         let d = (sim_val.correct as f64) * (1.0 / 3.0);
                         sim_val.result == val.result && (sim_val.correct - val.correct) as f64 <= d
@@ -129,14 +144,17 @@ impl Orchestrator for LinearOrchestrator {
         else {
             'main2: for j in 0..i {
                 let mut time = Duration::from_micros(0);
-                let mut val = Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+                let mut val =
+                    Value::builder().result("".to_string()).correct(0).is_correct(false).build();
                 let mut sim_val =
                     Value::builder().result("".to_string()).correct(0).is_correct(false).build();
 
                 for ii in 0..iter {
                     // TODO somehow better allow to define circuit width
                     // (or if it should increase width instead of depth?)
-                    if let Some(circuit) = generator.generate(depth - 1, j, ii, self.args.mirror).await? {
+                    if let Some(circuit) =
+                        generator.generate(depth - 1, j, ii, self.args.mirror).await?
+                    {
                         provider.append_circuit(circuit.clone()).await?;
 
                         let res = provider.run().await?.get(0).unwrap().to_string();

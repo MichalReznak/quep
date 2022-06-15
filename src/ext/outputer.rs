@@ -14,8 +14,9 @@ use crate::Error;
 // TODO rename
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct Value {
-    pub result: String,
-    pub correct: i32,
+    pub result: String,   // result bit-string
+    pub correct: i32,     // number of correct shots
+    pub is_correct: bool, // is correct?
 }
 
 #[enum_dispatch]

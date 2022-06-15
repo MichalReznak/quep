@@ -37,16 +37,10 @@ impl Outputer for TextOutputer {
         let mut row_dur = vec![];
         for i in 0..=values.get(0).context(OutOfBounds)?.len() {
             row.push(
-                i.cell()
-                    .justify(Justify::Center)
-                    .bold(true)
-                    .background_color(Some(Color::Cyan)),
+                i.cell().justify(Justify::Center).bold(true).background_color(Some(Color::Cyan)),
             );
             row_dur.push(
-                i.cell()
-                    .justify(Justify::Center)
-                    .bold(true)
-                    .background_color(Some(Color::Cyan)),
+                i.cell().justify(Justify::Center).bold(true).background_color(Some(Color::Cyan)),
             );
         }
         table.push(row);
@@ -125,14 +119,12 @@ impl Outputer for TextOutputer {
             let mut row = vec![];
             let i = i + 1;
 
-            let val = val.correct.cell().foreground_color(Some(
-                if (val.correct as f64) > 1024.0 * (2.0 / 3.0) {
-                    Color::Green
-                }
-                else {
-                    Color::Red
-                },
-            ));
+            let val = val.correct.cell().foreground_color(Some(if val.is_correct {
+                Color::Green
+            }
+            else {
+                Color::Red
+            }));
 
             row.push(format!("{i} x {i}").cell().background_color(Some(Color::Cyan)));
             row.push(val);

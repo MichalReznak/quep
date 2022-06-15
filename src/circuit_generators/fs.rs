@@ -38,7 +38,13 @@ impl FsCircuitGenerator {
 // TODO use mirror somehow
 #[async_trait]
 impl CircuitGenerator for FsCircuitGenerator {
-    async fn generate(&mut self, _: i32, j: i32, _: i32, mirror: bool) -> Result<Option<GenCircuit>, Error> {
+    async fn generate(
+        &mut self,
+        _: i32,
+        j: i32,
+        _: i32,
+        mirror: bool,
+    ) -> Result<Option<GenCircuit>, Error> {
         if j >= self.entries.len() as i32 {
             Ok(None)
         }

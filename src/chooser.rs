@@ -80,4 +80,9 @@ impl Chooser {
             Volume => OrchestratorDyn::from(VolumeOrchestrator::new(&self.args.orch)),
         }
     }
+
+    #[throws]
+    pub fn get_simulator(&self) -> SimpleQcProvider {
+        SimpleQcProvider::new(&self.args.provider)
+    }
 }

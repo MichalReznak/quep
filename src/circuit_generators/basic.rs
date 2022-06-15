@@ -21,7 +21,13 @@ impl BasicCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for BasicCircuitGenerator {
-    async fn generate(&mut self, _: i32, _: i32, _: i32, mirror: bool) -> Result<Option<GenCircuit>, Error> {
+    async fn generate(
+        &mut self,
+        _: i32,
+        _: i32,
+        _: i32,
+        mirror: bool,
+    ) -> Result<Option<GenCircuit>, Error> {
         use LangGateType::*;
         let mut gates = vec![
             LangGate::builder().t(X).i(0).build(),

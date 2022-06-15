@@ -20,7 +20,13 @@ impl VolumeCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for VolumeCircuitGenerator {
-    async fn generate(&mut self, i: i32, _: i32, _: i32, mirror: bool) -> Result<Option<GenCircuit>, Error> {
+    async fn generate(
+        &mut self,
+        i: i32,
+        _: i32,
+        _: i32,
+        mirror: bool,
+    ) -> Result<Option<GenCircuit>, Error> {
         let i = i + 1;
         let j = i / 2;
 

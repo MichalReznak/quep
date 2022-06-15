@@ -21,16 +21,21 @@ impl BasicCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for BasicCircuitGenerator {
-    async fn generate(&mut self, _: i32, _: i32, _: i32) -> Result<Option<GenCircuit>, Error> {
+    async fn generate(&mut self, _: i32, _: i32, _: i32, mirror: bool) -> Result<Option<GenCircuit>, Error> {
         use LangGateType::*;
-        let gates = vec![
+        let mut gates = vec![
             LangGate::builder().t(X).i(0).build(),
             LangGate::builder().t(H).i(0).build(),
             LangGate::builder().t(S).i(1).build(),
-            LangGate::builder().t(Sdg).i(1).build(),
-            LangGate::builder().t(H).i(0).build(),
-            LangGate::builder().t(X).i(0).build(),
         ];
+
+        if mirror {
+            gates.extend_from_slice(&[
+                LangGate::builder().t(Sdg).i(1).build(),
+                LangGate::builder().t(H).i(0).build(),
+                LangGate::builder().t(X).i(0).build(),
+            ]);
+        }
 
         let c = LangCircuit::builder().gates(gates).width(2).build();
         Ok(Some(Chooser::get_lang_schema(self.args.schema).as_string(c).await?))

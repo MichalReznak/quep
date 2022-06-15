@@ -31,5 +31,5 @@ pub enum CircuitGeneratorDyn {
 #[async_trait]
 #[enum_dispatch(CircuitGeneratorDyn)]
 pub trait CircuitGenerator {
-    async fn generate(&mut self, i: i32, j: i32, rand: i32) -> Result<Option<GenCircuit>, Error>;
+    async fn generate(&mut self, i: i32, j: i32, rand: i32, mirror: bool) -> Result<Option<GenCircuit>, Error>;
 }

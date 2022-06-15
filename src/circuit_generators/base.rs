@@ -115,6 +115,7 @@ impl CircuitGenerator for BaseCircuitGenerator {
         depth: i32,
         width: i32,
         _iter: i32, // TODO
+        mirror: bool,
     ) -> Result<Option<GenCircuit>, Error> {
         let depth = depth + 1;
         let width = width + 1;
@@ -128,8 +129,13 @@ impl CircuitGenerator for BaseCircuitGenerator {
 
         let (gates, inv_gates) = oqs_parse_circuit(&lang_schema, depth, width)?;
 
-        let lang_circuit =
-            LangCircuit::builder().width(width).gates(gates).inv_gates(inv_gates).build();
+        let lang_circuit = if mirror {
+            LangCircuit::builder().width(width).gates(gates).inv_gates(inv_gates).build()
+        }
+        else {
+            LangCircuit::builder().width(width).gates(gates).build()
+        };
+
         let circuit = lang_schema.as_string(lang_circuit).await?;
 
         Ok(Some(circuit))

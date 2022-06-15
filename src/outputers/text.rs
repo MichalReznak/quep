@@ -145,7 +145,7 @@ impl Outputer for TextOutputer {
         println!("\nResult:");
         print_stdout(table.table())?;
 
-        println!("\nQuantum Volume: {}", len);
+        println!("\nQuantum Volume: {}", 2i32.pow((len - 1) as u32));
 
         println!("\nApplication Runtime: {} ms", runtime.as_millis());
         Ok("".to_string()) // TODO Cannot return as a string

@@ -20,9 +20,9 @@ impl VolumeCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for VolumeCircuitGenerator {
-    async fn generate(&mut self, i: i32, j: i32, _: i32) -> Result<Option<GenCircuit>, Error> {
+    async fn generate(&mut self, i: i32, _: i32, _: i32, mirror: bool) -> Result<Option<GenCircuit>, Error> {
         let i = i + 1;
-        let j = j + 1;
+        let j = i / 2;
 
         use LangGateType::*;
         let gates = vec![X, H, Z, Y];
@@ -39,7 +39,12 @@ impl CircuitGenerator for VolumeCircuitGenerator {
         let mut inv_result = result.clone();
         inv_result.reverse();
 
-        let c = LangCircuit::builder().gates(result).inv_gates(inv_result).width(i).build();
+        let c = if mirror {
+            LangCircuit::builder().gates(result).inv_gates(inv_result).width(i).build()
+        }
+        else {
+            LangCircuit::builder().gates(result).width(i).build()
+        };
         Ok(Some(Chooser::get_lang_schema(self.args.schema).as_string(c).await?))
     }
 }

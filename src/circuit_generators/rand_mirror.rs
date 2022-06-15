@@ -29,7 +29,7 @@ impl RandMirrorCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for RandMirrorCircuitGenerator {
-    async fn generate(&mut self, i: i32, j: i32, _iter: i32) -> Result<Option<GenCircuit>, Error> {
+    async fn generate(&mut self, i: i32, j: i32, _iter: i32, mirror: bool) -> Result<Option<GenCircuit>, Error> {
         use LangGateType::*;
         let pauli_gates = [Id, X, Y, Z];
         let clifford_gates = [H, S, Id, X, Y, Z];
@@ -101,11 +101,19 @@ impl CircuitGenerator for RandMirrorCircuitGenerator {
 
         oqs_inv_gates.reverse();
 
-        let oqs = LangCircuit::builder()
-            .width(oqs_width)
-            .gates(oqs_gates)
-            .inv_gates(oqs_inv_gates)
-            .build();
+        let oqs = if mirror {
+            LangCircuit::builder()
+                .width(oqs_width)
+                .gates(oqs_gates)
+                .inv_gates(oqs_inv_gates)
+                .build()
+        }
+        else {
+            LangCircuit::builder()
+                .width(oqs_width)
+                .gates(oqs_gates)
+                .build()
+        };
         let c = Chooser::get_lang_schema(self.args.schema).as_string(oqs).await?;
         debug!("{}", c.circuit);
 

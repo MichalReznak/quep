@@ -45,7 +45,7 @@ impl Orchestrator for LatticeOrchestrator {
 
         // It runs dummy circuit to make the speed measurement more precise
         if self.args.preheat {
-            if let Some(circuit) = generator.generate(0, 0, 0).await? {
+            if let Some(circuit) = generator.generate(0, 0, 0, false).await? {
                 provider.append_circuit(circuit.clone()).await?;
                 provider.run().await?;
             }
@@ -60,7 +60,7 @@ impl Orchestrator for LatticeOrchestrator {
             'main: for i in 0..i {
                 for j in 0..j {
                     for ii in 0..iter {
-                        if let Some(c) = generator.generate(i, j, ii).await? {
+                        if let Some(c) = generator.generate(i, j, ii, self.args.mirror).await? {
                             provider.append_circuit(c.clone()).await?;
                         }
                         else {
@@ -103,7 +103,7 @@ impl Orchestrator for LatticeOrchestrator {
                     let mut time = Duration::from_micros(0);
                     let mut val = Value::builder().result("".to_string()).correct(0).build();
                     for ii in 0..iter {
-                        if let Some(circuit) = generator.generate(i, j, ii).await? {
+                        if let Some(circuit) = generator.generate(i, j, ii, self.args.mirror).await? {
                             // TODO if I do a multiple iterations and one falls below limit, how to
                             // solve this?
                             provider.append_circuit(circuit.clone()).await?;

@@ -33,6 +33,9 @@ grcov . `
 * TODO extend supported gates with custom defined and their inverse
 
 * Add arg to say whether circuits should be mirrored or computed on a simulator
-* Split results from correct shots
-* Use JobManager to Ibmq https://qiskit.org/documentation/stubs/qiskit.providers.ibmq.managed.IBMQJobManager.html#qiskit.providers.ibmq.managed.IBMQJobManager
-* Generate documentation
+* Split results from correct shots if mirror is not used
+* TODO Allow to change mirror to output all ones
+
+
+#### Changes after image inserted:
+* Added mirror flag

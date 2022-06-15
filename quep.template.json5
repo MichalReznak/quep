@@ -26,5 +26,6 @@
         data: './data', // Fs: Circuits source
         collect: false, // Run all circuits in a bunch
         preheat: true, // Do a dummy run
+        mirror: true, // Mirror circuits
     },
 }

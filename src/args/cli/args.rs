@@ -70,4 +70,7 @@ pub struct CliArgsOrch {
 
     /// Do a dummy run
     pub preheat: bool,
+
+    /// Mirror the circuits
+    pub mirror: bool,
 }

@@ -24,7 +24,7 @@ impl MirrorCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for MirrorCircuitGenerator {
-    async fn generate(&mut self, i: i32, j: i32, iter: i32) -> Result<Option<GenCircuit>, Error> {
+    async fn generate(&mut self, i: i32, j: i32, iter: i32, mirror: bool) -> Result<Option<GenCircuit>, Error> {
         let iter = if self.args.rand { iter } else { 0 };
 
         use LangGateType::*;
@@ -101,11 +101,19 @@ impl CircuitGenerator for MirrorCircuitGenerator {
 
         oqs_inv_gates.reverse();
 
-        let oqs = LangCircuit::builder()
-            .width(oqs_i)
-            .gates(oqs_gates)
-            .inv_gates(oqs_inv_gates)
-            .build();
+        let oqs = if mirror {
+            LangCircuit::builder()
+                .width(oqs_i)
+                .gates(oqs_gates)
+                .inv_gates(oqs_inv_gates)
+                .build()
+        }
+        else {
+            LangCircuit::builder()
+                .width(oqs_i)
+                .gates(oqs_gates)
+                .build()
+        };
         let circuit = Chooser::get_lang_schema(self.args.schema).as_string(oqs).await?;
         Ok(Some(circuit))
     }

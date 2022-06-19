@@ -9,7 +9,7 @@ import quepy
 
 async def main():
     c = quepy.QuepyConfig(
-        a=42
+        output="Serial",
     )
 
     res = await quepy.run(c)

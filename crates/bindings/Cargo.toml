@@ -12,3 +12,4 @@ pyo3 = { version = "0.16.5", features = ["extension-module"] }
 pyo3-asyncio = { version = "0.16", features = ["tokio-runtime"] }
 tokio = "1.19.2"
 quep = { path = "../../" }
+anyhow = "1.0.58"

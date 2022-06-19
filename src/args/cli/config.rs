@@ -11,33 +11,32 @@ use crate::utils::dir;
 #[serde(rename_all = "camelCase")]
 pub struct CliArgsConfig {
     #[serde(default)]
-    pub provider: ProviderConfig,
+    pub provider: CliArgsProviderConfig,
 
     #[serde(default)]
-    pub circuit: CircuitConfig,
+    pub circuit: CliArgsCircuitConfig,
 
     #[serde(default)]
-    pub orch: OrchConfig,
+    pub orch: CliArgsOrchConfig,
 
     #[serde(default)]
-    pub output: OutputConfig,
+    pub output: CliArgsOutputConfig,
 }
 
 #[derive(Serialize, Deserialize, Default, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct ProviderConfig {
+pub struct CliArgsProviderConfig {
     pub t: Option<ProviderType>,
 
     #[serde(default)]
     #[serde(deserialize_with = "parse_from_os_str")]
     pub python_dir: Option<String>,
-
     pub account_id: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Default, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct CircuitConfig {
+pub struct CliArgsCircuitConfig {
     pub t: Option<CircuitType>,
     pub schema: Option<CircuitSchemaType>,
     pub rand: Option<bool>,
@@ -48,7 +47,7 @@ pub struct CircuitConfig {
 
 #[derive(Serialize, Deserialize, Default, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct OutputConfig {
+pub struct CliArgsOutputConfig {
     pub t: Option<OutputType>,
     pub ser: Option<OutputSerType>,
     pub pretty: Option<bool>,
@@ -56,7 +55,7 @@ pub struct OutputConfig {
 
 #[derive(Serialize, Deserialize, Default, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct OrchConfig {
+pub struct CliArgsOrchConfig {
     pub t: Option<OrchestratorType>,
     pub size: Option<i32>,
     pub size_2: Option<i32>,

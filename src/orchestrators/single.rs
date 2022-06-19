@@ -1,7 +1,6 @@
 use std::time::Duration;
 
 use async_trait::async_trait;
-
 use regex::Regex;
 use snafu::OptionExt;
 use tokio::time::Instant;
@@ -12,7 +11,6 @@ use crate::chooser::Chooser;
 use crate::error::RegexCapture;
 use crate::ext::outputer::Value;
 use crate::ext::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
-
 
 /// Does a single run of some specific size
 pub struct SingleOrchestrator {

@@ -15,7 +15,9 @@ use typed_builder::TypedBuilder;
 use types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
 
 use crate::args::types::CircuitSchemaType;
-use crate::config::{CircuitConfig, OrchConfig, OutputConfig, ProviderConfig};
+use crate::config::{
+    CliArgsCircuitConfig, CliArgsOrchConfig, CliArgsOutputConfig, CliArgsProviderConfig,
+};
 use crate::{dir, Error};
 
 #[derive(Debug, Clone, TypedBuilder)]
@@ -27,7 +29,7 @@ pub struct CliArgs {
 }
 
 #[throws]
-pub fn parse_provider(clap: &CliArgsEnv, config: ProviderConfig) -> CliArgsProvider {
+pub fn parse_provider(clap: &CliArgsEnv, config: CliArgsProviderConfig) -> CliArgsProvider {
     let python_dir = dir("./python")?;
     let provider_type = clap.provider.or(config.t).unwrap_or(ProviderType::Simple);
 
@@ -45,7 +47,7 @@ pub fn parse_provider(clap: &CliArgsEnv, config: ProviderConfig) -> CliArgsProvi
 }
 
 #[throws]
-pub fn parse_output(clap: &CliArgsEnv, config: OutputConfig) -> CliArgsOutput {
+pub fn parse_output(clap: &CliArgsEnv, config: CliArgsOutputConfig) -> CliArgsOutput {
     CliArgsOutput::builder()
         .t(clap.output.or(config.t).unwrap_or(OutputType::Text))
         .ser(clap.output_ser.or(config.ser).unwrap_or(OutputSerType::Json))
@@ -54,7 +56,7 @@ pub fn parse_output(clap: &CliArgsEnv, config: OutputConfig) -> CliArgsOutput {
 }
 
 #[throws]
-pub fn parse_circuit(clap: &CliArgsEnv, config: CircuitConfig) -> CliArgsCircuit {
+pub fn parse_circuit(clap: &CliArgsEnv, config: CliArgsCircuitConfig) -> CliArgsCircuit {
     let circuit_source = dir("./base.template.qasm")?;
 
     CliArgsCircuit::builder()
@@ -72,7 +74,7 @@ pub fn parse_circuit(clap: &CliArgsEnv, config: CircuitConfig) -> CliArgsCircuit
 }
 
 #[throws]
-pub fn parse_orch(clap: &CliArgsEnv, config: OrchConfig) -> CliArgsOrch {
+pub fn parse_orch(clap: &CliArgsEnv, config: CliArgsOrchConfig) -> CliArgsOrch {
     let orch_data_dir = dir("./data")?;
 
     CliArgsOrch::builder()

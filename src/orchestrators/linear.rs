@@ -120,8 +120,8 @@ impl Orchestrator for LinearOrchestrator {
                             .correct(0)
                             .is_correct(false)
                             .build();
-                        for r in res.into_iter() {
-                            let c = re.captures(&r).context(RegexCapture).unwrap();
+                        for r in res.iter() {
+                            let c = re.captures(r).context(RegexCapture).unwrap();
                             sim_val.result = c["result"].parse::<String>().unwrap_infallible();
                             sim_val.correct += c["val"].parse::<i32>().unwrap();
                         }

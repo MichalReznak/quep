@@ -36,6 +36,9 @@ grcov . `
 * Split results from correct shots if mirror is not used
 * TODO Allow to change mirror to output all ones
 * TODO do nto compare only the most common number when no mirror is turn on
+* TODO Add a workaround for odd circuit for mirror circuits
+* TODO implement cycle benchmarking (inverse gate is inserted directly behind the correct gate, otherwise it is the same as mirror)
+* TODO allow to define initial state (does not need to be all zeros)
 
 #### Changes after image inserted:
 * Added mirror flag

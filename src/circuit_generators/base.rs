@@ -129,7 +129,7 @@ impl CircuitGenerator for BaseCircuitGenerator {
 
         lang_schema.parse_file(&self.args.source).await?;
 
-        let (mut oqs_gates, inv_gates) = oqs_parse_circuit(&lang_schema, depth, width)?;
+        let (mut oqs_gates, mut inv_gates) = oqs_parse_circuit(&lang_schema, depth, width)?;
 
         if mirror {
             use CircuitBenchType::*;
@@ -142,41 +142,10 @@ impl CircuitGenerator for BaseCircuitGenerator {
                     oqs_gates.extend(inv_gates.into_iter());
                 }
                 Cycle => {
-                    // TODO does not work
-                    // Pad vec with dummy gates
-                    let mut oqs_gates2 = vec![];
-                    for gate in &oqs_gates {
-                        oqs_gates2.push(gate.clone());
-                        if gate.other.is_some() {
-                            oqs_gates2.push(LangGate::builder().t(LangGateType::Dummy).i(-1).build())
-                        }
-                    }
+                    inv_gates.reverse();
 
-                    let mut oqs_inv_gates2 = vec![];
-                    for gate in &inv_gates {
-                        oqs_inv_gates2.push(gate.clone());
-                        if gate.other.is_some() {
-                            oqs_inv_gates2.push(LangGate::builder().t(LangGateType::Dummy).i(-1).build())
-                        }
-                    }
-
-                    // TODO not pretty
-                    // TODO chunks do nto work when gates are left
-                    let gates = oqs_gates2.chunks((2 * width) as usize).map(|e| e.clone())
-                        .map(|e| e.into_iter().collect::<Vec<_>>()).collect::<Vec<_>>();
-
-                    let inv_gates = oqs_inv_gates2.chunks((2 * width) as usize).map(|e| e.clone())
-                        .map(|e| e.into_iter().rev().collect::<Vec<_>>()).collect::<Vec<_>>();
-
-                    oqs_gates = interleave(gates, inv_gates)
-                        .flatten()
-                        .map(|e| e.clone())
-                        .collect::<Vec<_>>()
-                        .chunks((4 * width) as usize)
-                        .map(|e| e.clone())
-                        .map(|e| e.into_iter().collect::<Vec<_>>())
-                        .intersperse(vec![&LangGate::builder().t(LangGateType::Barrier).i(-1).build()])
-                        .flatten().map(|e| e.clone()).filter(|e| !matches!(e.t, LangGateType::Dummy)).collect::<Vec<_>>();
+                    oqs_gates = interleave(oqs_gates, inv_gates)
+                        .collect::<Vec<_>>();
                 }
             }
         }

@@ -42,15 +42,15 @@ impl CircuitGenerator for VolumeCircuitGenerator {
             }
         }
 
-        let mut inv_result = result.clone();
-        inv_result.reverse();
-
-        let c = if mirror {
-            LangCircuit::builder().gates(result).inv_gates(inv_result).width(i).build()
+        if mirror {
+            let mut inv_result = result.clone();
+            inv_result.reverse();
+            result.push(LangGate::builder().t(Barrier).i(-1).build());
+            result.extend(inv_result.into_iter());
         }
-        else {
-            LangCircuit::builder().gates(result).width(i).build()
-        };
-        Ok(Some(Chooser::get_lang_schema(self.args.schema).as_string(c).await?))
+
+        let c = LangCircuit::builder().gates(result).width(i).build();
+        Ok(Some(Chooser::get_lang_schema(self.args.schema).as_string(c).
+        await?))
     }
 }

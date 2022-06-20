@@ -16,16 +16,16 @@ use crate::Error::PyDowncastError;
 use crate::{CliArgs, Error};
 
 pub struct NoisyQcProvider {
-    args: CliArgsProvider,
+    // args: CliArgsProvider,
 
     py_instance: Option<PyObject>,
 }
 
 impl NoisyQcProvider {
-    pub fn new(args: &CliArgsProvider) -> Self {
+    pub fn new(_: &CliArgsProvider) -> Self {
         Self {
             py_instance: None,
-            args: args.clone(),
+            // args: args.clone(),
         }
     }
 }
@@ -39,7 +39,7 @@ impl QcProvider for NoisyQcProvider {
 
     async fn connect(&mut self) -> Result<(), Error> {
         Python::with_gil(|py| {
-            let code = std::fs::read_to_string(&format!("{}/noisy.py", &self.args.python_dir))?;
+            let code = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "./python/noisy.py"));
             let module = PyModule::from_code(py, &code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Noisy")?.into();
             let qiskit = qiskit.call0(py)?;

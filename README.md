@@ -39,6 +39,8 @@ grcov . `
 * TODO Add a workaround for odd circuit for mirror circuits
 * TODO implement cycle benchmarking (inverse gate is inserted directly behind the correct gate, otherwise it is the same as mirror)
 * TODO allow to define initial state (does not need to be all zeros)
+X TODO include python scripts as strings
+* TODO Add dependencies to maturin
 
 #### Changes after image inserted:
 * Added mirror flag

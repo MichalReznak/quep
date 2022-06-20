@@ -28,10 +28,6 @@ circ.barrier()
 
 circ.barrier()
 
-%INV_GATES%
-
-circ.barrier()
-
 %MEASURE%
 "#;
 
@@ -161,15 +157,7 @@ impl LangSchema for QiskitSchema {
         }
         let res = res.replace("%GATES%", &gates);
 
-        // Add inverse gates
-        let mut gates = String::new();
-        if let Some(inv_gates) = circ.inv_gates {
-            for gate in inv_gates {
-                writeln!(&mut gates, "{}", gate_to_string(&gate))?;
-            }
-        }
-        let res = res.replace("%INV_GATES%", &gates);
-
+        // Add measurements
         let mut measures = String::new();
         for i in 0..circ.width {
             writeln!(&mut measures, "circ.measure({}, {})", i, i)?;

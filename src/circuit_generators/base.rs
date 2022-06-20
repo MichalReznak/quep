@@ -127,17 +127,16 @@ impl CircuitGenerator for BaseCircuitGenerator {
 
         lang_schema.parse_file(&self.args.source).await?;
 
-        let (gates, inv_gates) = oqs_parse_circuit(&lang_schema, depth, width)?;
+        let (mut gates, inv_gates) = oqs_parse_circuit(&lang_schema, depth, width)?;
 
-        let lang_circuit = if mirror {
-            LangCircuit::builder().width(width).gates(gates).inv_gates(inv_gates).build()
+        if mirror {
+            gates.push(LangGate::builder().t(LangGateType::Barrier).i(-1).build());
+            gates.extend(inv_gates.into_iter());
         }
-        else {
-            LangCircuit::builder().width(width).gates(gates).build()
-        };
 
+        let lang_circuit =
+            LangCircuit::builder().width(width).gates(gates).build();
         let circuit = lang_schema.as_string(lang_circuit).await?;
-
         Ok(Some(circuit))
     }
 }

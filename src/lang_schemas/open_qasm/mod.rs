@@ -30,10 +30,6 @@ barrier q;
 
 barrier q;
 
-%INV_GATES%
-
-barrier q;
-
 measure q -> c;
 "#;
 
@@ -128,15 +124,6 @@ impl LangSchema for OpenQasmSchema {
             writeln!(&mut gates, "{}", gate_to_string(&gate))?;
         }
         let res = res.replace("%GATES%", &gates);
-
-        // Add inverse gates
-        let mut gates = String::new();
-        if let Some(inv_gates) = circ.inv_gates {
-            for gate in inv_gates {
-                writeln!(&mut gates, "{}", gate_to_string(&gate))?;
-            }
-        }
-        let res = res.replace("%INV_GATES%", &gates);
 
         Ok(GenCircuit::builder().circuit(res).t(CircuitSchemaType::OpenQasm).build())
     }

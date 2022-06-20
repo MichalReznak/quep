@@ -55,6 +55,7 @@ fn gate_to_string(gate: &LangGate) -> String {
                 "circ.barrier()".to_string()
             }
         }
+        _ => panic!("Never")
     }
 }
 

@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use async_trait::async_trait;
 use fehler::throws;
+use itertools::interleave;
 
 use crate::args::CliArgsCircuit;
 use crate::ext::types::circuit_generator::GenCircuit;
@@ -9,6 +10,7 @@ use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::{CircuitGenerator, LangSchema, LangSchemaDyn};
 use crate::lang_schemas::LangCircuit;
 use crate::{Chooser, Error};
+use crate::args::types::CircuitBenchType;
 
 #[throws]
 fn oqs_parse_circuit(
@@ -127,15 +129,60 @@ impl CircuitGenerator for BaseCircuitGenerator {
 
         lang_schema.parse_file(&self.args.source).await?;
 
-        let (mut gates, inv_gates) = oqs_parse_circuit(&lang_schema, depth, width)?;
+        let (mut oqs_gates, inv_gates) = oqs_parse_circuit(&lang_schema, depth, width)?;
 
         if mirror {
-            gates.push(LangGate::builder().t(LangGateType::Barrier).i(-1).build());
-            gates.extend(inv_gates.into_iter());
+            use CircuitBenchType::*;
+
+            // TODO clean up
+            match self.args.bench {
+                Mirror => {
+                    // TODO interleave with barriers??
+                    oqs_gates.push(LangGate::builder().t(LangGateType::Barrier).i(-1).build());
+                    oqs_gates.extend(inv_gates.into_iter());
+                }
+                Cycle => {
+                    // TODO does not work
+                    // Pad vec with dummy gates
+                    let mut oqs_gates2 = vec![];
+                    for gate in &oqs_gates {
+                        oqs_gates2.push(gate.clone());
+                        if gate.other.is_some() {
+                            oqs_gates2.push(LangGate::builder().t(LangGateType::Dummy).i(-1).build())
+                        }
+                    }
+
+                    let mut oqs_inv_gates2 = vec![];
+                    for gate in &inv_gates {
+                        oqs_inv_gates2.push(gate.clone());
+                        if gate.other.is_some() {
+                            oqs_inv_gates2.push(LangGate::builder().t(LangGateType::Dummy).i(-1).build())
+                        }
+                    }
+
+                    // TODO not pretty
+                    // TODO chunks do nto work when gates are left
+                    let gates = oqs_gates2.chunks((2 * width) as usize).map(|e| e.clone())
+                        .map(|e| e.into_iter().collect::<Vec<_>>()).collect::<Vec<_>>();
+
+                    let inv_gates = oqs_inv_gates2.chunks((2 * width) as usize).map(|e| e.clone())
+                        .map(|e| e.into_iter().rev().collect::<Vec<_>>()).collect::<Vec<_>>();
+
+                    oqs_gates = interleave(gates, inv_gates)
+                        .flatten()
+                        .map(|e| e.clone())
+                        .collect::<Vec<_>>()
+                        .chunks((4 * width) as usize)
+                        .map(|e| e.clone())
+                        .map(|e| e.into_iter().collect::<Vec<_>>())
+                        .intersperse(vec![&LangGate::builder().t(LangGateType::Barrier).i(-1).build()])
+                        .flatten().map(|e| e.clone()).filter(|e| !matches!(e.t, LangGateType::Dummy)).collect::<Vec<_>>();
+                }
+            }
         }
 
         let lang_circuit =
-            LangCircuit::builder().width(width).gates(gates).build();
+            LangCircuit::builder().width(width).gates(oqs_gates).build();
         let circuit = lang_schema.as_string(lang_circuit).await?;
         Ok(Some(circuit))
     }

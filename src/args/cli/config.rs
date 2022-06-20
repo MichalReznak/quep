@@ -4,7 +4,7 @@ use fehler::throws;
 use serde::{Deserialize, Deserializer, Serialize};
 
 use super::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
-use crate::args::types::CircuitSchemaType;
+use crate::args::types::{CircuitBenchType, CircuitSchemaType};
 use crate::utils::dir;
 
 #[derive(Serialize, Deserialize, Default)]
@@ -38,6 +38,7 @@ pub struct CliArgsProviderConfig {
 #[serde(rename_all = "camelCase")]
 pub struct CliArgsCircuitConfig {
     pub t: Option<CircuitType>,
+    pub bench: Option<CircuitBenchType>,
     pub schema: Option<CircuitSchemaType>,
     pub rand: Option<bool>,
     pub parse: Option<bool>,

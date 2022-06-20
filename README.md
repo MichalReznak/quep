@@ -41,6 +41,7 @@ grcov . `
 * TODO allow to define initial state (does not need to be all zeros)
 X TODO include python scripts as strings
 * TODO Add dependencies to maturin
+* TODO rename mirror and rand mirror to structured and random generators
 
 #### Changes after image inserted:
 * Added mirror flag

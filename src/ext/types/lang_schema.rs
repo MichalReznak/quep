@@ -15,6 +15,7 @@ pub enum LangGateType {
 
     // TODO other types of gates
     Barrier,
+    Dummy,
 }
 
 impl LangGateType {
@@ -32,6 +33,7 @@ impl LangGateType {
             Cz => Cz,
             Swap => Swap,
             Barrier => Barrier, // TODO support with multiple definitions -1 is with no index
+            Dummy => Dummy,
         }
     }
 }

@@ -55,6 +55,7 @@ fn gate_to_string(gate: &LangGate) -> String {
                 "barrier q;".to_string()
             }
         }
+        Dummy => panic!(),
     }
 }
 

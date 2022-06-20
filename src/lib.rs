@@ -11,6 +11,7 @@
 #![feature(result_flattening)]
 #![feature(string_remove_matches)]
 #![feature(new_uninit)]
+#![feature(iter_intersperse)]
 
 use chooser::Chooser;
 use ext::Orchestrator;

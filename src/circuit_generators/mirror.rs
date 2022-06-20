@@ -1,11 +1,12 @@
 use async_trait::async_trait;
-
+use itertools::interleave;
 use crate::args::CliArgsCircuit;
 use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::{CircuitGenerator, LangSchema};
 use crate::lang_schemas::LangCircuit;
 use crate::{Chooser, Error};
+use crate::args::types::CircuitBenchType;
 
 pub struct MirrorCircuitGenerator {
     args: CliArgsCircuit,
@@ -106,9 +107,50 @@ impl CircuitGenerator for MirrorCircuitGenerator {
         }
 
         if mirror {
-            oqs_inv_gates.reverse();
-            oqs_gates.push(LangGate::builder().t(Barrier).i(-1).build());
-            oqs_gates.extend(oqs_inv_gates.into_iter());
+            use CircuitBenchType::*;
+            match self.args.bench {
+                Mirror => {
+                    // TODO interleave with barriers??
+                    oqs_inv_gates.reverse();
+                    oqs_gates.push(LangGate::builder().t(Barrier).i(-1).build());
+                    oqs_gates.extend(oqs_inv_gates.into_iter());
+                }
+                Cycle => {
+                    // Pad vec with dummy gates
+                    let mut oqs_gates2 = vec![];
+                    for gate in &oqs_gates {
+                        oqs_gates2.push(gate.clone());
+                        if gate.other.is_some() {
+                            oqs_gates2.push(LangGate::builder().t(Dummy).i(-1).build())
+                        }
+                    }
+
+                    let mut oqs_inv_gates2 = vec![];
+                    for gate in &oqs_inv_gates {
+                        oqs_inv_gates2.push(gate.clone());
+                        if gate.other.is_some() {
+                            oqs_inv_gates2.push(LangGate::builder().t(Dummy).i(-1).build())
+                        }
+                    }
+
+                    // TODO not pretty
+                    let gates = oqs_gates2.chunks((2 * i) as usize).map(|e| e.clone())
+                        .map(|e| e.into_iter().collect::<Vec<_>>()).collect::<Vec<_>>();
+
+                    let inv_gates = oqs_inv_gates2.chunks((2 * i) as usize).map(|e| e.clone())
+                        .map(|e| e.into_iter().rev().collect::<Vec<_>>()).collect::<Vec<_>>();
+
+                    oqs_gates = interleave(gates, inv_gates)
+                        .flatten()
+                        .map(|e| e.clone())
+                        .collect::<Vec<_>>()
+                        .chunks((4 * i) as usize)
+                        .map(|e| e.clone())
+                        .map(|e| e.into_iter().collect::<Vec<_>>())
+                        .intersperse(vec![&LangGate::builder().t(Barrier).i(-1).build()])
+                        .flatten().map(|e| e.clone()).filter(|e| !matches!(e.t, Dummy)).collect::<Vec<_>>();
+                }
+            }
         };
 
         let oqs = LangCircuit::builder().width(oqs_i).gates(oqs_gates).build();

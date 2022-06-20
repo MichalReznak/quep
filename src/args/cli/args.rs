@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use typed_builder::TypedBuilder;
 
 use super::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
-use crate::args::types::CircuitSchemaType;
+use crate::args::types::{CircuitBenchType, CircuitSchemaType};
 
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct CliArgsProvider {
@@ -31,8 +31,11 @@ pub struct CliArgsOutput {
 pub struct CliArgsCircuit {
     pub t: CircuitType,
 
+    pub bench: CircuitBenchType,
+
     /// Openqasm and other TODO
     pub schema: CircuitSchemaType,
+
 
     /// Randomize circuit generation of the same size
     pub rand: bool,

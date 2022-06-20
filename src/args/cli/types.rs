@@ -46,3 +46,9 @@ pub enum CircuitSchemaType {
     OpenQasm,
     Qiskit,
 }
+
+#[derive(Debug, EnumString, Display, Clone, Copy, Serialize, Deserialize)]
+pub enum CircuitBenchType {
+    Mirror,
+    Cycle,
+}

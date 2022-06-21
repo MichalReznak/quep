@@ -75,7 +75,7 @@ class Noisy:
 
     def run_all(self: 'Noisy') -> str:
         start = time.time()
-        job = execute(self.circuits, self.backend, shots=1024, memory=True)
+        job = execute(self.circuits, self.backend, shots=1024, memory=True, optimization_level=0)
         end = time.time()
 
         self.meta_info = {

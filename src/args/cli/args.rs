@@ -36,7 +36,6 @@ pub struct CliArgsCircuit {
     /// Openqasm and other TODO
     pub schema: CircuitSchemaType,
 
-
     /// Randomize circuit generation of the same size
     pub rand: bool,
 

@@ -6,7 +6,8 @@ use quep_core::args::config::{
     CliArgsCircuitConfig, CliArgsOrchConfig, CliArgsOutputConfig, CliArgsProviderConfig,
 };
 use quep_core::args::types::{
-    CircuitSchemaType, CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType,
+    CircuitBenchType, CircuitSchemaType, CircuitType, OrchestratorType, OutputSerType, OutputType,
+    ProviderType,
 };
 use quep_core::args::CliArgsConfig;
 use quep_core::CliArgs;
@@ -21,6 +22,7 @@ struct QuepyConfig {
     pub output_ser: Option<OutputSerType>,
     pub output_pretty: Option<bool>,
     pub circuit: Option<CircuitType>,
+    pub circuit_bench: Option<CircuitBenchType>,
     pub circuit_schema: Option<CircuitSchemaType>,
     pub circuit_rand: Option<bool>,
     pub circuit_parse: Option<bool>,
@@ -49,6 +51,7 @@ impl QuepyConfig {
         output_pretty: Option<bool>,
 
         circuit: Option<String>,
+        circuit_bench: Option<String>,
         circuit_schema: Option<String>,
         circuit_rand: Option<bool>,
         circuit_parse: Option<bool>,
@@ -71,6 +74,7 @@ impl QuepyConfig {
             output_ser: output_ser.map(|e| OutputSerType::from_str(&e).unwrap()),
             output_pretty,
             circuit: circuit.map(|e| CircuitType::from_str(&e).unwrap()),
+            circuit_bench: circuit_bench.map(|e| CircuitBenchType::from_str(&e).unwrap()),
             circuit_schema: circuit_schema.map(|e| CircuitSchemaType::from_str(&e).unwrap()),
             circuit_rand,
             circuit_parse,
@@ -97,6 +101,7 @@ impl From<QuepyConfig> for CliArgsConfig {
             },
             circuit: CliArgsCircuitConfig {
                 t: qc.circuit,
+                bench: qc.circuit_bench,
                 schema: qc.circuit_schema,
                 rand: qc.circuit_rand,
                 parse: qc.circuit_parse,

@@ -45,7 +45,7 @@ impl QcProvider for IbmqQcProvider {
     async fn connect(&mut self) -> Result<(), Error> {
         Python::with_gil(|py| -> Result<_, Error> {
             let code = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "./python/ibmq.py"));
-            let module = PyModule::from_code(py, &code, "", "")?;
+            let module = PyModule::from_code(py, code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Ibmq")?.into();
             let qiskit = qiskit.call1(py, (&self.args.account_id,))?;
 

@@ -4,13 +4,14 @@ use log::debug;
 use rand::distributions::{Distribution, Uniform};
 use rand::SeedableRng;
 
+use crate::args::types::CircuitBenchType;
 use crate::args::CliArgsCircuit;
 use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::{CircuitGenerator, LangSchema};
 use crate::lang_schemas::LangCircuit;
 use crate::{Chooser, Error};
-use crate::args::types::CircuitBenchType;
+use crate::utils::cycle;
 
 #[allow(dead_code)]
 pub struct RandMirrorCircuitGenerator {
@@ -150,13 +151,16 @@ impl CircuitGenerator for RandMirrorCircuitGenerator {
                         .map(|e| e.into_iter().collect::<Vec<_>>())
                         .intersperse(vec![&LangGate::builder().t(Barrier).i(-1).build()])
                         .flatten().map(|e| e.clone()).filter(|e| !matches!(e.t, Dummy)).collect::<Vec<_>>();
+
+                    // TODO does not work with two qubit gates
+                    // oqs_gates = cycle(oqs_gates, oqs_inv_gates, i);
                 }
             }
         };
 
         let oqs = LangCircuit::builder().width(oqs_width).gates(oqs_gates).build();
-        let c = Chooser::get_lang_schema(self.args.schema).as_string(oqs).
-        await?; debug!("{}", c.circuit);
+        let c = Chooser::get_lang_schema(self.args.schema).as_string(oqs).await?;
+        debug!("{}", c.circuit);
 
         Ok(Some(c))
     }

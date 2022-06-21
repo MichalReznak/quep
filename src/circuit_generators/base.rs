@@ -4,13 +4,13 @@ use async_trait::async_trait;
 use fehler::throws;
 use itertools::interleave;
 
+use crate::args::types::CircuitBenchType;
 use crate::args::CliArgsCircuit;
 use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::{CircuitGenerator, LangSchema, LangSchemaDyn};
 use crate::lang_schemas::LangCircuit;
 use crate::{Chooser, Error};
-use crate::args::types::CircuitBenchType;
 
 #[throws]
 fn oqs_parse_circuit(
@@ -144,14 +144,12 @@ impl CircuitGenerator for BaseCircuitGenerator {
                 Cycle => {
                     inv_gates.reverse();
 
-                    oqs_gates = interleave(oqs_gates, inv_gates)
-                        .collect::<Vec<_>>();
+                    oqs_gates = interleave(oqs_gates, inv_gates).collect::<Vec<_>>();
                 }
             }
         }
 
-        let lang_circuit =
-            LangCircuit::builder().width(width).gates(oqs_gates).build();
+        let lang_circuit = LangCircuit::builder().width(width).gates(oqs_gates).build();
         let circuit = lang_schema.as_string(lang_circuit).await?;
         Ok(Some(circuit))
     }

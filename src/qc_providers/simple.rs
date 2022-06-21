@@ -16,7 +16,6 @@ use crate::{ext, CliArgs, Error};
 
 pub struct SimpleQcProvider {
     // args: CliArgsProvider,
-
     py_instance: Option<PyObject>,
 }
 
@@ -39,7 +38,7 @@ impl QcProvider for SimpleQcProvider {
     async fn connect(&mut self) -> Result<(), Error> {
         Python::with_gil(|py| {
             let code = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "./python/simple.py"));
-            let module = PyModule::from_code(py, &code, "", "")?;
+            let module = PyModule::from_code(py, code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Simple")?.into();
             let qiskit = qiskit.call0(py)?;
 

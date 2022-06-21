@@ -52,11 +52,12 @@ pub fn cycle(gates: Vec<LangGate>, inv_gates: Vec<LangGate>, i: i32) -> Vec<Lang
         .map(|e| e.into_iter().rev().collect::<Vec<_>>())
         .collect::<Vec<_>>();
 
+    // TODO should be just "i" instead of "2 * i" for Volume
     interleave(gates, inv_gates)
         .flatten()
         .map(|e| e.clone())
         .collect::<Vec<_>>()
-        .chunks((4 * i) as usize)
+        .chunks((2 * i) as usize)
         .map(|e| e.clone())
         .map(|e| e.into_iter().collect::<Vec<_>>())
         .intersperse(vec![&LangGate::builder().t(LangGateType::Barrier).i(-1).build()])

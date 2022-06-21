@@ -117,7 +117,7 @@ impl CircuitGenerator for MirrorCircuitGenerator {
                     oqs_gates.extend(oqs_inv_gates.into_iter());
                 }
                 Cycle => {
-                    oqs_gates = cycle(oqs_gates, oqs_inv_gates, i);
+                    oqs_gates = cycle(oqs_gates, oqs_inv_gates, 2 * i);
                 }
             }
         };

@@ -11,7 +11,6 @@ use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::{CircuitGenerator, LangSchema};
 use crate::lang_schemas::LangCircuit;
 use crate::{Chooser, Error};
-use crate::utils::cycle;
 
 #[allow(dead_code)]
 pub struct RandMirrorCircuitGenerator {
@@ -136,11 +135,17 @@ impl CircuitGenerator for RandMirrorCircuitGenerator {
                     }
 
                     // TODO not pretty
-                    let gates = oqs_gates2.chunks((2 * i) as usize).map(|e| e.clone())
-                        .map(|e| e.into_iter().collect::<Vec<_>>()).collect::<Vec<_>>();
+                    let gates = oqs_gates2
+                        .chunks((2 * i) as usize)
+                        .map(|e| e.clone())
+                        .map(|e| e.into_iter().collect::<Vec<_>>())
+                        .collect::<Vec<_>>();
 
-                    let inv_gates = oqs_inv_gates2.chunks((2 * i) as usize).map(|e| e.clone())
-                        .map(|e| e.into_iter().rev().collect::<Vec<_>>()).collect::<Vec<_>>();
+                    let inv_gates = oqs_inv_gates2
+                        .chunks((2 * i) as usize)
+                        .map(|e| e.clone())
+                        .map(|e| e.into_iter().rev().collect::<Vec<_>>())
+                        .collect::<Vec<_>>();
 
                     oqs_gates = interleave(gates, inv_gates)
                         .flatten()
@@ -150,7 +155,10 @@ impl CircuitGenerator for RandMirrorCircuitGenerator {
                         .map(|e| e.clone())
                         .map(|e| e.into_iter().collect::<Vec<_>>())
                         .intersperse(vec![&LangGate::builder().t(Barrier).i(-1).build()])
-                        .flatten().map(|e| e.clone()).filter(|e| !matches!(e.t, Dummy)).collect::<Vec<_>>();
+                        .flatten()
+                        .map(|e| e.clone())
+                        .filter(|e| !matches!(e.t, Dummy))
+                        .collect::<Vec<_>>();
 
                     // TODO does not work with two qubit gates
                     // oqs_gates = cycle(oqs_gates, oqs_inv_gates, i);

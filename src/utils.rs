@@ -3,8 +3,8 @@ use itertools::interleave;
 use snafu::OptionExt;
 
 use crate::error::Utf16;
-use crate::Error;
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
+use crate::Error;
 
 #[throws]
 pub fn dir(s: &str) -> String {
@@ -21,7 +21,7 @@ pub fn debug() -> bool {
     true
 }
 
-pub fn cycle(gates: Vec<LangGate> , inv_gates: Vec<LangGate>, i: i32) -> Vec<LangGate> {
+pub fn cycle(gates: Vec<LangGate>, inv_gates: Vec<LangGate>, i: i32) -> Vec<LangGate> {
     // Pad vec with dummy gates
     let mut oqs_gates2 = vec![];
     for gate in &gates {

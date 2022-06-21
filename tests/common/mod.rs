@@ -4,7 +4,8 @@ use anyhow::{Context, Error};
 use collection_literals::collection;
 use fehler::throws;
 use quep_core::args::types::{
-    CircuitSchemaType, CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType,
+    CircuitBenchType, CircuitSchemaType, CircuitType, OrchestratorType, OutputSerType, OutputType,
+    ProviderType,
 };
 use quep_core::args::{CliArgsCircuit, CliArgsOrch, CliArgsOutput, CliArgsProvider};
 use quep_core::CliArgs;
@@ -66,6 +67,7 @@ fn get_out(t: OutputType) -> CliArgsOutput {
 fn get_cir(t: CircuitType) -> CliArgsCircuit {
     CliArgsCircuit::builder()
         .t(t)
+        .bench(CircuitBenchType::Mirror)
         .schema(CircuitSchemaType::OpenQasm)
         .rand(true)
         .parse(false)

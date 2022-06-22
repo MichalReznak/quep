@@ -115,12 +115,14 @@ impl Outputer for TextOutputer {
 
         let len = values.len();
         let mut table = vec![];
+        let mut correct_count = 0;
         for (i, (val, dur)) in values.into_iter().zip(durations).enumerate() {
             let mut row = vec![];
             let i = i + 1;
 
             let val_res = val.result.cell();
             let val = val.correct.cell().foreground_color(Some(if val.is_correct {
+                correct_count += 1;
                 Color::Green
             }
             else {
@@ -137,9 +139,15 @@ impl Outputer for TextOutputer {
         }
 
         println!("\nResult:");
+        let qv = if dbg!(correct_count) == dbg!(table.len()) {
+            len
+        }
+        else {
+            len - 1
+        };
         print_stdout(table.table())?;
 
-        println!("\nQuantum Volume (log): {}", len - 1);
+        println!("\nQuantum Volume (log): {}", dbg!(qv));
 
         println!("\nApplication Runtime: {} ms", runtime.as_millis());
         Ok("".to_string()) // TODO Cannot return as a string

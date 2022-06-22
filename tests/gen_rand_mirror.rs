@@ -12,7 +12,7 @@ mod common;
 async fn volume_a() {
     let args = get_args(
         Config::builder()
-            .cir(CircuitType::RandMirror)
+            .cir(CircuitType::Rand)
             .orch(OrchestratorType::Volume)
             .out(OutputType::Serial)
             .prov(ProviderType::Noisy)
@@ -26,7 +26,7 @@ async fn volume_a() {
 async fn volume_b() {
     let args = get_args(
         Config::builder()
-            .cir(CircuitType::RandMirror)
+            .cir(CircuitType::Rand)
             .orch(OrchestratorType::Volume)
             .out(OutputType::Text)
             .prov(ProviderType::Noisy)
@@ -40,7 +40,7 @@ async fn volume_b() {
 async fn volume_c() {
     let args = get_args(
         Config::builder()
-            .cir(CircuitType::RandMirror)
+            .cir(CircuitType::Rand)
             .orch(OrchestratorType::Volume)
             .out(OutputType::Serial)
             .prov(ProviderType::Simple)
@@ -54,7 +54,7 @@ async fn volume_c() {
 async fn volume_d() {
     let args = get_args(
         Config::builder()
-            .cir(CircuitType::RandMirror)
+            .cir(CircuitType::Rand)
             .orch(OrchestratorType::Volume)
             .out(OutputType::Text)
             .prov(ProviderType::Simple)
@@ -68,7 +68,7 @@ async fn volume_d() {
 async fn lattice_a() {
     let args = get_args(
         Config::builder()
-            .cir(CircuitType::RandMirror)
+            .cir(CircuitType::Rand)
             .orch(OrchestratorType::Lattice)
             .out(OutputType::Serial)
             .prov(ProviderType::Noisy)
@@ -82,7 +82,7 @@ async fn lattice_a() {
 async fn lattice_b() {
     let args = get_args(
         Config::builder()
-            .cir(CircuitType::RandMirror)
+            .cir(CircuitType::Rand)
             .orch(OrchestratorType::Lattice)
             .out(OutputType::Text)
             .prov(ProviderType::Noisy)
@@ -96,7 +96,7 @@ async fn lattice_b() {
 async fn lattice_c() {
     let args = get_args(
         Config::builder()
-            .cir(CircuitType::RandMirror)
+            .cir(CircuitType::Rand)
             .orch(OrchestratorType::Lattice)
             .out(OutputType::Serial)
             .prov(ProviderType::Simple)
@@ -110,7 +110,7 @@ async fn lattice_c() {
 async fn lattice_d() {
     let args = get_args(
         Config::builder()
-            .cir(CircuitType::RandMirror)
+            .cir(CircuitType::Rand)
             .orch(OrchestratorType::Lattice)
             .out(OutputType::Text)
             .prov(ProviderType::Simple)
@@ -124,7 +124,7 @@ async fn lattice_d() {
 async fn single_a() {
     let args = get_args(
         Config::builder()
-            .cir(CircuitType::RandMirror)
+            .cir(CircuitType::Rand)
             .orch(OrchestratorType::Single)
             .out(OutputType::Serial)
             .prov(ProviderType::Noisy)
@@ -138,7 +138,7 @@ async fn single_a() {
 async fn single_b() {
     let args = get_args(
         Config::builder()
-            .cir(CircuitType::RandMirror)
+            .cir(CircuitType::Rand)
             .orch(OrchestratorType::Single)
             .out(OutputType::Text)
             .prov(ProviderType::Noisy)
@@ -152,7 +152,7 @@ async fn single_b() {
 async fn single_c() {
     let args = get_args(
         Config::builder()
-            .cir(CircuitType::RandMirror)
+            .cir(CircuitType::Rand)
             .orch(OrchestratorType::Single)
             .out(OutputType::Serial)
             .prov(ProviderType::Simple)
@@ -166,7 +166,7 @@ async fn single_c() {
 async fn single_d() {
     let args = get_args(
         Config::builder()
-            .cir(CircuitType::RandMirror)
+            .cir(CircuitType::Rand)
             .orch(OrchestratorType::Single)
             .out(OutputType::Text)
             .prov(ProviderType::Simple)
@@ -180,7 +180,7 @@ async fn single_d() {
 async fn linear_a() {
     let args = get_args(
         Config::builder()
-            .cir(CircuitType::RandMirror)
+            .cir(CircuitType::Rand)
             .orch(OrchestratorType::Linear)
             .out(OutputType::Serial)
             .prov(ProviderType::Noisy)
@@ -194,7 +194,7 @@ async fn linear_a() {
 async fn linear_b() {
     let args = get_args(
         Config::builder()
-            .cir(CircuitType::RandMirror)
+            .cir(CircuitType::Rand)
             .orch(OrchestratorType::Linear)
             .out(OutputType::Text)
             .prov(ProviderType::Noisy)
@@ -208,7 +208,7 @@ async fn linear_b() {
 async fn linear_c() {
     let args = get_args(
         Config::builder()
-            .cir(CircuitType::RandMirror)
+            .cir(CircuitType::Rand)
             .orch(OrchestratorType::Linear)
             .out(OutputType::Serial)
             .prov(ProviderType::Simple)
@@ -222,7 +222,7 @@ async fn linear_c() {
 async fn linear_d() {
     let args = get_args(
         Config::builder()
-            .cir(CircuitType::RandMirror)
+            .cir(CircuitType::Rand)
             .orch(OrchestratorType::Linear)
             .out(OutputType::Text)
             .prov(ProviderType::Simple)

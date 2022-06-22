@@ -1,17 +1,13 @@
+mod base;
 mod basic;
-
 mod fs;
-
+mod random;
+mod structured;
 mod volume;
 
-mod mirror;
-
-mod rand_mirror;
-
-mod base;
 pub use base::BaseCircuitGenerator;
 pub use basic::BasicCircuitGenerator;
 pub use fs::FsCircuitGenerator;
-pub use mirror::MirrorCircuitGenerator;
-pub use rand_mirror::RandMirrorCircuitGenerator;
+pub use random::RandCircuitGenerator;
+pub use structured::StructCircuitGenerator;
 pub use volume::VolumeCircuitGenerator;

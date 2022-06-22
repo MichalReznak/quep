@@ -2,8 +2,8 @@ use fehler::throws;
 
 use crate::args::types::*;
 use crate::circuit_generators::{
-    BaseCircuitGenerator, BasicCircuitGenerator, FsCircuitGenerator, MirrorCircuitGenerator,
-    RandMirrorCircuitGenerator, VolumeCircuitGenerator,
+    BaseCircuitGenerator, BasicCircuitGenerator, FsCircuitGenerator, RandCircuitGenerator,
+    StructCircuitGenerator, VolumeCircuitGenerator,
 };
 use crate::ext::{
     CircuitGeneratorDyn, LangSchemaDyn, OrchestratorDyn, OutputerDyn, QcProvider, QcProviderDyn,
@@ -62,10 +62,8 @@ impl Chooser {
             Basic => CircuitGeneratorDyn::from(BasicCircuitGenerator::new(&self.args.circuit)),
             Fs => CircuitGeneratorDyn::from(FsCircuitGenerator::new(&self.args.circuit)),
             Volume => CircuitGeneratorDyn::from(VolumeCircuitGenerator::new(&self.args.circuit)),
-            Mirror => CircuitGeneratorDyn::from(MirrorCircuitGenerator::new(&self.args.circuit)),
-            RandMirror => {
-                CircuitGeneratorDyn::from(RandMirrorCircuitGenerator::new(&self.args.circuit))
-            }
+            Struct => CircuitGeneratorDyn::from(StructCircuitGenerator::new(&self.args.circuit)),
+            Rand => CircuitGeneratorDyn::from(RandCircuitGenerator::new(&self.args.circuit)),
             Base => CircuitGeneratorDyn::from(BaseCircuitGenerator::new(&self.args.circuit)),
         }
     }

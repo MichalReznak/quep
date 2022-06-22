@@ -1,7 +1,4 @@
 use async_trait::async_trait;
-use log::debug;
-use rand::distributions::{Distribution, Uniform};
-use rand::SeedableRng;
 
 use crate::args::types::CircuitBenchType;
 use crate::args::CliArgsCircuit;
@@ -12,55 +9,55 @@ use crate::lang_schemas::LangCircuit;
 use crate::utils::cycle;
 use crate::{Chooser, Error};
 
-#[allow(dead_code)]
-pub struct RandMirrorCircuitGenerator {
+pub struct StructCircuitGenerator {
     args: CliArgsCircuit,
 }
 
-impl RandMirrorCircuitGenerator {
+// Structured mirror benchmarking with some restrictions:
+// Always the result should be all zeros
+// Second part of algorithm is always inverse to the first part in everything
+// Length is counted as 2d.
+
+impl StructCircuitGenerator {
     pub fn new(args: &CliArgsCircuit) -> Self {
         Self { args: args.clone() }
     }
 }
 
-// Randomized mirror benchmarking with some restrictions:
-// Always the result should be all zeros
-// Second part of algorithm is always inverse to the first part in everything
-// Length is counted as 2d.
-// It is using **uniform sampling**
-
 #[async_trait]
-impl CircuitGenerator for RandMirrorCircuitGenerator {
+impl CircuitGenerator for StructCircuitGenerator {
     async fn generate(
         &mut self,
         i: i32,
         j: i32,
-        _iter: i32,
+        iter: i32,
         mirror: bool,
     ) -> Result<Option<GenCircuit>, Error> {
+        let iter = if self.args.rand { iter } else { 0 };
+
         use LangGateType::*;
         let pauli_gates = [Id, X, Y, Z];
         let clifford_gates = [H, S, Id, X, Y, Z];
         let clifford_gates_inv = [H, Sdg, Id, X, Y, Z];
         let clifford_gates_2 = [Cx, Cz, Swap];
 
-        let mut rng = rand::rngs::SmallRng::from_entropy();
-        let p_rand: Uniform<usize> = Uniform::from(0..4);
-        let c_rand: Uniform<usize> = Uniform::from(0..9);
-
         let i = i + 1;
         let j = j + 1;
+        let oqs_i = i;
         let mut oqs_gates = vec![];
         let mut oqs_inv_gates = vec![];
-        let oqs_width = i;
 
         let c_len = clifford_gates.len();
+        let c_len2 = c_len + clifford_gates_2.len();
 
+        let mut a = iter;
+        let mut b = iter;
         let mut skip = false;
         for _ in 0..j {
             for ii in 0..i {
-                let p_gate_index = p_rand.sample(&mut rng);
-                let c_gate_index = c_rand.sample(&mut rng);
+                let p_gate_index = b as usize % pauli_gates.len();
+                let c_gate_index = a as usize % c_len2;
+                b += 1;
 
                 if skip {
                     skip = false;
@@ -71,6 +68,7 @@ impl CircuitGenerator for RandMirrorCircuitGenerator {
                     oqs_inv_gates.push(
                         LangGate::builder().t(clifford_gates_inv[c_gate_index]).i(ii).build(),
                     );
+                    a += 1;
                 }
                 // NO space for double gate
                 else if ii == i - 1 {
@@ -99,6 +97,8 @@ impl CircuitGenerator for RandMirrorCircuitGenerator {
                             .other(ii + 1)
                             .build(),
                     );
+
+                    a += 1;
                     skip = true;
                 }
 
@@ -117,16 +117,13 @@ impl CircuitGenerator for RandMirrorCircuitGenerator {
                     oqs_gates.extend(oqs_inv_gates.into_iter());
                 }
                 Cycle => {
-                    // TODO does not work with two qubit gates
                     oqs_gates = cycle(oqs_gates, oqs_inv_gates, 2 * i);
                 }
             }
         };
 
-        let oqs = LangCircuit::builder().width(oqs_width).gates(oqs_gates).build();
-        let c = Chooser::get_lang_schema(self.args.schema).as_string(oqs).await?;
-        debug!("{}", c.circuit);
-
-        Ok(Some(c))
+        let oqs = LangCircuit::builder().width(oqs_i).gates(oqs_gates).build();
+        let circuit = Chooser::get_lang_schema(self.args.schema).as_string(oqs).await?;
+        Ok(Some(circuit))
     }
 }

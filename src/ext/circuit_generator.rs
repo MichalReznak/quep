@@ -13,8 +13,8 @@ use enum_dispatch::enum_dispatch;
 
 use super::types::circuit_generator::GenCircuit;
 use crate::circuit_generators::{
-    BaseCircuitGenerator, BasicCircuitGenerator, FsCircuitGenerator, MirrorCircuitGenerator,
-    RandMirrorCircuitGenerator, VolumeCircuitGenerator,
+    BaseCircuitGenerator, BasicCircuitGenerator, FsCircuitGenerator, RandCircuitGenerator,
+    StructCircuitGenerator, VolumeCircuitGenerator,
 };
 use crate::Error;
 
@@ -23,8 +23,8 @@ pub enum CircuitGeneratorDyn {
     BasicCircuitGenerator,
     FsCircuitGenerator,
     VolumeCircuitGenerator,
-    MirrorCircuitGenerator,
-    RandMirrorCircuitGenerator,
+    StructCircuitGenerator,
+    RandCircuitGenerator,
     BaseCircuitGenerator,
 }
 

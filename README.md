@@ -32,16 +32,17 @@ grcov . `
 * TODO use thermal relaxation example to create a better noisy simulator
 * TODO extend supported gates with custom defined and their inverse
 
-* Add arg to say whether circuits should be mirrored or computed on a simulator
 * Split results from correct shots if mirror is not used
-* TODO Allow to change mirror to output all ones
-* TODO do nto compare only the most common number when no mirror is turn on
+* TODO do not compare only the most common number when no mirror is turn on
 * TODO Add a workaround for odd circuit for mirror circuits
-* TODO implement cycle benchmarking (inverse gate is inserted directly behind the correct gate, otherwise it is the same as mirror)
-* TODO allow to define initial state (does not need to be all zeros)
+
+X Add arg to say whether circuits should be mirrored or computed on a simulator
+X TODO implement cycle benchmarking (inverse gate is inserted directly behind the correct gate, otherwise it is the same as mirror)
+X TODO allow to define initial state (does not need to be all zeros)
+X TODO Add dependencies to maturin
 X TODO include python scripts as strings
-* TODO Add dependencies to maturin
-* TODO rename mirror and rand mirror to structured and random generators
+X TODO rename mirror and rand mirror to structured and random generators
 
 #### Changes after image inserted:
 * Added mirror flag
+* Lot of other stuff I don't remember anymore

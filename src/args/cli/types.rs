@@ -8,13 +8,13 @@ pub enum ProviderType {
     Noisy,
 }
 
-#[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
 pub enum OutputType {
     Text,
     Serial,
 }
 
-#[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
 pub enum CircuitType {
     Basic,
     Fs,
@@ -24,7 +24,7 @@ pub enum CircuitType {
     Base,
 }
 
-#[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
 pub enum OrchestratorType {
     Lattice,
     Linear, // For FS
@@ -32,7 +32,7 @@ pub enum OrchestratorType {
     Volume, // QuantumVolume
 }
 
-#[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
 pub enum OutputSerType {
     Json,
     Xml,
@@ -41,13 +41,13 @@ pub enum OutputSerType {
     Ron,
 }
 
-#[derive(Debug, EnumString, Display, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, EnumString, Display, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
 pub enum CircuitSchemaType {
     OpenQasm,
     Qiskit,
 }
 
-#[derive(Debug, EnumString, Display, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, EnumString, Display, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
 pub enum CircuitBenchType {
     Mirror,
     Cycle,

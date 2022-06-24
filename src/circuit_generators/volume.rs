@@ -62,6 +62,17 @@ impl CircuitGenerator for VolumeCircuitGenerator {
             }
         }
 
+        // Add NOT gate when should change init state
+        if self.args.init_one {
+            let mut gates = vec![];
+            for i in 0..i {
+                gates.push(LangGate::builder().t(X).i(i).build());
+            }
+            gates.push(LangGate::builder().t(Barrier).i(-1).build());
+            gates.extend(result);
+            result = gates;
+        }
+
         let c = LangCircuit::builder().gates(result).width(i).build();
         Ok(Some(Chooser::get_lang_schema(self.args.schema).as_string(c).await?))
     }

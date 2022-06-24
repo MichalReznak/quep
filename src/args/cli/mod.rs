@@ -57,12 +57,13 @@ pub fn parse_output(clap: &CliArgsEnv, config: CliArgsOutputConfig) -> CliArgsOu
 
 #[throws]
 pub fn parse_circuit(clap: &CliArgsEnv, config: CliArgsCircuitConfig) -> CliArgsCircuit {
-    let circuit_source = dir("./base.template.qasm")?;
+    let circuit_source = dir("./templates/example.qasm")?;
 
     CliArgsCircuit::builder()
         .t(clap.circuit.or(config.t).unwrap_or(CircuitType::Basic))
         .bench(clap.circuit_bench.or(config.bench).unwrap_or(CircuitBenchType::Mirror))
         .schema(clap.circuit_schema.or(config.schema).unwrap_or(CircuitSchemaType::OpenQasm))
+        .init_one(clap.circuit_init_one.or(config.init_one).unwrap_or(false))
         .rand(clap.circuit_rand.or(config.rand).unwrap_or(false))
         .parse(clap.circuit_parse.or(config.parse).unwrap_or(false))
         .source(clap.circuit_source.clone().or(config.source).unwrap_or(circuit_source))

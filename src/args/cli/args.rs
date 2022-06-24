@@ -31,10 +31,14 @@ pub struct CliArgsOutput {
 pub struct CliArgsCircuit {
     pub t: CircuitType,
 
+    // TODO text
     pub bench: CircuitBenchType,
 
     /// Openqasm and other TODO
     pub schema: CircuitSchemaType,
+
+    // TODO text
+    pub init_one: bool,
 
     /// Randomize circuit generation of the same size
     pub rand: bool,

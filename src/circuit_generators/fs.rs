@@ -35,7 +35,7 @@ impl FsCircuitGenerator {
     }
 }
 
-// TODO use mirror somehow
+// TODO use mirror somehow, set state to one
 #[async_trait]
 impl CircuitGenerator for FsCircuitGenerator {
     async fn generate(

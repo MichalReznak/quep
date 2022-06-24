@@ -69,9 +69,10 @@ fn get_cir(t: CircuitType) -> CliArgsCircuit {
         .t(t)
         .bench(CircuitBenchType::Mirror)
         .schema(CircuitSchemaType::OpenQasm)
+        .init_one(false)
         .rand(true)
         .parse(false)
-        .source(get_dir("./base.template.qasm")?)
+        .source(get_dir("./templates/example.qasm")?)
         .inverse_gates(collection! { HashMap<String, String>; })
         .build()
 }

@@ -5,10 +5,12 @@
         accountId: '', // IbmQ only
     },
     circuit: {
-        t: 'Base', // Base, Mirror, RandMirror, Fs, Volume, Basic
-        schema: 'Qiskit', // OpenQasm, Qiskit
+        t: 'Base', // Base, Struct, Rand, Fs, Volume, Basic
+        bench: 'Cycle', // Mirror, Cycle
+        schema: 'OpenQasm', // OpenQasm, Qiskit
+        initOne: true, // Set state to one or zero
         rand: true, // Outputs different circuits for each iteration
-        source: './data_qiskit/example.py', // Base circuit source
+        source: './templates/example.qasm', // Base circuit source
         inverse_gates: { // Custom defined inverse gates
             's': 'sdg',
         },
@@ -19,13 +21,13 @@
         pretty: true, // Pretty format
     },
     orch: {
-        t: 'Single', // Lattice, Volume, Linear, Single
+        t: 'Lattice', // Lattice, Volume, Linear, Single
         size: 4, // Width most of the time
         size2: 4, // Depth most of the time
         iter: 1, // Iterations of circuits of the same size
         data: './data', // Fs: Circuits source
         collect: false, // Run all circuits in a bunch
-        preheat: true, // Do a dummy run
+        preheat: false, // Do a dummy run
         mirror: true, // Mirror circuits
     },
 }

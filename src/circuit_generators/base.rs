@@ -149,6 +149,17 @@ impl CircuitGenerator for BaseCircuitGenerator {
             }
         }
 
+        // Add NOT gate when should change init state
+        if self.args.init_one {
+            let mut gates = vec![];
+            for i in 0..width {
+                gates.push(LangGate::builder().t(LangGateType::X).i(i).build());
+            }
+            gates.push(LangGate::builder().t(LangGateType::Barrier).i(-1).build());
+            gates.extend(oqs_gates);
+            oqs_gates = gates;
+        }
+
         let lang_circuit = LangCircuit::builder().width(width).gates(oqs_gates).build();
         let circuit = lang_schema.as_string(lang_circuit).await?;
         Ok(Some(circuit))

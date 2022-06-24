@@ -43,6 +43,17 @@ impl CircuitGenerator for BasicCircuitGenerator {
             ]);
         }
 
+        // Add NOT gate when should change init state
+        if self.args.init_one {
+            let mut tmp_gates = vec![];
+            for i in 0..2 {
+                tmp_gates.push(LangGate::builder().t(X).i(i).build());
+            }
+            tmp_gates.push(LangGate::builder().t(Barrier).i(-1).build());
+            tmp_gates.extend(gates);
+            gates = tmp_gates;
+        }
+
         let c = LangCircuit::builder().gates(gates).width(2).build();
         Ok(Some(Chooser::get_lang_schema(self.args.schema).as_string(c).await?))
     }

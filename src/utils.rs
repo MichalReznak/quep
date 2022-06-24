@@ -40,29 +40,18 @@ pub fn cycle(gates: Vec<LangGate>, inv_gates: Vec<LangGate>, i: i32) -> Vec<Lang
     }
 
     // TODO not pretty
-    let gates = oqs_gates2
-        .chunks(i as usize)
-        .map(|e| e.clone())
-        .map(|e| e.into_iter().collect::<Vec<_>>())
-        .collect::<Vec<_>>();
+    let gates = oqs_gates2.chunks(i as usize).map(|e| e.to_vec());
 
-    let inv_gates = oqs_inv_gates2
-        .chunks(i as usize)
-        .map(|e| e.clone())
-        .map(|e| e.into_iter().rev().collect::<Vec<_>>())
-        .collect::<Vec<_>>();
+    let inv_gates = oqs_inv_gates2.chunks(i as usize).map(|e| e.iter().rev().cloned().collect());
+
+    let result = interleave(gates, inv_gates).flatten().collect::<Vec<_>>();
 
     // TODO should be just "i" instead of "2 * i" for Volume
-    interleave(gates, inv_gates)
-        .flatten()
-        .map(|e| e.clone())
-        .collect::<Vec<_>>()
+    result
         .chunks((2 * i) as usize)
-        .map(|e| e.clone())
-        .map(|e| e.into_iter().collect::<Vec<_>>())
-        .intersperse(vec![&LangGate::builder().t(LangGateType::Barrier).i(-1).build()])
+        .intersperse(&[LangGate::builder().t(LangGateType::Barrier).i(-1).build()])
         .flatten()
-        .map(|e| e.clone())
         .filter(|e| !matches!(e.t, LangGateType::Dummy))
+        .cloned()
         .collect::<Vec<_>>()
 }

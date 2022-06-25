@@ -26,12 +26,7 @@ impl StructCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for StructCircuitGenerator {
-    async fn generate(
-        &mut self,
-        i: i32,
-        j: i32,
-        iter: i32,
-    ) -> Result<Option<GenCircuit>, Error> {
+    async fn generate(&mut self, i: i32, j: i32, iter: i32) -> Result<Option<GenCircuit>, Error> {
         let iter = if self.args.rand { iter } else { 0 };
 
         use LangGateType::*;

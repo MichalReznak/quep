@@ -139,7 +139,7 @@ impl Outputer for TextOutputer {
         }
 
         println!("\nResult:");
-        let qv = if dbg!(correct_count) == dbg!(table.len()) {
+        let qv = if correct_count == table.len() {
             len
         }
         else {
@@ -147,7 +147,7 @@ impl Outputer for TextOutputer {
         };
         print_stdout(table.table())?;
 
-        println!("\nQuantum Volume (log): {}", dbg!(qv));
+        println!("\nQuantum Volume (log): {}", qv);
 
         println!("\nApplication Runtime: {} ms", runtime.as_millis());
         Ok("".to_string()) // TODO Cannot return as a string

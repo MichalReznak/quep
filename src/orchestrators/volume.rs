@@ -7,11 +7,13 @@ use snafu::OptionExt;
 use tokio::time::Instant;
 use unwrap_infallible::UnwrapInfallible;
 
+use crate::args::types::CircuitType;
 use crate::args::CliArgsOrch;
 use crate::chooser::Chooser;
-use crate::error::RegexCapture;
+use crate::error::{Constraint, RegexCapture};
 use crate::ext::outputer::Value;
 use crate::ext::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
+use crate::{CliArgs, Error};
 
 /// Always increase depth and width by one in each iteration
 pub struct VolumeOrchestrator {
@@ -26,6 +28,16 @@ impl VolumeOrchestrator {
 
 #[async_trait]
 impl Orchestrator for VolumeOrchestrator {
+    fn check_constraints(&self, args: &CliArgs) -> Result<(), Error> {
+        if !matches!(args.circuit.t, CircuitType::Volume) {
+            Constraint {
+                reason: "Volume Orchestrator requires Volume circuit generator".to_string(),
+            }
+            .fail()?;
+        }
+        Ok(())
+    }
+
     async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<String, crate::Error> {
         let width = self.args.size;
         let iter = self.args.iter;
@@ -54,7 +66,7 @@ impl Orchestrator for VolumeOrchestrator {
         // TODO fix this
         // It runs dummy circuit to make the speed measurement more precise
         if self.args.preheat {
-            if let Some(circuit) = generator.generate(0, 0, 0).await? {
+            if let Some(circuit) = generator.generate(1, 1, 0).await? {
                 provider.append_circuit(circuit.clone()).await?;
                 provider.run().await?;
             }

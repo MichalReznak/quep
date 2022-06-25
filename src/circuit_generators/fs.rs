@@ -38,12 +38,7 @@ impl FsCircuitGenerator {
 // TODO use mirror somehow, set state to one
 #[async_trait]
 impl CircuitGenerator for FsCircuitGenerator {
-    async fn generate(
-        &mut self,
-        j: i32,
-        _: i32,
-        _: i32,
-    ) -> Result<Option<GenCircuit>, Error> {
+    async fn generate(&mut self, _: i32, j: i32, _: i32) -> Result<Option<GenCircuit>, Error> {
         if j >= self.entries.len() as i32 {
             Ok(None)
         }
@@ -62,7 +57,7 @@ impl CircuitGenerator for FsCircuitGenerator {
             if let Err(errors) = check {
                 errors.print(&mut cache)?;
                 error!("{errors:#?}");
-                Err(crate::Error::SomeError)
+                Err(Error::SomeError)
             }
             else {
                 Ok(Some(

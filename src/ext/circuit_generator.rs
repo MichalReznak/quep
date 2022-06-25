@@ -36,10 +36,5 @@ pub trait CircuitGenerator {
         Ok(())
     }
 
-    async fn generate(
-        &mut self,
-        i: i32,
-        j: i32,
-        rand: i32,
-    ) -> Result<Option<GenCircuit>, Error>;
+    async fn generate(&mut self, i: i32, j: i32, rand: i32) -> Result<Option<GenCircuit>, Error>;
 }

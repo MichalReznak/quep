@@ -31,12 +31,7 @@ impl RandCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for RandCircuitGenerator {
-    async fn generate(
-        &mut self,
-        i: i32,
-        j: i32,
-        _iter: i32,
-    ) -> Result<Option<GenCircuit>, Error> {
+    async fn generate(&mut self, i: i32, j: i32, _iter: i32) -> Result<Option<GenCircuit>, Error> {
         use LangGateType::*;
         let pauli_gates = [Id, X, Y, Z];
         let clifford_gates = [H, S, Id, X, Y, Z];
@@ -47,8 +42,6 @@ impl CircuitGenerator for RandCircuitGenerator {
         let p_rand: Uniform<usize> = Uniform::from(0..4);
         let c_rand: Uniform<usize> = Uniform::from(0..9);
 
-        let i = i + 1;
-        let j = j + 1;
         let mut oqs_gates = vec![];
         let mut oqs_inv_gates = vec![];
         let oqs_width = i;
@@ -56,7 +49,7 @@ impl CircuitGenerator for RandCircuitGenerator {
         let c_len = clifford_gates.len();
 
         let mut skip = false;
-        for _ in 0..j {
+        for _ in 1..=j {
             for ii in 0..i {
                 let p_gate_index = p_rand.sample(&mut rng);
                 let c_gate_index = c_rand.sample(&mut rng);

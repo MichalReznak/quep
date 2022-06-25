@@ -1,13 +1,14 @@
 use async_trait::async_trait;
 
-use crate::args::types::CircuitBenchType;
+use crate::args::types::{CircuitBenchType, OrchestratorType};
 use crate::args::CliArgsCircuit;
+use crate::error::Constraint;
 use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::{CircuitGenerator, LangSchema};
 use crate::lang_schemas::LangCircuit;
 use crate::utils::cycle;
-use crate::{Chooser, Error};
+use crate::{Chooser, CliArgs, Error};
 
 #[allow(dead_code)]
 pub struct VolumeCircuitGenerator {
@@ -22,20 +23,30 @@ impl VolumeCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for VolumeCircuitGenerator {
-    async fn generate(
-        &mut self,
-        i: i32,
-        _: i32,
-        _: i32,
-    ) -> Result<Option<GenCircuit>, Error> {
+    fn check_constraints(&self, args: &CliArgs) -> Result<(), Error> {
+        if !matches!(args.orch.t, OrchestratorType::Volume) {
+            Constraint {
+                reason: "Volume Circuit Generator requires Volume Orchestrator".to_string(),
+            }
+            .fail()?;
+        }
+        Ok(())
+    }
+
+    async fn generate(&mut self, i: i32, _: i32, _: i32) -> Result<Option<GenCircuit>, Error> {
         let i = i + 1;
-        let j = i / 2;
+        let j = if matches!(self.args.bench, CircuitBenchType::None) {
+            i
+        }
+        else {
+            i / 2 // TODO what for odd numbers?
+        };
 
         use LangGateType::*;
         let gates = vec![X, H, Z, Y];
         let mut result = vec![];
 
-        for j in 0..j {
+        for j in 1..=j {
             for i in 0..i {
                 let gate =
                     LangGate::builder().t(gates[(i + j) as usize % gates.len()]).i(i).build();
@@ -48,8 +59,6 @@ impl CircuitGenerator for VolumeCircuitGenerator {
             inv_result.reverse();
 
             use CircuitBenchType::*;
-            // TODO clean up
-
             match self.args.bench {
                 Mirror => {
                     // TODO interleave with barriers??

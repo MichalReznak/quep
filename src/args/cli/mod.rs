@@ -18,6 +18,7 @@ use crate::args::types::{CircuitBenchType, CircuitSchemaType};
 use crate::config::{
     CliArgsCircuitConfig, CliArgsOrchConfig, CliArgsOutputConfig, CliArgsProviderConfig,
 };
+use crate::error::Constraint;
 use crate::{dir, Error};
 
 #[derive(Debug, Clone, TypedBuilder)]
@@ -36,13 +37,12 @@ pub fn parse_provider(clap: &CliArgsEnv, config: CliArgsProviderConfig) -> CliAr
     CliArgsProvider::builder()
         .t(provider_type)
         .python_dir(clap.provider_python_dir.clone().or(config.python_dir).unwrap_or(python_dir))
-        .account_id(clap.provider_account_id.clone().or(config.account_id).unwrap_or_else(|| {
-            if provider_type == ProviderType::Ibmq {
-                panic!("IBM Q needs account ID");
-            }
-
-            "".to_string()
-        }))
+        .account_id(
+            clap.provider_account_id
+                .clone()
+                .or(config.account_id)
+                .unwrap_or_else(|| "".to_string()),
+        )
         .build()
 }
 
@@ -90,6 +90,16 @@ pub fn parse_orch(clap: &CliArgsEnv, config: CliArgsOrchConfig) -> CliArgsOrch {
         .build()
 }
 
+#[throws]
+fn check_constraints(args: &CliArgs) {
+    if args.orch.size <= 0 || args.orch.size_2 <= 0 {
+        Constraint {
+            reason: "Size/Size2 needs to be positive number".to_string(),
+        }
+        .fail()?;
+    }
+}
+
 impl CliArgs {
     #[throws]
     pub fn parse() -> CliArgs {
@@ -97,24 +107,28 @@ impl CliArgs {
         let clap = CliArgsEnv::parse();
         let config = CliArgsConfig::default();
 
-        CliArgs::builder()
+        let res = CliArgs::builder()
             .provider(parse_provider(&clap, config.provider)?)
             .output(parse_output(&clap, config.output)?)
             .circuit(parse_circuit(&clap, config.circuit)?)
             .orch(parse_orch(&clap, config.orch)?)
-            .build()
+            .build();
+        check_constraints(&res)?;
+        res
     }
 
     #[throws]
     pub fn parse_with_config_no_env(config: CliArgsConfig) -> CliArgs {
         let clap = CliArgsEnv::default();
 
-        CliArgs::builder()
+        let res = CliArgs::builder()
             .provider(parse_provider(&clap, config.provider)?)
             .output(parse_output(&clap, config.output)?)
             .circuit(parse_circuit(&clap, config.circuit)?)
             .orch(parse_orch(&clap, config.orch)?)
-            .build()
+            .build();
+        check_constraints(&res)?;
+        res
     }
 
     #[throws]
@@ -126,11 +140,14 @@ impl CliArgs {
         let config = std::fs::read_to_string(&config_path)?;
         let config = json5::from_str::<CliArgsConfig>(&config)?;
 
-        CliArgs::builder()
+        let res = CliArgs::builder()
             .provider(parse_provider(&clap, config.provider)?)
             .output(parse_output(&clap, config.output)?)
             .circuit(parse_circuit(&clap, config.circuit)?)
             .orch(parse_orch(&clap, config.orch)?)
-            .build()
+            .build();
+
+        check_constraints(&res)?;
+        res
     }
 }

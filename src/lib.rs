@@ -46,7 +46,9 @@ impl Quep {
     pub async fn new(args: CliArgs) -> Self {
         // Use python only when needed
         use ProviderType::*;
-        if matches!(args.provider.t, Simple | Ibmq | Noisy) || matches!(args.circuit.bench, CircuitBenchType::None) {
+        if matches!(args.provider.t, Simple | Ibmq | Noisy)
+            || matches!(args.circuit.bench, CircuitBenchType::None)
+        {
             pyvenv::PyVenv::init(&args.provider.python_dir).await?;
             println!("Done");
         }
@@ -75,6 +77,7 @@ impl Quep {
         let orch = chooser.get_orchestrator()?;
         let mirror = !matches!(self.args.circuit.bench, CircuitBenchType::None);
 
+        orch.check_constraints(&self.args)?;
         orch.run(&chooser, mirror).await?
     }
 }

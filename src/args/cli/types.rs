@@ -9,12 +9,14 @@ pub enum ProviderType {
 }
 
 #[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
+#[strum(ascii_case_insensitive)]
 pub enum OutputType {
     Text,
     Serial,
 }
 
 #[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
+#[strum(ascii_case_insensitive)]
 pub enum CircuitType {
     Basic,
     Fs,
@@ -25,6 +27,7 @@ pub enum CircuitType {
 }
 
 #[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
+#[strum(ascii_case_insensitive)]
 pub enum OrchestratorType {
     Lattice,
     Linear, // For FS
@@ -33,6 +36,7 @@ pub enum OrchestratorType {
 }
 
 #[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
+#[strum(ascii_case_insensitive)]
 pub enum OutputSerType {
     Json,
     Xml,
@@ -42,12 +46,14 @@ pub enum OutputSerType {
 }
 
 #[derive(Debug, EnumString, Display, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
+#[strum(ascii_case_insensitive)]
 pub enum CircuitSchemaType {
     OpenQasm,
     Qiskit,
 }
 
 #[derive(Debug, EnumString, Display, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
+#[strum(ascii_case_insensitive)]
 pub enum CircuitBenchType {
     Mirror,
     Cycle,

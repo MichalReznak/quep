@@ -106,7 +106,7 @@ impl Orchestrator for LinearOrchestrator {
                     // Skip first N iterations if defined
                     // TODO this can be done smarter
                     if i < (from_i - 1) as usize {
-                        return val.clone();
+                        return val;
                     }
 
                     for r in res {

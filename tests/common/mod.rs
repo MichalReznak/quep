@@ -41,6 +41,8 @@ fn get_orch(t: OrchestratorType) -> CliArgsOrch {
         .t(t)
         .size(4)
         .size_2(4)
+        .from_size(1)
+        .from_size_2(1)
         .iter(4)
         .data(get_dir("./data")?)
         .collect(false)

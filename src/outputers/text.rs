@@ -115,19 +115,22 @@ impl Outputer for TextOutputer {
 
         let len = values.len();
         let mut table = vec![];
-        let mut correct_count = 0;
+        let mut last_correct = false;
+
         for (i, (val, dur)) in values.into_iter().zip(durations).enumerate() {
             let mut row = vec![];
             let i = i + 1;
 
             let val_res = val.result.cell();
-            let val = val.correct.cell().foreground_color(Some(if val.is_correct {
-                correct_count += 1;
+            last_correct = val.is_correct;
+            let color = if val.is_correct {
                 Color::Green
             }
             else {
                 Color::Red
-            }));
+            };
+
+            let val = val.correct.cell().foreground_color(Some(color));
 
             row.push(format!("{i} x {i}").cell().background_color(Some(Color::Cyan)));
             row.push(val_res);
@@ -139,12 +142,7 @@ impl Outputer for TextOutputer {
         }
 
         println!("\nResult:");
-        let qv = if correct_count == table.len() {
-            len
-        }
-        else {
-            len - 1
-        };
+        let qv = if last_correct { len } else { len - 1 };
         print_stdout(table.table())?;
 
         println!("\nQuantum Volume (log): {}", qv);

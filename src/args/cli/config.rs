@@ -59,6 +59,8 @@ pub struct CliArgsOutputConfig {
 #[serde(rename_all = "camelCase")]
 pub struct CliArgsOrchConfig {
     pub t: Option<OrchestratorType>,
+    pub from_size: Option<i32>,
+    pub from_size_2: Option<i32>,
     pub size: Option<i32>,
     pub size_2: Option<i32>,
     pub iter: Option<i32>,

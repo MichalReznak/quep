@@ -22,6 +22,8 @@
     },
     orch: {
         t: 'Lattice', // Lattice, Volume, Linear, Single
+        fromSize: 1, // Start width
+        fromSize2: 1, // Start depth
         size: 4, // Width most of the time
         size2: 4, // Depth most of the time
         iter: 1, // Iterations of circuits of the same size

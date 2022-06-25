@@ -63,11 +63,15 @@ pub struct CliArgsOrch {
     /// Number of iterations of the same size
     pub iter: i32,
 
+    /// Start depth of the max circuits
+    pub from_size: i32,
+
+    /// Start width of the circuits
+    pub from_size_2: i32,
+
     /// Depth of the max circuits
     pub size: i32,
 
-    // TODO make it better
-    // This is to define width and depth separately in some orchestrators
     /// Width of the circuits
     pub size_2: i32,
 

@@ -63,11 +63,15 @@ pub struct CliArgsEnv {
     #[clap(long, env = "QUEP_ORCH_ITER")]
     pub orch_iter: Option<i32>,
 
+    #[clap(long, env = "QUEP_ORCH_FROM_SIZE")]
+    pub orch_from_size: Option<i32>,
+
+    #[clap(long, env = "QUEP_ORCH_FROM_SIZE_2")]
+    pub orch_from_size_2: Option<i32>,
+
     #[clap(long, env = "QUEP_ORCH_SIZE")]
     pub orch_size: Option<i32>,
 
-    // TODO make it better
-    // This is to define width and depth separately in some orchestrators
     #[clap(long, env = "QUEP_ORCH_SIZE_2")]
     pub orch_size_2: Option<i32>,
 

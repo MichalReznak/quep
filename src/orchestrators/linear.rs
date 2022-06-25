@@ -27,6 +27,7 @@ impl LinearOrchestrator {
 #[async_trait]
 impl Orchestrator for LinearOrchestrator {
     async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<String, crate::Error> {
+        let from_i = self.args.from_size;
         let i = self.args.size;
         let depth = self.args.size_2;
         let iter = self.args.iter;
@@ -101,6 +102,13 @@ impl Orchestrator for LinearOrchestrator {
                         .correct(0)
                         .is_correct(false)
                         .build();
+
+                    // Skip first N iterations if defined
+                    // TODO this can be done smarter
+                    if i < (from_i - 1) as usize {
+                        return val.clone();
+                    }
+
                     for r in res {
                         let c = re.captures(&r).context(RegexCapture).unwrap();
                         val.result = c["result"].parse::<String>().unwrap_infallible();
@@ -147,6 +155,14 @@ impl Orchestrator for LinearOrchestrator {
                     Value::builder().result("".to_string()).correct(0).is_correct(false).build();
                 let mut sim_val =
                     Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+
+                // Skip first N iterations if defined
+                // TODO this can be done smarter
+                if j < from_i {
+                    durations.push(Duration::from_millis(0));
+                    result.push(val.clone());
+                    continue;
+                }
 
                 for ii in 0..iter {
                     // TODO somehow better allow to define circuit width

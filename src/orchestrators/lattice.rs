@@ -26,6 +26,8 @@ impl LatticeOrchestrator {
 #[async_trait]
 impl Orchestrator for LatticeOrchestrator {
     async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<String, crate::Error> {
+        let from_i = self.args.from_size;
+        let from_j = self.args.from_size_2;
         let i = self.args.size;
         let j = self.args.size_2;
         let iter = self.args.iter;
@@ -104,6 +106,14 @@ impl Orchestrator for LatticeOrchestrator {
                         .correct(0)
                         .is_correct(false)
                         .build();
+
+                    // Skip first N iterations if defined
+                    // TODO this can be done smarter
+                    if ii < from_i - 1 || jj < from_j - 1 {
+                        sr.push(val.clone());
+                        continue;
+                    }
+
                     for r in res {
                         let c = re.captures(r).context(RegexCapture).unwrap();
                         val.result = c["result"].parse::<String>().unwrap_infallible();
@@ -158,6 +168,14 @@ impl Orchestrator for LatticeOrchestrator {
                         .correct(0)
                         .is_correct(false)
                         .build();
+
+                    // Skip first N iterations if defined
+                    // TODO this can be done smarter
+                    if i < from_i || j < from_j {
+                        durations.push(Duration::from_millis(0));
+                        sr.push(val.clone());
+                        continue;
+                    }
 
                     for ii in 0..iter {
                         if let Some(circuit) = generator.generate(i, j, ii).await? {

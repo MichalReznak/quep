@@ -38,7 +38,8 @@ impl Orchestrator for VolumeOrchestrator {
         Ok(())
     }
 
-    async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<String, crate::Error> {
+    async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<String, Error> {
+        let from_i = self.args.from_size;
         let width = self.args.size;
         let iter = self.args.iter;
         let mut result = vec![];
@@ -112,6 +113,13 @@ impl Orchestrator for VolumeOrchestrator {
                         .correct(0)
                         .is_correct(false)
                         .build();
+
+                    // Skip first N iterations if defined
+                    // TODO this can be done smarter
+                    if i < (from_i - 1) as usize {
+                        return val;
+                    }
+
                     for r in res {
                         let c = re.captures(&r).context(RegexCapture).unwrap();
                         val.result = c["result"].parse::<String>().unwrap_infallible();
@@ -157,6 +165,14 @@ impl Orchestrator for VolumeOrchestrator {
                     Value::builder().result("".to_string()).correct(0).is_correct(false).build();
                 let mut sim_val =
                     Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+
+                // Skip first N iterations if defined
+                // TODO this can be done smarter
+                if i < from_i {
+                    durations.push(Duration::from_millis(0));
+                    result.push(val.clone());
+                    continue;
+                }
 
                 for ii in 0..iter {
                     if let Some(circuit) = generator.generate(i, i, ii).await? {

@@ -1,15 +1,16 @@
 import time
 from qiskit import *
 from qiskit.providers.aer import AerSimulator
-from qiskit.providers.aer.noise import NoiseModel, pauli_error, depolarizing_error
+from qiskit.providers.aer.noise import NoiseModel, pauli_error, depolarizing_error, thermal_relaxation_error
 
-p_reset = 0.002
-p_meas = 0.001
-p_gate1 = 0.003
+# # Loose mode
+# p_reset = 0.002
+# p_meas = 0.001
+# p_gate1 = 0.003
 
-# p_reset = 0.05
-# p_meas = 0.05
-# p_gate1 = 0.02
+p_reset = 0.004
+p_meas = 0.002
+p_gate1 = 0.006
 
 
 # QuantumError objects
@@ -28,19 +29,13 @@ error_meas_p2 = error_meas.compose(error_meas_p)
 error_gate1_p2 = error_gate1.compose(error_gate1_p)
 error_gate2_p2 = error_gate2.compose(error_gate2_p)
 
-# TODO option 2
-# error_reset_p2 = depolarizing_error(p_reset, 1)
-# error_meas_p2 = depolarizing_error(p_meas, 1)
-# error_gate1_p2 = depolarizing_error(p_gate1, 1)
-# error_gate2_p2 = error_gate1_p2.tensor(error_gate1_p2)
-
 
 # Add errors to noise model
-noise_bit_flip = NoiseModel()
-noise_bit_flip.add_all_qubit_quantum_error(error_reset_p2, "reset")
-noise_bit_flip.add_all_qubit_quantum_error(error_meas_p2, "measure")
-noise_bit_flip.add_all_qubit_quantum_error(error_gate1_p2, ["id", "rz", "u1", "u2", "u3"])
-noise_bit_flip.add_all_qubit_quantum_error(error_gate2_p2, ["cx", "zx"])
+noise_model = NoiseModel()
+noise_model.add_all_qubit_quantum_error(error_reset_p2, "reset")
+noise_model.add_all_qubit_quantum_error(error_meas_p2, "measure")
+noise_model.add_all_qubit_quantum_error(error_gate1_p2, ["id", "rz", "u1", "u2", "u3"])
+noise_model.add_all_qubit_quantum_error(error_gate2_p2, ["cx", "zx"])
 
 
 class Noisy:
@@ -52,7 +47,7 @@ class Noisy:
         return self.meta_info
 
     def auth(self):
-        self.backend = AerSimulator(noise_model=noise_bit_flip)
+        self.backend = AerSimulator(noise_model=noise_model)
 
     def clear_circuits(self: 'Noisy'):
         self.circuits = []

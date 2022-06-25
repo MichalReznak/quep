@@ -84,7 +84,9 @@ pub fn parse_orch(clap: &CliArgsEnv, config: CliArgsOrchConfig) -> CliArgsOrch {
         .data(clap.orch_data.clone().or(config.data).unwrap_or(orch_data_dir))
         .iter(clap.orch_iter.or(config.iter).unwrap_or(1))
         .size(clap.orch_size.or(config.size).unwrap_or(1))
+        .from_size(clap.orch_from_size.or(config.from_size).unwrap_or(1))
         .size_2(clap.orch_size_2.or(config.size_2).unwrap_or(1))
+        .from_size_2(clap.orch_from_size_2.or(config.from_size_2).unwrap_or(1))
         .collect(clap.orch_collect.or(config.collect).unwrap_or(false))
         .preheat(clap.orch_preheat.or(config.preheat).unwrap_or(true))
         .build()
@@ -92,9 +94,13 @@ pub fn parse_orch(clap: &CliArgsEnv, config: CliArgsOrchConfig) -> CliArgsOrch {
 
 #[throws]
 fn check_constraints(args: &CliArgs) {
-    if args.orch.size <= 0 || args.orch.size_2 <= 0 {
+    if args.orch.size <= 0
+        || args.orch.size_2 <= 0
+        || args.orch.from_size <= 0
+        || args.orch.from_size_2 <= 0
+    {
         Constraint {
-            reason: "Size/Size2 needs to be positive number".to_string(),
+            reason: "size/size2/fromSize/fromSize2 needs to be positive number".to_string(),
         }
         .fail()?;
     }

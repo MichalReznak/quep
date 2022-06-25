@@ -35,6 +35,7 @@ grcov . `
 * Split results from correct shots if mirror is not used
 * TODO do not compare only the most common number when no mirror is turn on
 * TODO Add a workaround for odd circuit for mirror circuits
+* Extend with toffoli gate
 
 X Add arg to say whether circuits should be mirrored or computed on a simulator
 X TODO implement cycle benchmarking (inverse gate is inserted directly behind the correct gate, otherwise it is the same as mirror)

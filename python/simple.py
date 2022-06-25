@@ -16,13 +16,6 @@ class Simple:
     def clear_circuits(self: 'Simple'):
         self.circuits = []
 
-    def set_circuit(self: 'Simple', circuit: str, log: bool):
-        qasm_circuit = QuantumCircuit.from_qasm_str(circuit)
-        self.circuits = [qasm_circuit]
-
-        if log:
-            print(qasm_circuit)
-
     def append_circuit(self: 'Simple', circuit: str, t: str, log: bool):
         parsed_c = None
 

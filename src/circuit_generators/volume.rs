@@ -34,7 +34,7 @@ impl CircuitGenerator for VolumeCircuitGenerator {
     }
 
     async fn generate(&mut self, i: i32, _: i32, _: i32) -> Result<Option<GenCircuit>, Error> {
-        let i = i + 1;
+        let odd = i % 2 == 1;
         let j = if matches!(self.args.bench, CircuitBenchType::None) {
             i
         }
@@ -46,7 +46,7 @@ impl CircuitGenerator for VolumeCircuitGenerator {
         let gates = vec![X, H, Z, Y];
         let mut result = vec![];
 
-        for j in 1..=j {
+        for j in 0..j {
             for i in 0..i {
                 let gate =
                     LangGate::builder().t(gates[(i + j) as usize % gates.len()]).i(i).build();
@@ -73,7 +73,7 @@ impl CircuitGenerator for VolumeCircuitGenerator {
         }
 
         // Add NOT gate when should change init state
-        if self.args.init_one {
+        if self.args.init_one || odd {
             let mut gates = vec![];
             for i in 0..i {
                 gates.push(LangGate::builder().t(X).i(i).build());

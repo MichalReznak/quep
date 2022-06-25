@@ -66,9 +66,9 @@ impl Orchestrator for LinearOrchestrator {
         let runtime = Instant::now();
 
         if self.args.collect {
-            'main: for j in 0..i {
+            'main: for j in 1..=i {
                 for ii in 0..iter {
-                    if let Some(c) = generator.generate(depth - 1, j, ii).await? {
+                    if let Some(c) = generator.generate(depth, j, ii).await? {
                         provider.append_circuit(c.clone()).await?;
 
                         if !mirror {
@@ -141,7 +141,7 @@ impl Orchestrator for LinearOrchestrator {
             outputer.output_linear(result, None, depth, Instant::now() - runtime).await
         }
         else {
-            'main2: for j in 0..i {
+            'main2: for j in 1..=i {
                 let mut time = Duration::from_micros(0);
                 let mut val =
                     Value::builder().result("".to_string()).correct(0).is_correct(false).build();
@@ -151,7 +151,7 @@ impl Orchestrator for LinearOrchestrator {
                 for ii in 0..iter {
                     // TODO somehow better allow to define circuit width
                     // (or if it should increase width instead of depth?)
-                    if let Some(circuit) = generator.generate(depth - 1, j, ii).await? {
+                    if let Some(circuit) = generator.generate(depth, j, ii).await? {
                         provider.append_circuit(circuit.clone()).await?;
 
                         let res = provider.run().await?.get(0).unwrap().to_string();

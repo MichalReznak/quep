@@ -6,11 +6,12 @@ use openqasm as oq;
 use oq::GenericError;
 use walkdir::{DirEntry, WalkDir};
 
-use crate::args::types::CircuitSchemaType;
+use crate::args::types::{CircuitSchemaType, OrchestratorType};
 use crate::args::CliArgsCircuit;
+use crate::error::Constraint;
 use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::CircuitGenerator;
-use crate::Error;
+use crate::{CliArgs, Error};
 
 #[allow(dead_code)]
 #[derive(Debug)]
@@ -38,12 +39,22 @@ impl FsCircuitGenerator {
 // TODO use mirror somehow, set state to one
 #[async_trait]
 impl CircuitGenerator for FsCircuitGenerator {
+    fn check_constraints(&self, args: &CliArgs) -> Result<(), Error> {
+        if !matches!(args.orch.t, OrchestratorType::Linear) {
+            Constraint {
+                reason: "FileSystem Circuit Generator requires Linear Orchestrator".to_string(),
+            }
+            .fail()?;
+        }
+        Ok(())
+    }
+
     async fn generate(&mut self, _: i32, j: i32, _: i32) -> Result<Option<GenCircuit>, Error> {
-        if j >= self.entries.len() as i32 {
+        if j > self.entries.len() as i32 {
             Ok(None)
         }
         else {
-            let path = self.entries[j as usize].path();
+            let path = self.entries[(j - 1) as usize].path();
             let mut circuit = std::fs::read_to_string(path)?;
             circuit.remove_matches("\r");
 

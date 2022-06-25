@@ -77,7 +77,7 @@ impl Orchestrator for VolumeOrchestrator {
 
         if self.args.collect {
             // TODO add iterations
-            'main: for i in 0..width {
+            'main: for i in 1..=width {
                 for ii in 0..iter {
                     if let Some(c) = generator.generate(i, i, ii).await? {
                         provider.append_circuit(c.clone()).await?;
@@ -151,7 +151,7 @@ impl Orchestrator for VolumeOrchestrator {
         }
         else {
             // TODO for now it generates empty for not computed ones
-            'main2: for i in 0..width {
+            'main2: for i in 1..=width {
                 let mut time = Duration::from_micros(0);
                 let mut val =
                     Value::builder().result("".to_string()).correct(0).is_correct(false).build();

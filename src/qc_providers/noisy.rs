@@ -12,8 +12,8 @@ use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::MetaInfo;
 use crate::ext::QcProvider;
 use crate::utils::debug;
+use crate::Error;
 use crate::Error::PyDowncastError;
-use crate::{CliArgs, Error};
 
 pub struct NoisyQcProvider {
     // args: CliArgsProvider,
@@ -31,11 +31,6 @@ impl NoisyQcProvider {
 
 #[async_trait]
 impl QcProvider for NoisyQcProvider {
-    fn check_constraints(&self, _args: &CliArgs) -> Result<(), Error> {
-        // TODO
-        Ok(())
-    }
-
     async fn connect(&mut self) -> Result<(), Error> {
         Python::with_gil(|py| {
             let code = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "./python/noisy.py"));

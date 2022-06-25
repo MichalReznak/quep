@@ -12,7 +12,7 @@ use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::QcProvider;
 use crate::utils::debug;
 use crate::Error::PyDowncastError;
-use crate::{ext, CliArgs, Error};
+use crate::{ext, Error};
 
 pub struct SimpleQcProvider {
     // args: CliArgsProvider,
@@ -30,11 +30,6 @@ impl SimpleQcProvider {
 
 #[async_trait]
 impl QcProvider for SimpleQcProvider {
-    fn check_constraints(&self, _args: &CliArgs) -> Result<(), Error> {
-        // TODO
-        Ok(())
-    }
-
     async fn connect(&mut self) -> Result<(), Error> {
         Python::with_gil(|py| {
             let code = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "./python/simple.py"));

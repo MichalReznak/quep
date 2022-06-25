@@ -16,7 +16,7 @@ use crate::circuit_generators::{
     BaseCircuitGenerator, BasicCircuitGenerator, FsCircuitGenerator, RandCircuitGenerator,
     StructCircuitGenerator, VolumeCircuitGenerator,
 };
-use crate::Error;
+use crate::{CliArgs, Error};
 
 #[enum_dispatch]
 pub enum CircuitGeneratorDyn {
@@ -31,6 +31,11 @@ pub enum CircuitGeneratorDyn {
 #[async_trait]
 #[enum_dispatch(CircuitGeneratorDyn)]
 pub trait CircuitGenerator {
+    /// Check whether arguments are correct
+    fn check_constraints(&self, _args: &CliArgs) -> Result<(), Error> {
+        Ok(())
+    }
+
     async fn generate(
         &mut self,
         i: i32,

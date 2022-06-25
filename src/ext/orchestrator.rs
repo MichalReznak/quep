@@ -9,7 +9,7 @@ use enum_dispatch::enum_dispatch;
 use crate::orchestrators::{
     LatticeOrchestrator, LinearOrchestrator, SingleOrchestrator, VolumeOrchestrator,
 };
-use crate::{Chooser, Error};
+use crate::{Chooser, CliArgs, Error};
 
 #[enum_dispatch]
 pub enum OrchestratorDyn {
@@ -22,6 +22,11 @@ pub enum OrchestratorDyn {
 #[async_trait]
 #[enum_dispatch(OrchestratorDyn)]
 pub trait Orchestrator {
+    /// Check whether arguments are correct
+    fn check_constraints(&self, _args: &CliArgs) -> Result<(), Error> {
+        Ok(())
+    }
+
     /// Execute algorithm using the chosen extensions
     async fn run(&self, chooser: &Chooser) -> Result<String, Error>;
 }

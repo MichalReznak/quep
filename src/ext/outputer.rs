@@ -9,7 +9,7 @@ use tokio::time::Duration;
 use typed_builder::TypedBuilder;
 
 use crate::outputers::{SerialOutputer, TextOutputer};
-use crate::Error;
+use crate::{CliArgs, Error};
 
 // TODO rename
 #[derive(Debug, Clone, TypedBuilder)]
@@ -28,6 +28,11 @@ pub enum OutputerDyn {
 #[async_trait]
 #[enum_dispatch(OutputerDyn)]
 pub trait Outputer {
+    /// Check whether arguments are correct
+    fn check_constraints(&self, _args: &CliArgs) -> Result<(), Error> {
+        Ok(())
+    }
+
     /// Create a lattice or results
     async fn output_table(
         &self,

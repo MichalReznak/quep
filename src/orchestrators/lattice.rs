@@ -67,7 +67,7 @@ impl Orchestrator for LatticeOrchestrator {
 
         if self.args.collect {
             'main: for i in 1..=i {
-                for j in 0..=j {
+                for j in 1..=j {
                     for ii in 0..iter {
                         if let Some(c) = generator.generate(i, j, ii).await? {
                             provider.append_circuit(c.clone()).await?;
@@ -92,10 +92,10 @@ impl Orchestrator for LatticeOrchestrator {
                 vec![]
             };
 
-            for ii in 1..=i {
+            for ii in 0..i {
                 let mut sr = vec![];
 
-                for jj in 0..=j {
+                for jj in 0..j {
                     let ci = ((ii * j) + jj) * iter;
                     let res = res.get((ci as usize)..(ci as usize + (iter as usize))).unwrap();
 

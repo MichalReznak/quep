@@ -26,11 +26,10 @@ impl LinearOrchestrator {
 
 #[async_trait]
 impl Orchestrator for LinearOrchestrator {
-    async fn run(&self, chooser: &Chooser) -> Result<String, crate::Error> {
+    async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<String, crate::Error> {
         let i = self.args.size;
         let depth = self.args.size_2;
         let iter = self.args.iter;
-        let mirror = self.args.mirror;
 
         let mut result = vec![];
         let mut durations = vec![];
@@ -57,7 +56,7 @@ impl Orchestrator for LinearOrchestrator {
         // TODO fix this
         // It runs dummy circuit to make the speed measurement more precise
         if self.args.preheat {
-            if let Some(circuit) = generator.generate(0, 0, 0, false).await? {
+            if let Some(circuit) = generator.generate(0, 0, 0).await? {
                 provider.append_circuit(circuit.clone()).await?;
                 provider.run().await?;
             }
@@ -69,7 +68,7 @@ impl Orchestrator for LinearOrchestrator {
         if self.args.collect {
             'main: for j in 0..i {
                 for ii in 0..iter {
-                    if let Some(c) = generator.generate(depth - 1, j, ii, self.args.mirror).await? {
+                    if let Some(c) = generator.generate(depth - 1, j, ii).await? {
                         provider.append_circuit(c.clone()).await?;
 
                         if !mirror {
@@ -153,7 +152,7 @@ impl Orchestrator for LinearOrchestrator {
                     // TODO somehow better allow to define circuit width
                     // (or if it should increase width instead of depth?)
                     if let Some(circuit) =
-                        generator.generate(depth - 1, j, ii, self.args.mirror).await?
+                        generator.generate(depth - 1, j, ii).await?
                     {
                         provider.append_circuit(circuit.clone()).await?;
 

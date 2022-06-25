@@ -31,7 +31,6 @@ impl CircuitGenerator for StructCircuitGenerator {
         i: i32,
         j: i32,
         iter: i32,
-        mirror: bool,
     ) -> Result<Option<GenCircuit>, Error> {
         let iter = if self.args.rand { iter } else { 0 };
 
@@ -41,8 +40,6 @@ impl CircuitGenerator for StructCircuitGenerator {
         let clifford_gates_inv = [H, Sdg, Id, X, Y, Z];
         let clifford_gates_2 = [Cx, Cz, Swap];
 
-        let i = i + 1;
-        let j = j + 1;
         let oqs_i = i;
         let mut oqs_gates = vec![];
         let mut oqs_inv_gates = vec![];
@@ -50,10 +47,11 @@ impl CircuitGenerator for StructCircuitGenerator {
         let c_len = clifford_gates.len();
         let c_len2 = c_len + clifford_gates_2.len();
 
+        // let j = if self.args.
         let mut a = iter;
         let mut b = iter;
         let mut skip = false;
-        for _ in 0..j {
+        for _ in 1..=j {
             for ii in 0..i {
                 let p_gate_index = b as usize % pauli_gates.len();
                 let c_gate_index = a as usize % c_len2;
@@ -107,20 +105,19 @@ impl CircuitGenerator for StructCircuitGenerator {
             }
         }
 
-        if mirror {
-            use CircuitBenchType::*;
-            match self.args.bench {
-                Mirror => {
-                    // TODO interleave with barriers??
-                    oqs_inv_gates.reverse();
-                    oqs_gates.push(LangGate::builder().t(Barrier).i(-1).build());
-                    oqs_gates.extend(oqs_inv_gates.into_iter());
-                }
-                Cycle => {
-                    oqs_gates = cycle(oqs_gates, oqs_inv_gates, 2 * i);
-                }
+        use CircuitBenchType::*;
+        match self.args.bench {
+            Mirror => {
+                // TODO interleave with barriers??
+                oqs_inv_gates.reverse();
+                oqs_gates.push(LangGate::builder().t(Barrier).i(-1).build());
+                oqs_gates.extend(oqs_inv_gates.into_iter());
             }
-        };
+            Cycle => {
+                oqs_gates = cycle(oqs_gates, oqs_inv_gates, 2 * i);
+            }
+            None => {}
+        }
 
         // Add NOT gate when should change init state
         if self.args.init_one {

@@ -6,6 +6,7 @@ use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::{CircuitGenerator, LangSchema};
 use crate::lang_schemas::LangCircuit;
 use crate::{Chooser, Error};
+use crate::args::types::CircuitBenchType;
 
 #[allow(dead_code)]
 pub struct BasicCircuitGenerator {
@@ -26,7 +27,6 @@ impl CircuitGenerator for BasicCircuitGenerator {
         _: i32,
         _: i32,
         _: i32,
-        mirror: bool,
     ) -> Result<Option<GenCircuit>, Error> {
         use LangGateType::*;
         let mut gates = vec![
@@ -35,7 +35,7 @@ impl CircuitGenerator for BasicCircuitGenerator {
             LangGate::builder().t(S).i(1).build(),
         ];
 
-        if mirror {
+        if !matches!(self.args.bench, CircuitBenchType::None) {
             gates.extend_from_slice(&[
                 LangGate::builder().t(Sdg).i(1).build(),
                 LangGate::builder().t(H).i(0).build(),

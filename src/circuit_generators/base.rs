@@ -114,13 +114,10 @@ impl BaseCircuitGenerator {
 impl CircuitGenerator for BaseCircuitGenerator {
     async fn generate(
         &mut self,
-        depth: i32,
         width: i32,
+        depth: i32,
         _iter: i32, // TODO
-        mirror: bool,
     ) -> Result<Option<GenCircuit>, Error> {
-        let depth = depth + 1;
-        let width = width + 1;
         // TODO check circuit size
         // TODO barriers support
         // TODO different order of operations
@@ -131,28 +128,27 @@ impl CircuitGenerator for BaseCircuitGenerator {
 
         let (mut oqs_gates, mut inv_gates) = oqs_parse_circuit(&lang_schema, depth, width)?;
 
-        if mirror {
-            use CircuitBenchType::*;
+        use CircuitBenchType::*;
 
-            // TODO clean up
-            match self.args.bench {
-                Mirror => {
-                    // TODO interleave with barriers??
-                    oqs_gates.push(LangGate::builder().t(LangGateType::Barrier).i(-1).build());
-                    oqs_gates.extend(inv_gates.into_iter());
-                }
-                Cycle => {
-                    inv_gates.reverse();
-
-                    oqs_gates = interleave(oqs_gates, inv_gates).collect::<Vec<_>>();
-                }
+        // TODO clean up
+        match self.args.bench {
+            Mirror => {
+                // TODO interleave with barriers??
+                oqs_gates.push(LangGate::builder().t(LangGateType::Barrier).i(-1).build());
+                oqs_gates.extend(inv_gates.into_iter());
             }
+            Cycle => {
+                inv_gates.reverse();
+
+                oqs_gates = interleave(oqs_gates, inv_gates).collect::<Vec<_>>();
+            }
+            None => {}
         }
 
         // Add NOT gate when should change init state
         if self.args.init_one {
             let mut gates = vec![];
-            for i in 0..width {
+            for i in 1..width {
                 gates.push(LangGate::builder().t(LangGateType::X).i(i).build());
             }
             gates.push(LangGate::builder().t(LangGateType::Barrier).i(-1).build());

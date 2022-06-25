@@ -51,4 +51,5 @@ pub enum CircuitSchemaType {
 pub enum CircuitBenchType {
     Mirror,
     Cycle,
+    None,
 }

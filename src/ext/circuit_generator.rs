@@ -41,6 +41,5 @@ pub trait CircuitGenerator {
         i: i32,
         j: i32,
         rand: i32,
-        mirror: bool,
     ) -> Result<Option<GenCircuit>, Error>;
 }

@@ -28,7 +28,6 @@ grcov . `
 ```
 
 # TODOs:
-* TODO Add constraints
 * TODO use thermal relaxation example to create a better noisy simulator
 * TODO extend supported gates with custom defined and their inverse
 
@@ -43,6 +42,7 @@ X TODO allow to define initial state (does not need to be all zeros)
 X TODO Add dependencies to maturin
 X TODO include python scripts as strings
 X TODO rename mirror and rand mirror to structured and random generators
+X TODO Add constraints
 
 #### Changes after image inserted:
 * Added mirror flag

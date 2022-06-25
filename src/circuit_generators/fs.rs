@@ -40,10 +40,9 @@ impl FsCircuitGenerator {
 impl CircuitGenerator for FsCircuitGenerator {
     async fn generate(
         &mut self,
-        _: i32,
         j: i32,
         _: i32,
-        _mirror: bool,
+        _: i32,
     ) -> Result<Option<GenCircuit>, Error> {
         if j >= self.entries.len() as i32 {
             Ok(None)

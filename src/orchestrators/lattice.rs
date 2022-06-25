@@ -25,11 +25,10 @@ impl LatticeOrchestrator {
 
 #[async_trait]
 impl Orchestrator for LatticeOrchestrator {
-    async fn run(&self, chooser: &Chooser) -> Result<String, crate::Error> {
+    async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<String, crate::Error> {
         let i = self.args.size;
         let j = self.args.size_2;
         let iter = self.args.iter;
-        let mirror = self.args.mirror;
 
         let mut result = vec![];
         let mut durations = vec![];
@@ -55,7 +54,7 @@ impl Orchestrator for LatticeOrchestrator {
 
         // It runs dummy circuit to make the speed measurement more precise
         if self.args.preheat {
-            if let Some(circuit) = generator.generate(0, 0, 0, false).await? {
+            if let Some(circuit) = generator.generate(0, 0, 0).await? {
                 provider.append_circuit(circuit.clone()).await?;
                 provider.run().await?;
             }
@@ -70,7 +69,7 @@ impl Orchestrator for LatticeOrchestrator {
             'main: for i in 0..i {
                 for j in 0..j {
                     for ii in 0..iter {
-                        if let Some(c) = generator.generate(i, j, ii, self.args.mirror).await? {
+                        if let Some(c) = generator.generate(i, j, ii).await? {
                             provider.append_circuit(c.clone()).await?;
 
                             if !mirror {
@@ -162,7 +161,7 @@ impl Orchestrator for LatticeOrchestrator {
 
                     for ii in 0..iter {
                         if let Some(circuit) =
-                            generator.generate(i, j, ii, self.args.mirror).await?
+                            generator.generate(i, j, ii).await?
                         {
                             // TODO if I do a multiple iterations and one falls below limit, how to
                             // solve this?

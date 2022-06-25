@@ -27,7 +27,6 @@ impl CircuitGenerator for VolumeCircuitGenerator {
         i: i32,
         _: i32,
         _: i32,
-        mirror: bool,
     ) -> Result<Option<GenCircuit>, Error> {
         let i = i + 1;
         let j = i / 2;
@@ -44,12 +43,13 @@ impl CircuitGenerator for VolumeCircuitGenerator {
             }
         }
 
-        if mirror {
+        {
             let mut inv_result = result.clone();
             inv_result.reverse();
 
             use CircuitBenchType::*;
             // TODO clean up
+
             match self.args.bench {
                 Mirror => {
                     // TODO interleave with barriers??
@@ -59,6 +59,7 @@ impl CircuitGenerator for VolumeCircuitGenerator {
                 Cycle => {
                     result = cycle(result, inv_result, i);
                 }
+                None => {}
             }
         }
 

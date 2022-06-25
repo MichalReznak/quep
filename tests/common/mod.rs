@@ -45,7 +45,6 @@ fn get_orch(t: OrchestratorType) -> CliArgsOrch {
         .data(get_dir("./data")?)
         .collect(false)
         .preheat(true)
-        .mirror(true)
         .build()
 }
 

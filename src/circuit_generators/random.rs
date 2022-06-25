@@ -36,7 +36,6 @@ impl CircuitGenerator for RandCircuitGenerator {
         i: i32,
         j: i32,
         _iter: i32,
-        mirror: bool,
     ) -> Result<Option<GenCircuit>, Error> {
         use LangGateType::*;
         let pauli_gates = [Id, X, Y, Z];
@@ -107,20 +106,19 @@ impl CircuitGenerator for RandCircuitGenerator {
             }
         }
 
-        if mirror {
-            use CircuitBenchType::*;
-            match self.args.bench {
-                Mirror => {
-                    // TODO interleave with barriers??
-                    oqs_inv_gates.reverse();
-                    oqs_gates.push(LangGate::builder().t(Barrier).i(-1).build());
-                    oqs_gates.extend(oqs_inv_gates.into_iter());
-                }
-                Cycle => {
-                    oqs_gates = cycle(oqs_gates, oqs_inv_gates, 2 * i);
-                }
+        use CircuitBenchType::*;
+        match self.args.bench {
+            Mirror => {
+                // TODO interleave with barriers??
+                oqs_inv_gates.reverse();
+                oqs_gates.push(LangGate::builder().t(Barrier).i(-1).build());
+                oqs_gates.extend(oqs_inv_gates.into_iter());
             }
-        };
+            Cycle => {
+                oqs_gates = cycle(oqs_gates, oqs_inv_gates, 2 * i);
+            }
+            None => {}
+        }
 
         // Add NOT gate when should change init state
         if self.args.init_one {

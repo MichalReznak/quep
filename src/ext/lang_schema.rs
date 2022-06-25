@@ -19,11 +19,6 @@ pub enum LangSchemaDyn {
 #[async_trait]
 #[enum_dispatch(LangSchemaDyn)]
 pub trait LangSchema {
-    /// Check whether arguments are correct
-    fn check_constraints(&self, _args: &CliArgs) -> Result<(), Error> {
-        Ok(())
-    }
-
     /// Returns list of gates from the source file
     fn get_gates(&self) -> Vec<LangGate>;
 

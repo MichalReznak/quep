@@ -18,6 +18,7 @@ use crate::qc_providers::{IbmqQcProvider, NoisyQcProvider, SimpleQcProvider};
 use crate::{CliArgs, Error};
 
 /// Args based factory
+#[derive(Clone, Default)]
 pub struct Chooser {
     args: CliArgs,
 }
@@ -29,12 +30,10 @@ impl Chooser {
 
     pub fn get_lang_schema(t: CircuitSchemaType) -> LangSchemaDyn {
         use CircuitSchemaType::*;
-        let res = match t {
+        match t {
             OpenQasm => LangSchemaDyn::from(OpenQasmSchema::new()),
             Qiskit => LangSchemaDyn::from(QiskitSchema::new()),
-        };
-        // res.check_constraints(&self.args)?; // TODO
-        res
+        }
     }
 
     #[throws]

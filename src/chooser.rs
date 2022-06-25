@@ -18,7 +18,6 @@ use crate::qc_providers::{IbmqQcProvider, NoisyQcProvider, SimpleQcProvider};
 use crate::{CliArgs, Error};
 
 /// Args based factory
-#[derive(Clone, Default)]
 pub struct Chooser {
     args: CliArgs,
 }

@@ -37,9 +37,6 @@ pub struct CliArgsCircuit {
     /// Openqasm and other TODO
     pub schema: CircuitSchemaType,
 
-    /// Increase by one and expect inverse result (Struct, Rand)
-    pub interleave: bool,
-
     // TODO text
     pub init_one: bool,
 

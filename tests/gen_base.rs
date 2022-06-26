@@ -9,62 +9,6 @@ mod common;
 
 #[throws]
 #[tokio::test]
-async fn volume_a() {
-    let args = get_args(
-        Config::builder()
-            .cir(CircuitType::Base)
-            .orch(OrchestratorType::Volume)
-            .out(OutputType::Serial)
-            .prov(ProviderType::Noisy)
-            .build(),
-    )?;
-    Quep::new(args).await?.run().await?;
-}
-
-#[throws]
-#[tokio::test]
-async fn volume_b() {
-    let args = get_args(
-        Config::builder()
-            .cir(CircuitType::Base)
-            .orch(OrchestratorType::Volume)
-            .out(OutputType::Text)
-            .prov(ProviderType::Noisy)
-            .build(),
-    )?;
-    Quep::new(args).await?.run().await?;
-}
-
-#[throws]
-#[tokio::test]
-async fn volume_c() {
-    let args = get_args(
-        Config::builder()
-            .cir(CircuitType::Base)
-            .orch(OrchestratorType::Volume)
-            .out(OutputType::Serial)
-            .prov(ProviderType::Simple)
-            .build(),
-    )?;
-    Quep::new(args).await?.run().await?;
-}
-
-#[throws]
-#[tokio::test]
-async fn volume_d() {
-    let args = get_args(
-        Config::builder()
-            .cir(CircuitType::Base)
-            .orch(OrchestratorType::Volume)
-            .out(OutputType::Text)
-            .prov(ProviderType::Simple)
-            .build(),
-    )?;
-    Quep::new(args).await?.run().await?;
-}
-
-#[throws]
-#[tokio::test]
 async fn lattice_a() {
     let args = get_args(
         Config::builder()

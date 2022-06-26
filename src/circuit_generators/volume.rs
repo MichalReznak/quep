@@ -24,9 +24,9 @@ impl VolumeCircuitGenerator {
 #[async_trait]
 impl CircuitGenerator for VolumeCircuitGenerator {
     fn check_constraints(&self, args: &CliArgs) -> Result<(), Error> {
-        if !matches!(args.orch.t, OrchestratorType::Volume) {
+        if !matches!(args.orch.t, OrchestratorType::Volume | OrchestratorType::Single) {
             Constraint {
-                reason: "Volume Circuit Generator requires Volume Orchestrator".to_string(),
+                reason: "Volume Circuit Generator requires Volume or Single Orchestrator".to_string(),
             }
             .fail()?;
         }

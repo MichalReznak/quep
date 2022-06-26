@@ -65,62 +65,6 @@ async fn volume_d() {
 
 #[throws]
 #[tokio::test]
-async fn lattice_a() {
-    let args = get_args(
-        Config::builder()
-            .cir(CircuitType::Volume)
-            .orch(OrchestratorType::Lattice)
-            .out(OutputType::Serial)
-            .prov(ProviderType::Noisy)
-            .build(),
-    )?;
-    Quep::new(args).await?.run().await?;
-}
-
-#[throws]
-#[tokio::test]
-async fn lattice_b() {
-    let args = get_args(
-        Config::builder()
-            .cir(CircuitType::Volume)
-            .orch(OrchestratorType::Lattice)
-            .out(OutputType::Text)
-            .prov(ProviderType::Noisy)
-            .build(),
-    )?;
-    Quep::new(args).await?.run().await?;
-}
-
-#[throws]
-#[tokio::test]
-async fn lattice_c() {
-    let args = get_args(
-        Config::builder()
-            .cir(CircuitType::Volume)
-            .orch(OrchestratorType::Lattice)
-            .out(OutputType::Serial)
-            .prov(ProviderType::Simple)
-            .build(),
-    )?;
-    Quep::new(args).await?.run().await?;
-}
-
-#[throws]
-#[tokio::test]
-async fn lattice_d() {
-    let args = get_args(
-        Config::builder()
-            .cir(CircuitType::Volume)
-            .orch(OrchestratorType::Lattice)
-            .out(OutputType::Text)
-            .prov(ProviderType::Simple)
-            .build(),
-    )?;
-    Quep::new(args).await?.run().await?;
-}
-
-#[throws]
-#[tokio::test]
 async fn single_a() {
     let args = get_args(
         Config::builder()
@@ -168,62 +112,6 @@ async fn single_d() {
         Config::builder()
             .cir(CircuitType::Volume)
             .orch(OrchestratorType::Single)
-            .out(OutputType::Text)
-            .prov(ProviderType::Simple)
-            .build(),
-    )?;
-    Quep::new(args).await?.run().await?;
-}
-
-#[throws]
-#[tokio::test]
-async fn linear_a() {
-    let args = get_args(
-        Config::builder()
-            .cir(CircuitType::Volume)
-            .orch(OrchestratorType::Linear)
-            .out(OutputType::Serial)
-            .prov(ProviderType::Noisy)
-            .build(),
-    )?;
-    Quep::new(args).await?.run().await?;
-}
-
-#[throws]
-#[tokio::test]
-async fn linear_b() {
-    let args = get_args(
-        Config::builder()
-            .cir(CircuitType::Volume)
-            .orch(OrchestratorType::Linear)
-            .out(OutputType::Text)
-            .prov(ProviderType::Noisy)
-            .build(),
-    )?;
-    Quep::new(args).await?.run().await?;
-}
-
-#[throws]
-#[tokio::test]
-async fn linear_c() {
-    let args = get_args(
-        Config::builder()
-            .cir(CircuitType::Volume)
-            .orch(OrchestratorType::Linear)
-            .out(OutputType::Serial)
-            .prov(ProviderType::Simple)
-            .build(),
-    )?;
-    Quep::new(args).await?.run().await?;
-}
-
-#[throws]
-#[tokio::test]
-async fn linear_d() {
-    let args = get_args(
-        Config::builder()
-            .cir(CircuitType::Volume)
-            .orch(OrchestratorType::Linear)
             .out(OutputType::Text)
             .prov(ProviderType::Simple)
             .build(),

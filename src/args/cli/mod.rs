@@ -67,11 +67,13 @@ pub fn parse_circuit(clap: &CliArgsEnv, config: CliArgsCircuitConfig) -> CliArgs
         .rand(clap.circuit_rand.or(config.rand).unwrap_or(false))
         .parse(clap.circuit_parse.or(config.parse).unwrap_or(false))
         .source(clap.circuit_source.clone().or(config.source).unwrap_or(circuit_source))
-        .inverse_gates(clap.circuit_inverse_gates.clone().or(config.inverse_gates).unwrap_or(collection! {
-            HashMap<String, String>;
-            "s".to_string() => "sdg".to_string(),
-            "t".to_string() => "tdg".to_string(),
-        }))
+        .inverse_gates(clap.circuit_inverse_gates.clone().or(config.inverse_gates).unwrap_or(
+            collection! {
+                HashMap<String, String>;
+                "s".to_string() => "sdg".to_string(),
+                "t".to_string() => "tdg".to_string(),
+            },
+        ))
         .build()
 }
 

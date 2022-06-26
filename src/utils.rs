@@ -47,11 +47,8 @@ pub fn cycle(gates: Vec<LangGate>, inv_gates: Vec<LangGate>, i: i32) -> Vec<Lang
         }
     }
 
-    // TODO not pretty
     let gates = oqs_gates2.chunks(i as usize).map(|e| e.to_vec());
-
     let inv_gates = oqs_inv_gates2.chunks(i as usize).map(|e| e.iter().rev().cloned().collect());
-
     let result = interleave(gates, inv_gates).flatten().collect::<Vec<_>>();
 
     // TODO should be just "i" instead of "2 * i" for Volume
@@ -100,7 +97,6 @@ pub async fn provider_run(py_instance: &PyObject) -> Result<Vec<String>, Error> 
         let fun = py_instance.call_method0(py, "run_all")?;
 
         // Change to vector
-        // TODO better?
         let res: Vec<_> = if let Ok(list) = fun.cast_as::<PyList>(py) {
             list.into_iter().collect()
         }

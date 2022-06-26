@@ -34,12 +34,11 @@ impl CircuitGenerator for VolumeCircuitGenerator {
     }
 
     async fn generate(&mut self, i: i32, _: i32, _: i32) -> Result<Option<GenCircuit>, Error> {
-        let odd = i % 2 == 1;
         let j = if matches!(self.args.bench, CircuitBenchType::None) {
             i
         }
         else {
-            i / 2 // TODO what for odd numbers?
+            i / 2
         };
 
         use LangGateType::*;
@@ -73,7 +72,7 @@ impl CircuitGenerator for VolumeCircuitGenerator {
         }
 
         // Add NOT gate when should change init state
-        if self.args.init_one || odd {
+        if self.args.init_one || i % 2 == 1 {
             let mut gates = vec![];
             for i in 0..i {
                 gates.push(LangGate::builder().t(X).i(i).build());

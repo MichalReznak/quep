@@ -64,7 +64,6 @@ impl Orchestrator for VolumeOrchestrator {
             None
         };
 
-        // TODO fix this
         // It runs dummy circuit to make the speed measurement more precise
         if self.args.preheat && let Some(circuit) = generator.generate(1, 1, 0).await? {
             provider.append_circuit(circuit.clone()).await?;
@@ -114,41 +113,40 @@ impl Orchestrator for VolumeOrchestrator {
                         .build();
 
                     // Skip first N iterations if defined
-                    // TODO this can be done smarter
-                    if i < (from_i - 1) as usize {
-                        return val;
-                    }
-
-                    for r in res {
-                        let c = re.captures(&r).context(RegexCapture).unwrap();
-                        val.result = c["result"].parse::<String>().unwrap_infallible();
-                        val.correct += c["val"].parse::<i32>().unwrap();
-                    }
-                    val.correct /= iter;
-
-                    val.is_correct = if !mirror {
-                        let ci = i * (iter as usize);
-                        let res =
-                            sim_res.get((ci as usize)..(ci as usize + (iter as usize))).unwrap();
-
-                        let mut sim_val = OutValue::builder()
-                            .result("".to_string())
-                            .correct(0)
-                            .is_correct(false)
-                            .build();
-                        for r in res.iter() {
-                            let c = re.captures(r).context(RegexCapture).unwrap();
-                            sim_val.result = c["result"].parse::<String>().unwrap_infallible();
-                            sim_val.correct += c["val"].parse::<i32>().unwrap();
+                    if i >= (from_i - 1) as usize {
+                        for r in res {
+                            let c = re.captures(&r).context(RegexCapture).unwrap();
+                            val.result = c["result"].parse::<String>().unwrap_infallible();
+                            val.correct += c["val"].parse::<i32>().unwrap();
                         }
-                        sim_val.correct /= iter;
+                        val.correct /= iter;
 
-                        let d = (sim_val.correct as f64) * (1.0 / 3.0);
-                        sim_val.result == val.result && (sim_val.correct - val.correct) as f64 <= d
+                        val.is_correct = if !mirror {
+                            let ci = i * (iter as usize);
+                            let res = sim_res
+                                .get((ci as usize)..(ci as usize + (iter as usize)))
+                                .unwrap();
+
+                            let mut sim_val = OutValue::builder()
+                                .result("".to_string())
+                                .correct(0)
+                                .is_correct(false)
+                                .build();
+                            for r in res.iter() {
+                                let c = re.captures(r).context(RegexCapture).unwrap();
+                                sim_val.result = c["result"].parse::<String>().unwrap_infallible();
+                                sim_val.correct += c["val"].parse::<i32>().unwrap();
+                            }
+                            sim_val.correct /= iter;
+
+                            let d = (sim_val.correct as f64) * (1.0 / 3.0);
+                            sim_val.result == val.result
+                                && (sim_val.correct - val.correct) as f64 <= d
+                        }
+                        else {
+                            (val.correct as f64) > 1024.0 * (2.0 / 3.0)
+                        };
                     }
-                    else {
-                        (val.correct as f64) > 1024.0 * (2.0 / 3.0)
-                    };
 
                     val
                 })
@@ -166,7 +164,6 @@ impl Orchestrator for VolumeOrchestrator {
                     OutValue::builder().result("".to_string()).correct(0).is_correct(false).build();
 
                 // Skip first N iterations if defined
-                // TODO this can be done smarter
                 if i < from_i {
                     durations.push(Duration::from_millis(0));
                     result.push(val.clone());
@@ -205,7 +202,7 @@ impl Orchestrator for VolumeOrchestrator {
                     (val.correct as f64) > 1024.0 * (2.0 / 3.0)
                 };
 
-                durations.push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO
+                durations.push(Duration::from_millis((time.as_millis() as u64) / (iter as u64)));
                 result.push(val.clone());
 
                 if val.correct as f64 <= 1024.0 * (2.0 / 3.0) {

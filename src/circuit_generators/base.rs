@@ -131,7 +131,6 @@ impl CircuitGenerator for BaseCircuitGenerator {
 
         use CircuitBenchType::*;
 
-        // TODO clean up
         match self.args.bench {
             Mirror => {
                 // TODO interleave with barriers??
@@ -140,8 +139,7 @@ impl CircuitGenerator for BaseCircuitGenerator {
             }
             Cycle => {
                 inv_gates.reverse();
-
-                oqs_gates = interleave(oqs_gates, inv_gates).collect::<Vec<_>>();
+                oqs_gates = interleave(oqs_gates, inv_gates).collect();
             }
             None => {}
         }

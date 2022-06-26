@@ -105,7 +105,6 @@ impl Orchestrator for LatticeOrchestrator {
                         .build();
 
                     // Skip first N iterations if defined
-                    // TODO this can be done smarter
                     if ii < from_i - 1 || jj < from_j - 1 {
                         sr.push(val.clone());
                         continue;

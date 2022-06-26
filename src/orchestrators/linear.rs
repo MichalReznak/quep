@@ -102,7 +102,7 @@ impl Orchestrator for LinearOrchestrator {
                         .build();
 
                     // Skip first N iterations if defined
-                    if i >= from_i as usize {
+                    if i >= (from_i - 1) as usize {
                         for r in res {
                             let c = re.captures(&r).context(RegexCapture).unwrap();
                             val.result = c["result"].parse::<String>().unwrap_infallible();
@@ -112,8 +112,9 @@ impl Orchestrator for LinearOrchestrator {
 
                         val.is_correct = if !mirror {
                             let ci = i * (iter as usize);
-                            let res =
-                                sim_res.get((ci as usize)..(ci as usize + (iter as usize))).unwrap();
+                            let res = sim_res
+                                .get((ci as usize)..(ci as usize + (iter as usize)))
+                                .unwrap();
                             println!("{res:?}");
 
                             let mut sim_val = OutValue::builder()
@@ -130,7 +131,8 @@ impl Orchestrator for LinearOrchestrator {
                             println!("{sim_val:#?}");
 
                             let d = (sim_val.correct as f64) * (1.0 / 3.0);
-                            sim_val.result == val.result && (sim_val.correct - val.correct) as f64 <= d
+                            sim_val.result == val.result
+                                && (sim_val.correct - val.correct) as f64 <= d
                         }
                         else {
                             (val.correct as f64) > 1024.0 * (2.0 / 3.0)

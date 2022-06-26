@@ -5,6 +5,7 @@ use clap::Parser;
 use fehler::throws;
 use regex::Regex;
 use snafu::OptionExt;
+use unwrap_infallible::UnwrapInfallible;
 
 use super::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
 use crate::args::types::{CircuitBenchType, CircuitSchemaType};
@@ -98,9 +99,13 @@ fn parse_from_os_str(val: &OsStr) -> String {
 
 #[throws]
 fn parse_to_map(val: &str) -> HashMap<String, String> {
-    let re = Regex::new(r"^(?P<result>\d+): (?P<val>\d+)$")?;
-    let c = re.captures(r).context(RegexCapture).unwrap();
-
-    // TODO use regex
-    HashMap::new()
+    Regex::new(r"(?P<key>[a-zA-Z0-9]+):\s*(?P<val>[a-zA-Z0-9]+);?\s*")?
+        .captures_iter(val)
+        .map(|c| {
+            (
+                c["key"].parse::<String>().unwrap_infallible(),
+                c["val"].parse::<String>().unwrap_infallible(),
+            )
+        })
+        .collect()
 }

@@ -33,7 +33,7 @@ struct Record {
     #[builder(setter(into))]
     output: String,
     #[builder(setter(into))]
-    time_ms: Option<i32>, // TODO issue for toml, json5 (not implemented) should be u128
+    time_ms: Option<i32>,
     result: i32,
     correct: bool,
 }
@@ -47,8 +47,6 @@ impl SerialOutputer {
         Self { args: args.clone() }
     }
 }
-
-// TODO can be any serialized format
 
 #[throws]
 fn serialize(t: OutputSerType, out: &Output, pretty: bool) -> String {
@@ -117,7 +115,6 @@ impl Outputer for SerialOutputer {
         runtime: Duration,
     ) -> Result<String, Error> {
         let include_durs = matches!(durations, Some(_));
-        // TODO this hack is not pretty
         let durations = durations.unwrap_or_else(|| {
             vec![Duration::from_millis(0)].into_iter().cycle().take(values.len()).collect()
         });
@@ -160,7 +157,6 @@ impl Outputer for SerialOutputer {
         runtime: Duration,
     ) -> Result<String, Error> {
         let include_durs = matches!(durations, Some(_));
-        // TODO this hack is not pretty
         let durations = durations.unwrap_or_else(|| {
             vec![Duration::from_millis(0)].into_iter().cycle().take(values.len()).collect()
         });

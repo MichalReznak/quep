@@ -1,3 +1,4 @@
+// TODO define all default values correctly
 {
     provider: {
         t: 'Noisy', // Simple, Noisy, Ibmq
@@ -5,9 +6,10 @@
         accountId: '', // IbmQ only
     },
     circuit: {
-        t: 'Base', // Base, Struct, Rand, Fs, Volume, Basic
-        bench: 'Cycle', // Mirror, Cycle
+        t: 'Struct', // Base, Struct, Rand, Fs, Volume, Basic
+        bench: 'Mirror', // Mirror, Cycle
         schema: 'OpenQasm', // OpenQasm, Qiskit
+        interleave: false, // Increase by one and expect inverse result (Struct, Rand)
         initOne: true, // Set state to one or zero
         rand: true, // Outputs different circuits for each iteration
         source: './templates/example.qasm', // Base circuit source

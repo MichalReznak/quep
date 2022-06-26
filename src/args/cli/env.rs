@@ -39,6 +39,9 @@ pub struct CliArgsEnv {
     #[clap(long, env = "QUEP_CIRCUIT_SCHEMA")]
     pub circuit_schema: Option<CircuitSchemaType>,
 
+    #[clap(long, env = "QUEP_CIRCUIT_INTERLEAVE")]
+    pub circuit_interleave: Option<bool>,
+
     #[clap(long, env = "QUEP_CIRCUIT_INIT_ONE")]
     pub circuit_init_one: Option<bool>,
 

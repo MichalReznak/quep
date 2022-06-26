@@ -40,6 +40,7 @@ pub struct CliArgsCircuitConfig {
     pub t: Option<CircuitType>,
     pub bench: Option<CircuitBenchType>,
     pub schema: Option<CircuitSchemaType>,
+    pub interleave: Option<bool>,
     pub init_one: Option<bool>,
     pub rand: Option<bool>,
     pub parse: Option<bool>,

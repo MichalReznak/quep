@@ -40,9 +40,9 @@ impl FsCircuitGenerator {
 #[async_trait]
 impl CircuitGenerator for FsCircuitGenerator {
     fn check_constraints(&self, args: &CliArgs) -> Result<(), Error> {
-        if !matches!(args.orch.t, OrchestratorType::Linear) {
+        if !matches!(args.orch.t, OrchestratorType::Linear|OrchestratorType::Single) {
             Constraint {
-                reason: "FileSystem Circuit Generator requires Linear Orchestrator".to_string(),
+                reason: "FileSystem Circuit Generator requires Linear or Single Orchestrator".to_string(),
             }
             .fail()?;
         }

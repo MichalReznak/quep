@@ -9,7 +9,7 @@ use unwrap_infallible::UnwrapInfallible;
 use crate::args::CliArgsOrch;
 use crate::chooser::Chooser;
 use crate::error::RegexCapture;
-use crate::ext::outputer::Value;
+use crate::ext::outputer::OutValue;
 use crate::ext::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
 
 /// Does a single run of some specific size
@@ -79,7 +79,7 @@ impl Orchestrator for SingleOrchestrator {
             let res = provider.run().await?;
 
             let mut val =
-                Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+                OutValue::builder().result("".to_string()).correct(0).is_correct(false).build();
             for r in res {
                 let c = re.captures(&r).context(RegexCapture).unwrap();
                 val.result = c["result"].parse::<String>().unwrap_infallible();
@@ -91,7 +91,7 @@ impl Orchestrator for SingleOrchestrator {
                 let res = simulator.as_mut().unwrap().run().await?;
 
                 let mut sim_val =
-                    Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+                    OutValue::builder().result("".to_string()).correct(0).is_correct(false).build();
                 for r in res {
                     let c = re.captures(&r).context(RegexCapture).unwrap();
                     sim_val.result = c["result"].parse::<String>().unwrap_infallible();
@@ -114,9 +114,9 @@ impl Orchestrator for SingleOrchestrator {
             let mut sr = vec![];
             let mut time = Duration::from_micros(0);
             let mut val =
-                Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+                OutValue::builder().result("".to_string()).correct(0).is_correct(false).build();
             let mut sim_val =
-                Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+                OutValue::builder().result("".to_string()).correct(0).is_correct(false).build();
 
             for ii in 0..iter {
                 if let Some(circuit) = generator.generate(i, j, ii).await? {

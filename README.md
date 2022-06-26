@@ -28,13 +28,20 @@ grcov . `
 ```
 
 # TODOs:
-* TODO extend supported gates with custom defined and their inverse
+* Extend supported gates with custom defined and their inverse 
+     (Will not be base gate anymore, no point of doing that)
+
 * Split results from correct shots if mirror is not used
-  * TODO do not compare only the most common number when no mirror is turn on
+  * Do not compare only the most common number when no mirror is turn on 
+
 * Extend with toffoli gate?
-* Add option to increase mirror/cycle circuit size only by one with inverted result?
-* Allow to define custom layer size
-* Allow to ext define custom arguments?
+
+* Add option to increase mirror/cycle circuit size only by one with inverted result? 
+    (Only good for layers of size 1, but then it's just a plain Volume benchmark that is already implemented)
+
+* Allow to define custom layer size? (Nah, just write it in future work)
+
+* Allow to ext define custom arguments? (Nah, just write it in future work)
 
 #### Changes after image inserted:
 X Added mirror flag

@@ -1,7 +1,9 @@
+use std::collections::HashMap;
 use std::ffi::OsStr;
 
 use clap::Parser;
 use fehler::throws;
+use regex::Regex;
 use snafu::OptionExt;
 
 use super::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
@@ -51,9 +53,9 @@ pub struct CliArgsEnv {
     #[clap(long, env = "QUEP_CIRCUIT_SOURCE")]
     pub circuit_source: Option<String>,
 
-    // TODO allow somehow
-    // #[clap(long, env = "QUEP_CIRCUIT_INVERSE_GATES")]
-    // pub circuit_inverse_gates: Option<HashMap<String, String>>,
+    #[clap(long, env = "QUEP_CIRCUIT_INVERSE_GATES", parse(try_from_str = parse_to_map))]
+    pub circuit_inverse_gates: Option<HashMap<String, String>>,
+
     #[clap(long, env = "QUEP_ORCH")]
     pub orch: Option<OrchestratorType>,
 
@@ -92,4 +94,13 @@ pub struct CliArgsEnv {
 #[throws]
 fn parse_from_os_str(val: &OsStr) -> String {
     dunce::canonicalize(val)?.to_str().context(Utf16)?.to_owned()
+}
+
+#[throws]
+fn parse_to_map(val: &str) -> HashMap<String, String> {
+    let re = Regex::new(r"^(?P<result>\d+): (?P<val>\d+)$")?;
+    let c = re.captures(r).context(RegexCapture).unwrap();
+
+    // TODO use regex
+    HashMap::new()
 }

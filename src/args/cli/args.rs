@@ -31,13 +31,13 @@ pub struct CliArgsOutput {
 pub struct CliArgsCircuit {
     pub t: CircuitType,
 
-    // TODO text
+    /// Circuit benchmark type
     pub bench: CircuitBenchType,
 
-    /// Openqasm and other TODO
+    /// Used language schema
     pub schema: CircuitSchemaType,
 
-    // TODO text
+    /// Initializes all qubits to |1>
     pub init_one: bool,
 
     /// Randomize circuit generation of the same size

@@ -107,7 +107,7 @@ impl LangSchema for OpenQasmSchema {
         Ok(())
     }
 
-    // TODO check if is valid
+    // TODO check if is valid?
     async fn as_string(&mut self, circ: LangCircuit) -> Result<GenCircuit, Error> {
         // Add width
         let res = CIRCUIT_TEMPLATE.replace("%WIDTH%", &circ.width.to_string());

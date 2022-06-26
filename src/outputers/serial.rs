@@ -10,7 +10,7 @@ use typed_builder::TypedBuilder;
 use crate::args::types::OutputSerType;
 use crate::args::CliArgsOutput;
 use crate::error::OutOfBounds;
-use crate::ext::outputer::Value;
+use crate::ext::outputer::OutValue;
 use crate::ext::Outputer;
 use crate::Error;
 
@@ -78,7 +78,7 @@ fn serialize(t: OutputSerType, out: &Output, pretty: bool) -> String {
 impl Outputer for SerialOutputer {
     async fn output_table(
         &self,
-        values: Vec<Vec<Value>>,
+        values: Vec<Vec<OutValue>>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
     ) -> Result<String, Error> {
@@ -112,7 +112,7 @@ impl Outputer for SerialOutputer {
 
     async fn output_volume(
         &self,
-        values: Vec<Value>,
+        values: Vec<OutValue>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
     ) -> Result<String, Error> {
@@ -154,7 +154,7 @@ impl Outputer for SerialOutputer {
 
     async fn output_linear(
         &self,
-        values: Vec<Value>,
+        values: Vec<OutValue>,
         durations: Option<Vec<Duration>>,
         width: i32,
         runtime: Duration,

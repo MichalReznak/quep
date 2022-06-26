@@ -11,7 +11,7 @@ use crate::args::types::CircuitType;
 use crate::args::CliArgsOrch;
 use crate::chooser::Chooser;
 use crate::error::{Constraint, RegexCapture};
-use crate::ext::outputer::Value;
+use crate::ext::outputer::OutValue;
 use crate::ext::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
 use crate::{CliArgs, Error};
 
@@ -107,7 +107,7 @@ impl Orchestrator for VolumeOrchestrator {
                 .into_iter()
                 .enumerate()
                 .map(|(i, res)| {
-                    let mut val = Value::builder()
+                    let mut val = OutValue::builder()
                         .result("".to_string())
                         .correct(0)
                         .is_correct(false)
@@ -131,7 +131,7 @@ impl Orchestrator for VolumeOrchestrator {
                         let res =
                             sim_res.get((ci as usize)..(ci as usize + (iter as usize))).unwrap();
 
-                        let mut sim_val = Value::builder()
+                        let mut sim_val = OutValue::builder()
                             .result("".to_string())
                             .correct(0)
                             .is_correct(false)
@@ -161,9 +161,9 @@ impl Orchestrator for VolumeOrchestrator {
             'main2: for i in 1..=width {
                 let mut time = Duration::from_micros(0);
                 let mut val =
-                    Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+                    OutValue::builder().result("".to_string()).correct(0).is_correct(false).build();
                 let mut sim_val =
-                    Value::builder().result("".to_string()).correct(0).is_correct(false).build();
+                    OutValue::builder().result("".to_string()).correct(0).is_correct(false).build();
 
                 // Skip first N iterations if defined
                 // TODO this can be done smarter

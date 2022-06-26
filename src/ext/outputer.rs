@@ -11,9 +11,8 @@ use typed_builder::TypedBuilder;
 use crate::outputers::{SerialOutputer, TextOutputer};
 use crate::{CliArgs, Error};
 
-// TODO rename
 #[derive(Debug, Clone, TypedBuilder)]
-pub struct Value {
+pub struct OutValue {
     pub result: String,   // result bit-string
     pub correct: i32,     // number of correct shots
     pub is_correct: bool, // is correct?
@@ -36,7 +35,7 @@ pub trait Outputer {
     /// Create a lattice or results
     async fn output_table(
         &self,
-        value: Vec<Vec<Value>>,
+        value: Vec<Vec<OutValue>>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
     ) -> Result<String, Error>;
@@ -44,7 +43,7 @@ pub trait Outputer {
     /// Output with increasing width and depth always by one
     async fn output_volume(
         &self,
-        values: Vec<Value>,
+        values: Vec<OutValue>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
     ) -> Result<String, Error>;
@@ -52,7 +51,7 @@ pub trait Outputer {
     /// Output as a linear list of values
     async fn output_linear(
         &self,
-        values: Vec<Value>,
+        values: Vec<OutValue>,
         durations: Option<Vec<Duration>>,
         width: i32,
         runtime: Duration,

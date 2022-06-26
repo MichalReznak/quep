@@ -9,7 +9,7 @@ use unwrap_infallible::UnwrapInfallible;
 use crate::args::CliArgsOrch;
 use crate::chooser::Chooser;
 use crate::error::{OutOfBounds, RegexCapture};
-use crate::ext::outputer::Value;
+use crate::ext::outputer::OutValue;
 use crate::ext::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
 
 /// Iterates in all combination for 2D array
@@ -62,7 +62,6 @@ impl Orchestrator for LatticeOrchestrator {
             println!("Pre-heat run done");
         }
 
-        // TODO should be as close to computation as possible
         let runtime = Instant::now();
 
         if self.args.collect {
@@ -99,7 +98,7 @@ impl Orchestrator for LatticeOrchestrator {
                     let ci = ((ii * j) + jj) * iter;
                     let res = res.get((ci as usize)..(ci as usize + (iter as usize))).unwrap();
 
-                    let mut val = Value::builder()
+                    let mut val = OutValue::builder()
                         .result("".to_string())
                         .correct(0)
                         .is_correct(false)
@@ -123,7 +122,7 @@ impl Orchestrator for LatticeOrchestrator {
                         let sim_res =
                             sim_res.get((ci as usize)..(ci as usize + (iter as usize))).unwrap();
 
-                        let mut sim_val = Value::builder()
+                        let mut sim_val = OutValue::builder()
                             .result("".to_string())
                             .correct(0)
                             .is_correct(false)
@@ -156,12 +155,12 @@ impl Orchestrator for LatticeOrchestrator {
 
                 for j in 1..=j {
                     let mut time = Duration::from_micros(0);
-                    let mut val = Value::builder()
+                    let mut val = OutValue::builder()
                         .result("".to_string())
                         .correct(0)
                         .is_correct(false)
                         .build();
-                    let mut sim_val = Value::builder()
+                    let mut sim_val = OutValue::builder()
                         .result("".to_string())
                         .correct(0)
                         .is_correct(false)

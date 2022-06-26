@@ -32,6 +32,7 @@ grcov . `
 * Split results from correct shots if mirror is not used
   * TODO do not compare only the most common number when no mirror is turn on
 * Extend with toffoli gate?
+* Add option to increase mirror/cycle circuit size only by one with inverted result
 
 #### Changes after image inserted:
 X Added mirror flag

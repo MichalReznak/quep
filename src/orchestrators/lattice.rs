@@ -55,14 +55,12 @@ impl Orchestrator for LatticeOrchestrator {
         };
 
         // It runs dummy circuit to make the speed measurement more precise
-        if self.args.preheat {
-            if let Some(circuit) = generator.generate(1, 1, 0).await? {
-                provider.append_circuit(circuit.clone()).await?;
-                provider.run().await?;
-            }
-        }
+        if self.args.preheat && let Some(circuit) = generator.generate(1, 1, 0).await? {
+            provider.append_circuit(circuit.clone()).await?;
+            provider.run().await?;
 
-        println!("Dummy run done");
+            println!("Pre-heat run done");
+        }
 
         // TODO should be as close to computation as possible
         let runtime = Instant::now();

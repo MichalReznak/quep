@@ -40,9 +40,17 @@ impl FsCircuitGenerator {
 #[async_trait]
 impl CircuitGenerator for FsCircuitGenerator {
     fn check_constraints(&self, args: &CliArgs) -> Result<(), Error> {
-        if !matches!(args.orch.t, OrchestratorType::Linear|OrchestratorType::Single) {
+        if !matches!(args.orch.t, OrchestratorType::Linear | OrchestratorType::Single) {
             Constraint {
-                reason: "FileSystem Circuit Generator requires Linear or Single Orchestrator".to_string(),
+                reason: "FileSystem Circuit Generator requires Linear or Single Orchestrator"
+                    .to_string(),
+            }
+            .fail()?;
+        }
+
+        if !matches!(args.circuit.schema, CircuitSchemaType::OpenQasm) {
+            Constraint {
+                reason: "FileSystem Circuit Generator supports OpenQasm files only".to_string(),
             }
             .fail()?;
         }
@@ -73,7 +81,7 @@ impl CircuitGenerator for FsCircuitGenerator {
             else {
                 Ok(Some(
                     GenCircuit::builder().circuit(circuit).t(CircuitSchemaType::OpenQasm).build(),
-                )) // TODO openqasm only for now
+                ))
             }
         }
     }

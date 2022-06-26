@@ -1,13 +1,12 @@
 use async_trait::async_trait;
 
-use crate::args::types::CircuitBenchType;
 use crate::args::CliArgsCircuit;
 use crate::ext::types::circuit_generator::GenCircuit;
-use crate::ext::types::lang_schema::{LangGate, LangGateType};
+use crate::ext::types::lang_schema::LangGate;
 use crate::ext::{CircuitGenerator, LangSchema};
 use crate::lang_schemas::LangCircuit;
-use crate::utils::cycle;
-use crate::{Chooser, Error};
+use crate::utils::{init_one, inverse};
+use crate::{Chooser, Error, CLIFFORD_GATES, CLIFFORD_GATES_2, CLIFFORD_GATES_INV, PAULI_GATES};
 
 pub struct StructCircuitGenerator {
     args: CliArgsCircuit,
@@ -29,26 +28,19 @@ impl CircuitGenerator for StructCircuitGenerator {
     async fn generate(&mut self, i: i32, j: i32, iter: i32) -> Result<Option<GenCircuit>, Error> {
         let iter = if self.args.rand { iter } else { 0 };
 
-        use LangGateType::*;
-        let pauli_gates = [Id, X, Y, Z];
-        let clifford_gates = [H, S, Id, X, Y, Z];
-        let clifford_gates_inv = [H, Sdg, Id, X, Y, Z];
-        let clifford_gates_2 = [Cx, Cz, Swap];
-
         let oqs_i = i;
         let mut oqs_gates = vec![];
         let mut oqs_inv_gates = vec![];
 
-        let c_len = clifford_gates.len();
-        let c_len2 = c_len + clifford_gates_2.len();
+        let c_len = CLIFFORD_GATES.len();
+        let c_len2 = c_len + CLIFFORD_GATES_2.len();
 
-        // let j = if self.args.
         let mut a = iter;
         let mut b = iter;
         let mut skip = false;
         for _ in 1..=j {
             for ii in 0..i {
-                let p_gate_index = b as usize % pauli_gates.len();
+                let p_gate_index = b as usize % PAULI_GATES.len();
                 let c_gate_index = a as usize % c_len2;
                 b += 1;
 
@@ -57,20 +49,20 @@ impl CircuitGenerator for StructCircuitGenerator {
                 }
                 else if c_gate_index < c_len {
                     oqs_gates
-                        .push(LangGate::builder().t(clifford_gates[c_gate_index]).i(ii).build());
+                        .push(LangGate::builder().t(CLIFFORD_GATES[c_gate_index]).i(ii).build());
                     oqs_inv_gates.push(
-                        LangGate::builder().t(clifford_gates_inv[c_gate_index]).i(ii).build(),
+                        LangGate::builder().t(CLIFFORD_GATES_INV[c_gate_index]).i(ii).build(),
                     );
                     a += 1;
                 }
                 // NO space for double gate
                 else if ii == i - 1 {
                     oqs_gates.push(
-                        LangGate::builder().t(clifford_gates[c_gate_index - c_len]).i(ii).build(),
+                        LangGate::builder().t(CLIFFORD_GATES[c_gate_index - c_len]).i(ii).build(),
                     );
                     oqs_inv_gates.push(
                         LangGate::builder()
-                            .t(clifford_gates_inv[c_gate_index - c_len])
+                            .t(CLIFFORD_GATES_INV[c_gate_index - c_len])
                             .i(ii)
                             .build(),
                     );
@@ -78,14 +70,14 @@ impl CircuitGenerator for StructCircuitGenerator {
                 else {
                     oqs_gates.push(
                         LangGate::builder()
-                            .t(clifford_gates_2[c_gate_index - c_len])
+                            .t(CLIFFORD_GATES_2[c_gate_index - c_len])
                             .i(ii)
                             .other(ii + 1)
                             .build(),
                     );
                     oqs_inv_gates.push(
                         LangGate::builder()
-                            .t(clifford_gates_2[c_gate_index - c_len])
+                            .t(CLIFFORD_GATES_2[c_gate_index - c_len])
                             .i(ii)
                             .other(ii + 1)
                             .build(),
@@ -95,34 +87,16 @@ impl CircuitGenerator for StructCircuitGenerator {
                     skip = true;
                 }
 
-                oqs_gates.push(LangGate::builder().t(pauli_gates[p_gate_index]).i(ii).build());
-                oqs_inv_gates.push(LangGate::builder().t(pauli_gates[p_gate_index]).i(ii).build());
+                oqs_gates.push(LangGate::builder().t(PAULI_GATES[p_gate_index]).i(ii).build());
+                oqs_inv_gates.push(LangGate::builder().t(PAULI_GATES[p_gate_index]).i(ii).build());
             }
         }
 
-        use CircuitBenchType::*;
-        match self.args.bench {
-            Mirror => {
-                // TODO interleave with barriers??
-                oqs_inv_gates.reverse();
-                oqs_gates.push(LangGate::builder().t(Barrier).i(-1).build());
-                oqs_gates.extend(oqs_inv_gates.into_iter());
-            }
-            Cycle => {
-                oqs_gates = cycle(oqs_gates, oqs_inv_gates, 2 * i);
-            }
-            None => {}
-        }
+        oqs_gates = inverse(self.args.bench, oqs_gates, oqs_inv_gates, i);
 
         // Add NOT gate when should change init state
         if self.args.init_one {
-            let mut gates = vec![];
-            for i in 0..i {
-                gates.push(LangGate::builder().t(X).i(i).build());
-            }
-            gates.push(LangGate::builder().t(Barrier).i(-1).build());
-            gates.extend(oqs_gates);
-            oqs_gates = gates;
+            oqs_gates = init_one(oqs_gates, i);
         }
 
         let oqs = LangCircuit::builder().width(oqs_i).gates(oqs_gates).build();

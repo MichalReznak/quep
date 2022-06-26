@@ -32,7 +32,8 @@ grcov . `
 * Split results from correct shots if mirror is not used
   * TODO do not compare only the most common number when no mirror is turn on
 * Extend with toffoli gate?
-* Add option to increase mirror/cycle circuit size only by one with inverted result
+* Add option to increase mirror/cycle circuit size only by one with inverted result?
+* Allow to define custom layer size
 * Allow to ext define custom arguments?
 
 #### Changes after image inserted:

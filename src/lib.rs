@@ -21,6 +21,7 @@ use fehler::throws;
 mod chooser;
 mod circuit_generators;
 mod error;
+mod globals;
 mod lang_schemas;
 mod orchestrators;
 mod outputers;
@@ -33,6 +34,7 @@ pub mod utils;
 
 pub use args::CliArgs;
 pub use error::Error;
+pub use globals::*;
 
 use crate::args::config;
 use crate::args::types::{CircuitBenchType, ProviderType};

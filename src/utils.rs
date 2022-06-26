@@ -3,8 +3,9 @@ use itertools::interleave;
 use snafu::OptionExt;
 
 use crate::error::Utf16;
+use crate::ext::types::lang_schema::LangGateType::{Barrier, X};
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
-use crate::Error;
+use crate::{CircuitBenchType, Error};
 
 #[throws]
 pub fn dir(s: &str) -> String {
@@ -54,4 +55,35 @@ pub fn cycle(gates: Vec<LangGate>, inv_gates: Vec<LangGate>, i: i32) -> Vec<Lang
         .filter(|e| !matches!(e.t, LangGateType::Dummy))
         .cloned()
         .collect::<Vec<_>>()
+}
+
+pub fn inverse(
+    bench: CircuitBenchType,
+    mut gates: Vec<LangGate>,
+    mut gates_inv: Vec<LangGate>,
+    i: i32,
+) -> Vec<LangGate> {
+    use CircuitBenchType::*;
+
+    match bench {
+        Mirror => {
+            // TODO interleave with barriers??
+            gates_inv.reverse();
+            gates.push(LangGate::builder().t(Barrier).i(-1).build());
+            gates.extend(gates_inv.into_iter());
+            gates
+        }
+        Cycle => cycle(gates, gates_inv, 2 * i),
+        None => gates,
+    }
+}
+
+pub fn init_one(oqs_gates: Vec<LangGate>, i: i32) -> Vec<LangGate> {
+    let mut gates = vec![];
+    for i in 0..i {
+        gates.push(LangGate::builder().t(X).i(i).build());
+    }
+    gates.push(LangGate::builder().t(Barrier).i(-1).build());
+    gates.extend(oqs_gates);
+    gates
 }

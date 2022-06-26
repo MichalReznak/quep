@@ -1,3 +1,16 @@
+//! NOTES:
+//! order of reg defines order in circuit
+//! barrier inputs I-gates to unset ones
+//! Now restricted version -> single qreg[n] and creg[n]
+//!      Measure is done on all
+//!      They define only the circuit
+//!      Number of qubits does not change
+//! Non inverse gates are not handled
+//! For now only a single qreg and creg can be defined
+//! Gates needs to be defined only in an entry file (otherwise order is wrong)
+//! Depth is number of gates on each qubit it's not with automatic identity
+//! gates
+
 use std::collections::HashMap;
 
 use async_trait::async_trait;
@@ -85,18 +98,6 @@ fn oqs_parse_circuit(
     inv_gates.reverse();
     (gates, inv_gates)
 }
-
-// NOTES:
-// order of reg defines order in circuit
-// barrier inputs I-gates to unset ones
-// Now restricted version -> single qreg[n] and creg[n]
-//      Measure is done on all
-//      They define only the circuit
-//      Number of qubits does not change
-// Non inverse gates are not handled
-// For now only a single qreg and creg can be defined
-// Gates needs to be defined only in an entry file (otherwise order is wrong)
-// Depth is number of gates on each qubit it's not with automatic identity gates
 
 #[allow(dead_code)]
 #[derive(Debug)]

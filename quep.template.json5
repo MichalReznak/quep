@@ -2,14 +2,13 @@
 {
     provider: {
         t: 'Noisy', // Simple, Noisy, Ibmq
-        pythonDir: './python', // Python providers implementation
+        pythonDir: '.', // Python providers implementation
         accountId: '', // IbmQ only
     },
     circuit: {
         t: 'Struct', // Base, Struct, Rand, Fs, Volume, Basic
-        bench: 'Mirror', // Mirror, Cycle
+        bench: 'Mirror', // Mirror, Cycle, None
         schema: 'OpenQasm', // OpenQasm, Qiskit
-        interleave: false, // Increase by one and expect inverse result (Struct, Rand)
         initOne: true, // Set state to one or zero
         rand: true, // Outputs different circuits for each iteration
         source: './templates/example.qasm', // Base circuit source
@@ -32,6 +31,5 @@
         data: './data', // Fs: Circuits source
         collect: false, // Run all circuits in a bunch
         preheat: false, // Do a dummy run
-        mirror: true, // Mirror circuits
     },
 }

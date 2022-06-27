@@ -14,7 +14,11 @@ impl PyVenv {
         // check if python dir is available
         let venv_dir = format!("{}/.venv", dir);
         let pip = format!("{}/.venv/Scripts/pip", dir);
-        let req = format!("{}/requirements.txt", dir);
+        let req_str =
+            include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "./python/requirements.txt"))
+                .to_string();
+        let mut reqs = vec!["install"];
+        reqs.extend(req_str.split("\r\n").filter(|e| !e.is_empty()));
 
         if !Path::new(&venv_dir).exists() {
             // install .venv
@@ -25,8 +29,8 @@ impl PyVenv {
         // Check if qiskit exists
         if !Path::new(&format!("{}/cmake", &venv_dir)).exists() {
             // run in venv pip install
-            println!("Installing qiskit...");
-            Command::new(&pip).args(["install", "-r", &req]).spawn()?.wait().await?;
+            println!("Installing python dependencies...");
+            Command::new(&pip).args(&reqs).spawn()?.wait().await?;
         }
 
         // set correct paths

@@ -34,7 +34,7 @@ grcov . `
 * Split results from correct shots if mirror is not used
   * Do not compare only the most common number when no mirror is turn on 
 
-* Extend with toffoli gate?
+* Extend with toffoli gate? (No)
 
 * Add option to increase mirror/cycle circuit size only by one with inverted result? 
     (Only good for layers of size 1, but then it's just a plain Volume benchmark that is already implemented)
@@ -44,8 +44,6 @@ grcov . `
 * Allow to ext define custom arguments? (Nah, just write it in future work)
 
 #### Changes after image inserted:
-X Added mirror flag
-X Lot of other stuff I don't remember anymore
 X Add arg to say whether circuits should be mirrored or computed on a simulator
 X implement cycle benchmarking (inverse gate is inserted directly behind the correct gate, otherwise it is the same as mirror)
 X allow to define initial state (does not need to be all zeros)

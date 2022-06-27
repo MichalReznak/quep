@@ -154,7 +154,6 @@ impl Orchestrator for LinearOrchestrator {
                     OutValue::builder().result("".to_string()).correct(0).is_correct(false).build();
 
                 // Skip first N iterations if defined
-                // TODO this can be done smarter
                 if j < from_i {
                     durations.push(Duration::from_millis(0));
                     result.push(val.clone());
@@ -162,8 +161,6 @@ impl Orchestrator for LinearOrchestrator {
                 }
 
                 for ii in 0..iter {
-                    // TODO somehow better allow to define circuit width
-                    // (or if it should increase width instead of depth?)
                     if let Some(circuit) = generator.generate(depth, j, ii).await? {
                         provider.append_circuit(circuit.clone()).await?;
 
@@ -193,7 +190,7 @@ impl Orchestrator for LinearOrchestrator {
                     (val.correct as f64) > 1024.0 * (2.0 / 3.0)
                 };
 
-                durations.push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO
+                durations.push(Duration::from_millis((time.as_millis() as u64) / (iter as u64)));
                 result.push(val.clone());
 
                 if (val.correct as f64) <= 1024.0 * (2.0 / 3.0) {

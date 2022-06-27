@@ -147,7 +147,7 @@ impl Orchestrator for SingleOrchestrator {
                 (val.correct as f64) > 1024.0 * (2.0 / 3.0)
             };
 
-            durations.push(Duration::from_millis((time.as_millis() as u64) / (iter as u64))); // TODO
+            durations.push(Duration::from_millis((time.as_millis() as u64) / (iter as u64)));
             sr.push(val.clone());
 
             result.push(sr.clone());

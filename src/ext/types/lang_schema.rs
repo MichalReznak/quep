@@ -59,7 +59,6 @@ impl LangGate {
     }
 }
 
-// TODO rename?
 #[derive(TypedBuilder, Clone)]
 pub struct LangCircuit {
     pub width: i32,

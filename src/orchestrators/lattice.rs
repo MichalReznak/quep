@@ -166,7 +166,6 @@ impl Orchestrator for LatticeOrchestrator {
                         .build();
 
                     // Skip first N iterations if defined
-                    // TODO this can be done smarter
                     if i < from_i || j < from_j {
                         durations.push(Duration::from_millis(0));
                         sr.push(val.clone());

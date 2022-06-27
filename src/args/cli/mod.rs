@@ -31,7 +31,7 @@ pub struct CliArgs {
 
 #[throws]
 pub fn parse_provider(clap: &CliArgsEnv, config: CliArgsProviderConfig) -> CliArgsProvider {
-    let python_dir = dir("./python")?;
+    let python_dir = dir(".")?; // TODO use executable directory
     let provider_type = clap.provider.or(config.t).unwrap_or(ProviderType::Simple);
 
     CliArgsProvider::builder()

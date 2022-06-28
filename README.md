@@ -28,6 +28,8 @@ grcov . `
 ```
 
 # TODOs:
+* Serialize to python, allow to define python extensions
+
 * Extend supported gates with custom defined and their inverse 
      (Will not be base gate anymore, no point of doing that)
 

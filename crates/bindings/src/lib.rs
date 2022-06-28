@@ -24,17 +24,19 @@ struct QuepyConfig {
     pub circuit: Option<CircuitType>,
     pub circuit_bench: Option<CircuitBenchType>,
     pub circuit_schema: Option<CircuitSchemaType>,
+    pub circuit_init_one: Option<bool>,
     pub circuit_rand: Option<bool>,
     pub circuit_parse: Option<bool>,
     pub circuit_source: Option<String>,
     pub orch: Option<OrchestratorType>,
     pub orch_data: Option<String>,
     pub orch_iter: Option<i32>,
+    pub orch_from_size: Option<i32>,
+    pub orch_from_size_2: Option<i32>,
     pub orch_size: Option<i32>,
     pub orch_size_2: Option<i32>,
     pub orch_collect: Option<bool>,
     pub orch_preheat: Option<bool>,
-    pub orch_mirror: Option<bool>,
 }
 
 #[pymethods]
@@ -53,6 +55,7 @@ impl QuepyConfig {
         circuit: Option<String>,
         circuit_bench: Option<String>,
         circuit_schema: Option<String>,
+        circuit_init_one: Option<bool>,
         circuit_rand: Option<bool>,
         circuit_parse: Option<bool>,
         circuit_source: Option<String>,
@@ -60,11 +63,12 @@ impl QuepyConfig {
         orch: Option<String>,
         orch_data: Option<String>,
         orch_iter: Option<i32>,
+        orch_from_size: Option<i32>,
+        orch_from_size_2: Option<i32>,
         orch_size: Option<i32>,
         orch_size_2: Option<i32>,
         orch_collect: Option<bool>,
         orch_preheat: Option<bool>,
-        orch_mirror: Option<bool>,
     ) -> PyResult<Self> {
         Ok(Self {
             provider: provider.map(|e| ProviderType::from_str(&e).unwrap()),
@@ -75,6 +79,7 @@ impl QuepyConfig {
             output_pretty,
             circuit: circuit.map(|e| CircuitType::from_str(&e).unwrap()),
             circuit_bench: circuit_bench.map(|e| CircuitBenchType::from_str(&e).unwrap()),
+            circuit_init_one,
             circuit_schema: circuit_schema.map(|e| CircuitSchemaType::from_str(&e).unwrap()),
             circuit_rand,
             circuit_parse,
@@ -86,7 +91,8 @@ impl QuepyConfig {
             orch_size_2,
             orch_collect,
             orch_preheat,
-            orch_mirror,
+            orch_from_size,
+            orch_from_size_2
         })
     }
 }
@@ -103,19 +109,21 @@ impl From<QuepyConfig> for CliArgsConfig {
                 t: qc.circuit,
                 bench: qc.circuit_bench,
                 schema: qc.circuit_schema,
+                init_one: qc.circuit_init_one,
                 rand: qc.circuit_rand,
                 parse: qc.circuit_parse,
                 source: qc.circuit_source,
-                inverse_gates: None,
+                inverse_gates: None, // TODO
             },
             orch: CliArgsOrchConfig {
                 t: qc.orch,
+                from_size: qc.orch_from_size,
+                from_size_2: qc.orch_from_size_2,
                 size: qc.orch_size,
                 size_2: qc.orch_size_2,
                 iter: qc.orch_iter,
                 collect: qc.orch_collect,
                 preheat: qc.orch_preheat,
-                mirror: qc.orch_mirror,
                 data: qc.orch_data,
             },
             output: CliArgsOutputConfig {

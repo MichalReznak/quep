@@ -30,15 +30,15 @@ use crate::utils::{debug, provider_meta_info, provider_run};
 use crate::Error;
 
 pub struct PythonQcProvider {
-    args: CliArgsProvider,
+    // args: CliArgsProvider,
     py_instance: Option<PyObject>,
 }
 
 impl PythonQcProvider {
-    pub fn new(args: &CliArgsProvider) -> Self {
+    pub fn new(_args: &CliArgsProvider) -> Self {
         Self {
             py_instance: None,
-            args: args.clone(),
+            // args: args.clone(),
         }
     }
 }
@@ -48,19 +48,20 @@ impl QcProvider for PythonQcProvider {
     async fn connect(&mut self) -> Result<(), Error> {
         todo!("Check if is working. Haven't tested it");
 
-        Python::with_gil(|py| {
-            // TODO should be python dir?
-            let code =
-                std::fs::read_to_string(&format!("{}/qc_provider.py", self.args.python_dir))?;
-            let module = PyModule::from_code(py, &code, "", "")?;
-            let qiskit: Py<PyAny> = module.getattr("QcProvider")?.into();
-            let qiskit = qiskit.call0(py)?;
-
-            qiskit.call_method0(py, "auth")?;
-
-            self.py_instance = Some(qiskit);
-            Ok(())
-        })
+        // Python::with_gil(|py| {
+        //     // TODO should be python dir?
+        //     let code =
+        //         std::fs::read_to_string(&format!("{}/qc_provider.py",
+        // self.args.python_dir))?;     let module =
+        // PyModule::from_code(py, &code, "", "")?;     let qiskit:
+        // Py<PyAny> = module.getattr("QcProvider")?.into();
+        //     let qiskit = qiskit.call0(py)?;
+        //
+        //     qiskit.call_method0(py, "auth")?;
+        //
+        //     self.py_instance = Some(qiskit);
+        //     Ok(())
+        // })
     }
 
     async fn append_circuit(&mut self, circuit: GenCircuit) -> Result<(), Error> {

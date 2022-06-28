@@ -8,7 +8,7 @@ use enum_dispatch::enum_dispatch;
 use tokio::time::Duration;
 use typed_builder::TypedBuilder;
 
-use crate::outputers::{SerialOutputer, TextOutputer, PythonOutputer};
+use crate::outputers::{PythonOutputer, SerialOutputer, TextOutputer};
 use crate::{CliArgs, Error};
 
 #[derive(Debug, Clone, TypedBuilder)]

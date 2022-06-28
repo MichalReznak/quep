@@ -1,7 +1,10 @@
 use fehler::throws;
 
 use crate::args::types::*;
-use crate::circuit_generators::{BaseCircuitGenerator, BasicCircuitGenerator, FsCircuitGenerator, PythonCircuitGenerator, RandCircuitGenerator, StructCircuitGenerator, VolumeCircuitGenerator};
+use crate::circuit_generators::{
+    BaseCircuitGenerator, BasicCircuitGenerator, FsCircuitGenerator, PythonCircuitGenerator,
+    RandCircuitGenerator, StructCircuitGenerator, VolumeCircuitGenerator,
+};
 use crate::ext::{
     CircuitGenerator, CircuitGeneratorDyn, LangSchemaDyn, Orchestrator, OrchestratorDyn, Outputer,
     OutputerDyn, QcProvider, QcProviderDyn,

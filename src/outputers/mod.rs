@@ -1,7 +1,7 @@
+mod python;
 mod serial;
 mod text;
-mod python;
 
+pub use python::PythonOutputer;
 pub use serial::SerialOutputer;
 pub use text::TextOutputer;
-pub use python::PythonOutputer;

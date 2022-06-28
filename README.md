@@ -28,7 +28,7 @@ grcov . `
 ```
 
 # TODOs:
-* Add C API? (IS it needed?)
+* Circuit generator should return only intermediate circuit format and then it should be serialized by lang_schema.
 
 * Serialize to python, allow to define python extensions 
     X Can define custom requirements.txt
@@ -39,20 +39,22 @@ grcov . `
     Rename Python to external (or something like that and allow it to be dynlib)
     Add other extensions to this system
 
-* Extend supported gates with custom defined and their inverse 
-     (Will not be base gate anymore, no point of doing that)
-
-* Split results from correct shots if mirror is not used
-  * Do not compare only the most common number when no mirror is turn on 
-
-* Extend with toffoli gate? (No)
-
-* Add option to increase mirror/cycle circuit size only by one with inverted result? 
-    (Only good for layers of size 1, but then it's just a plain Volume benchmark that is already implemented)
+* Allow to ext define custom arguments? (Nah, just write it in future work)
 
 * Allow to define custom layer size? (Nah, just write it in future work)
 
-* Allow to ext define custom arguments? (Nah, just write it in future work)
+* Split results from correct shots if mirror is not used
+    * Do not compare only the most common number when no mirror is turn on
+
+* NO: Extend with toffoli gate? (This is complex gate on a circuit)
+
+* NO: Add option to increase mirror/cycle circuit size only by one with inverted result?
+  (Only good for layers of size 1, but then it's just a plain Volume benchmark that is already implemented)
+
+* NO: Add C API? (Is it needed? I don't think so)
+
+* NO: Extend supported gates with custom defined and their inverse
+  (Will not be base gate anymore, no point of doing that)
 
 #### Changes after image inserted:
 X Add arg to say whether circuits should be mirrored or computed on a simulator

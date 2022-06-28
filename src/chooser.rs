@@ -1,10 +1,7 @@
 use fehler::throws;
 
 use crate::args::types::*;
-use crate::circuit_generators::{
-    BaseCircuitGenerator, BasicCircuitGenerator, FsCircuitGenerator, RandCircuitGenerator,
-    StructCircuitGenerator, VolumeCircuitGenerator,
-};
+use crate::circuit_generators::{BaseCircuitGenerator, BasicCircuitGenerator, FsCircuitGenerator, PythonCircuitGenerator, RandCircuitGenerator, StructCircuitGenerator, VolumeCircuitGenerator};
 use crate::ext::{
     CircuitGenerator, CircuitGeneratorDyn, LangSchemaDyn, Orchestrator, OrchestratorDyn, Outputer,
     OutputerDyn, QcProvider, QcProviderDyn,
@@ -13,8 +10,8 @@ use crate::lang_schemas::{OpenQasmSchema, QiskitSchema};
 use crate::orchestrators::{
     LatticeOrchestrator, LinearOrchestrator, SingleOrchestrator, VolumeOrchestrator,
 };
-use crate::outputers::{SerialOutputer, TextOutputer};
-use crate::qc_providers::{IbmqQcProvider, NoisyQcProvider, SimpleQcProvider};
+use crate::outputers::{PythonOutputer, SerialOutputer, TextOutputer};
+use crate::qc_providers::{IbmqQcProvider, NoisyQcProvider, PythonQcProvider, SimpleQcProvider};
 use crate::{CliArgs, Error};
 
 /// Args based factory
@@ -42,6 +39,7 @@ impl Chooser {
             Ibmq => QcProviderDyn::from(IbmqQcProvider::new(&self.args.provider)),
             Simple => QcProviderDyn::from(SimpleQcProvider::new(&self.args.provider)),
             Noisy => QcProviderDyn::from(NoisyQcProvider::new(&self.args.provider)),
+            Python => QcProviderDyn::from(PythonQcProvider::new(&self.args.provider)),
         };
         res.check_constraints(&self.args)?;
         res
@@ -53,6 +51,7 @@ impl Chooser {
         let res = match self.args.output.t {
             Text => OutputerDyn::from(TextOutputer::new(&self.args.output)),
             Serial => OutputerDyn::from(SerialOutputer::new(&self.args.output)),
+            Python => OutputerDyn::from(PythonOutputer::new(&self.args.output)),
         };
         res.check_constraints(&self.args)?;
         res
@@ -68,6 +67,7 @@ impl Chooser {
             Struct => CircuitGeneratorDyn::from(StructCircuitGenerator::new(&self.args.circuit)),
             Rand => CircuitGeneratorDyn::from(RandCircuitGenerator::new(&self.args.circuit)),
             Base => CircuitGeneratorDyn::from(BaseCircuitGenerator::new(&self.args.circuit)),
+            Python => CircuitGeneratorDyn::from(PythonCircuitGenerator::new(&self.args.circuit)),
         };
         res.check_constraints(&self.args)?;
         res

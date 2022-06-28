@@ -28,7 +28,16 @@ grcov . `
 ```
 
 # TODOs:
-* Serialize to python, allow to define python extensions
+* Add C API? (IS it needed?)
+
+* Serialize to python, allow to define python extensions 
+    X Can define custom requirements.txt
+    X Extended with Python QcProvider
+    Add option to check for constraints
+    Send arguments
+    Test it
+    Rename Python to external (or something like that and allow it to be dynlib)
+    Add other extensions to this system
 
 * Extend supported gates with custom defined and their inverse 
      (Will not be base gate anymore, no point of doing that)

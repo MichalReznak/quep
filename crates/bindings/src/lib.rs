@@ -92,7 +92,7 @@ impl QuepyConfig {
             orch_collect,
             orch_preheat,
             orch_from_size,
-            orch_from_size_2
+            orch_from_size_2,
         })
     }
 }
@@ -141,7 +141,7 @@ fn run(py: Python<'_>, config: QuepyConfig) -> PyResult<&PyAny> {
     future_into_py(py, async move {
         let args = CliArgs::parse_with_config_no_env(config.into()).unwrap();
         let res = quep_core::Quep::new(args).await.unwrap().run().await.unwrap();
-        Ok(Python::with_gil(|_py| res))
+        Ok(Python::with_gil(|_| res))
     })
 }
 

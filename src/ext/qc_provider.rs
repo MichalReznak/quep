@@ -2,12 +2,13 @@
 //!
 //! Set of qc_providers that implement common interface to communicate
 //! with a set or a single computer
+
 use async_trait::async_trait;
 use enum_dispatch::enum_dispatch;
 
 use super::types::MetaInfo;
 use crate::ext::types::circuit_generator::GenCircuit;
-use crate::qc_providers::{IbmqQcProvider, NoisyQcProvider, SimpleQcProvider};
+use crate::qc_providers::{IbmqQcProvider, NoisyQcProvider, PythonQcProvider, SimpleQcProvider};
 use crate::{CliArgs, Error};
 
 #[enum_dispatch]
@@ -15,6 +16,7 @@ pub enum QcProviderDyn {
     IbmqQcProvider,
     SimpleQcProvider,
     NoisyQcProvider,
+    PythonQcProvider,
 }
 
 #[async_trait]

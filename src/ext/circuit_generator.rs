@@ -14,7 +14,7 @@ use enum_dispatch::enum_dispatch;
 use super::types::circuit_generator::GenCircuit;
 use crate::circuit_generators::{
     BaseCircuitGenerator, BasicCircuitGenerator, FsCircuitGenerator, RandCircuitGenerator,
-    StructCircuitGenerator, VolumeCircuitGenerator,
+    StructCircuitGenerator, VolumeCircuitGenerator, PythonCircuitGenerator,
 };
 use crate::{CliArgs, Error};
 
@@ -26,6 +26,7 @@ pub enum CircuitGeneratorDyn {
     StructCircuitGenerator,
     RandCircuitGenerator,
     BaseCircuitGenerator,
+    PythonCircuitGenerator
 }
 
 #[async_trait]

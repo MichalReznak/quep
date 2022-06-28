@@ -6,6 +6,7 @@ pub enum ProviderType {
     Ibmq,
     Simple,
     Noisy,
+    Python,
 }
 
 #[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
@@ -13,6 +14,7 @@ pub enum ProviderType {
 pub enum OutputType {
     Text,
     Serial,
+    Python,
 }
 
 #[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
@@ -24,6 +26,7 @@ pub enum CircuitType {
     Struct,
     Rand,
     Base,
+    Python,
 }
 
 #[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]

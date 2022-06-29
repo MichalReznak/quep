@@ -12,7 +12,7 @@ use crate::args::CliArgsOrch;
 use crate::chooser::Chooser;
 use crate::error::{Constraint, RegexCapture};
 use crate::ext::outputer::OutValue;
-use crate::ext::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
+use crate::ext::{CircuitGenerator, LangSchema, Orchestrator, Outputer, QcProvider};
 use crate::{CliArgs, Error};
 
 /// Always increase depth and width by one in each iteration
@@ -50,6 +50,7 @@ impl Orchestrator for VolumeOrchestrator {
         // generate test suite -> CircuitGenerator
         let mut generator = chooser.get_circuit_generator()?;
         let outputer = chooser.get_outputer()?;
+        let mut lang_schema = chooser.get_lang_schema()?;
 
         // connect to the provider -> QcProvider
         let mut provider = chooser.get_provider()?;
@@ -65,8 +66,9 @@ impl Orchestrator for VolumeOrchestrator {
         };
 
         // It runs dummy circuit to make the speed measurement more precise
-        if self.args.preheat && let Some(circuit) = generator.generate(1, 1, 0).await? {
-            provider.append_circuit(circuit.clone()).await?;
+        if self.args.preheat && let Some(circuit) = generator.generate(&lang_schema, 1, 1, 0).await? {
+            let circuit = lang_schema.as_string(circuit.clone()).await?;
+            provider.append_circuit(circuit).await?;
             provider.run().await?;
 
             println!("Pre-heat run done");
@@ -78,7 +80,8 @@ impl Orchestrator for VolumeOrchestrator {
             // TODO add iterations
             'main: for i in 1..=width {
                 for ii in 0..iter {
-                    if let Some(c) = generator.generate(i, i, ii).await? {
+                    if let Some(c) = generator.generate(&lang_schema, i, i, ii).await? {
+                        let c = lang_schema.as_string(c.clone()).await?;
                         provider.append_circuit(c.clone()).await?;
 
                         if !mirror {
@@ -170,9 +173,10 @@ impl Orchestrator for VolumeOrchestrator {
                 }
 
                 for ii in 0..iter {
-                    if let Some(circuit) = generator.generate(i, i, ii).await? {
+                    if let Some(circuit) = generator.generate(&lang_schema, i, i, ii).await? {
                         // TODO if I do a multiple iterations and one falls below limit, how to
                         // solve this?
+                        let circuit = lang_schema.as_string(circuit.clone()).await?;
                         provider.append_circuit(circuit.clone()).await?;
 
                         let res = provider.run().await?.get(0).unwrap().to_string();

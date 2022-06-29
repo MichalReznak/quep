@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::time::Duration;
 
 use fehler::throws;
@@ -141,4 +142,78 @@ pub async fn provider_meta_info(py_instance: &PyObject) -> Result<MetaInfo, Erro
 
         Ok(MetaInfo::builder().time(time).build())
     })
+}
+
+#[throws]
+pub fn oqs_parse_circuit(
+    oqs_gates: Vec<LangGate>,
+    depth: i32,
+    width: i32,
+) -> (Vec<LangGate>, Vec<LangGate>) {
+    let mut counts = HashMap::<i32, i32>::new();
+    let mut gates = vec![];
+    let mut inv_gates = vec![];
+
+    for gate in &oqs_gates {
+        if matches!(gate.t, LangGateType::Barrier) && gate.i < width {
+            gates.push(gate.clone());
+            inv_gates.push(gate.inverse());
+            continue;
+        }
+
+        let mut second_ok = true;
+
+        let count = if let Some(c) = counts.get_mut(&gate.i) {
+            *c
+        }
+        else {
+            0
+        };
+
+        let first_ok = count < depth && gate.i < width;
+
+        use LangGateType::*;
+        match gate.t {
+            Cx | Cz | Swap => {
+                let count = if let Some(c) = counts.get_mut(&gate.other.unwrap()) {
+                    *c
+                }
+                else {
+                    0
+                };
+
+                second_ok = count < depth && gate.other.unwrap() < width;
+            }
+            _ => {}
+        }
+
+        // Do all indices fulfill the limit?
+        if first_ok && second_ok {
+            // Add limits for the next gate
+            if let Some(c) = counts.get_mut(&gate.i) {
+                *c += 1;
+            }
+            else {
+                counts.insert(gate.i, 1);
+            }
+
+            match gate.t {
+                Cx | Cz | Swap => {
+                    if let Some(c) = counts.get_mut(&gate.other.unwrap()) {
+                        *c += 1;
+                    }
+                    else {
+                        counts.insert(gate.other.unwrap(), 1);
+                    }
+                }
+                _ => {}
+            }
+
+            gates.push(gate.clone());
+            inv_gates.push(gate.inverse());
+        }
+    }
+
+    inv_gates.reverse();
+    (gates, inv_gates)
 }

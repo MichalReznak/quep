@@ -3,12 +3,11 @@ use async_trait::async_trait;
 use crate::args::types::{CircuitBenchType, OrchestratorType};
 use crate::args::CliArgsCircuit;
 use crate::error::Constraint;
-use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
-use crate::ext::{CircuitGenerator, LangSchema};
+use crate::ext::{CircuitGenerator, LangSchemaDyn};
 use crate::lang_schemas::LangCircuit;
 use crate::utils::cycle;
-use crate::{Chooser, CliArgs, Error};
+use crate::{CliArgs, Error};
 
 #[allow(dead_code)]
 pub struct VolumeCircuitGenerator {
@@ -34,7 +33,13 @@ impl CircuitGenerator for VolumeCircuitGenerator {
         Ok(())
     }
 
-    async fn generate(&mut self, i: i32, _: i32, _: i32) -> Result<Option<GenCircuit>, Error> {
+    async fn generate(
+        &mut self,
+        _lang_schema: &LangSchemaDyn,
+        i: i32,
+        _: i32,
+        _: i32,
+    ) -> Result<Option<LangCircuit>, Error> {
         let j = if matches!(self.args.bench, CircuitBenchType::None) {
             i
         }
@@ -83,7 +88,6 @@ impl CircuitGenerator for VolumeCircuitGenerator {
             result = gates;
         }
 
-        let c = LangCircuit::builder().gates(result).width(i).build();
-        Ok(Some(Chooser::get_lang_schema(self.args.schema).as_string(c).await?))
+        Ok(Some(LangCircuit::builder().gates(result).width(i).build()))
     }
 }

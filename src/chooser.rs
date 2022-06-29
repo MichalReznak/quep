@@ -27,9 +27,19 @@ impl Chooser {
         Self { args }
     }
 
-    pub fn get_lang_schema(t: CircuitSchemaType) -> LangSchemaDyn {
+    // TODO remove
+    pub fn get_lang_schema_static(t: CircuitSchemaType) -> LangSchemaDyn {
         use CircuitSchemaType::*;
         match t {
+            OpenQasm => LangSchemaDyn::from(OpenQasmSchema::new()),
+            Qiskit => LangSchemaDyn::from(QiskitSchema::new()),
+        }
+    }
+
+    #[throws]
+    pub fn get_lang_schema(&self) -> LangSchemaDyn {
+        use CircuitSchemaType::*;
+        match self.args.circuit.schema {
             OpenQasm => LangSchemaDyn::from(OpenQasmSchema::new()),
             Qiskit => LangSchemaDyn::from(QiskitSchema::new()),
         }

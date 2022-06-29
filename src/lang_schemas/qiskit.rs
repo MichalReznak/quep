@@ -93,11 +93,7 @@ impl QiskitSchema {
 
 #[async_trait]
 impl LangSchema for QiskitSchema {
-    fn get_gates(&self) -> Vec<LangGate> {
-        self.gates.clone()
-    }
-
-    async fn parse_file(&mut self, path: &str) -> Result<(), Error> {
+    async fn parse_file(&self, path: &str) -> Result<Vec<LangGate>, Error> {
         let re =
             Regex::new(r"circ\.(?P<name>[a-zA-Z0-9]+)\((?P<index>\d+)(,\s*(?P<other>\d+))*\)")?;
 
@@ -136,8 +132,7 @@ impl LangSchema for QiskitSchema {
             }
         }
 
-        self.gates = gates;
-        Ok(())
+        Ok(gates)
     }
 
     async fn as_string(&mut self, circ: LangCircuit) -> Result<GenCircuit, Error> {

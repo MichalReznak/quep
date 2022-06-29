@@ -1,16 +1,20 @@
 use std::path::Path;
 
 use async_trait::async_trait;
+use itertools::interleave;
 use log::error;
 use openqasm as oq;
 use oq::GenericError;
+use snafu::OptionExt;
 use walkdir::{DirEntry, WalkDir};
 
-use crate::args::types::{CircuitSchemaType, OrchestratorType};
+use crate::args::types::{CircuitBenchType, CircuitSchemaType, OrchestratorType};
 use crate::args::CliArgsCircuit;
-use crate::error::Constraint;
-use crate::ext::types::circuit_generator::GenCircuit;
-use crate::ext::CircuitGenerator;
+use crate::error::{Constraint, OutOfBounds};
+use crate::ext::types::lang_schema::{LangGate, LangGateType};
+use crate::ext::{CircuitGenerator, LangSchema, LangSchemaDyn};
+use crate::lang_schemas::LangCircuit;
+use crate::utils::oqs_parse_circuit;
 use crate::{CliArgs, Error};
 
 #[allow(dead_code)]
@@ -57,7 +61,14 @@ impl CircuitGenerator for FsCircuitGenerator {
         Ok(())
     }
 
-    async fn generate(&mut self, _: i32, j: i32, _: i32) -> Result<Option<GenCircuit>, Error> {
+    // TODO switch arguments
+    async fn generate(
+        &mut self,
+        lang_schema: &LangSchemaDyn,
+        width: i32,
+        j: i32,
+        _: i32,
+    ) -> Result<Option<LangCircuit>, Error> {
         if j > self.entries.len() as i32 {
             Ok(None)
         }
@@ -66,23 +77,57 @@ impl CircuitGenerator for FsCircuitGenerator {
             let mut circuit = std::fs::read_to_string(path)?;
             circuit.remove_matches("\r");
 
-            let mut cache = oq::SourceCache::new();
-            let mut parser = oq::Parser::new(&mut cache);
+            {
+                let mut cache = oq::SourceCache::new();
+                let check: Result<_, oq::Errors> = try {
+                    let mut parser = oq::Parser::new(&mut cache);
+                    parser.parse_source(circuit.to_string(), Some(&Path::new(".")));
+                    parser.done().to_errors()?.type_check().to_errors()?;
+                };
 
-            let check: Result<_, oq::Errors> = try {
-                parser.parse_source(circuit.to_string(), Some(&Path::new(".")));
-                parser.done().to_errors()?.type_check().to_errors()?;
-            };
-            if let Err(errors) = check {
-                errors.print(&mut cache)?;
-                error!("{errors:#?}");
-                Err(Error::SomeError)
+                if let Err(errors) = check {
+                    errors.print(&mut cache)?;
+                    error!("{errors:#?}");
+                    return Err(Error::SomeError);
+                }
             }
-            else {
-                Ok(Some(
-                    GenCircuit::builder().circuit(circuit).t(CircuitSchemaType::OpenQasm).build(),
-                ))
+
+            // TODO copied code from base.rs
+            // TODO remove, don't know how
+            let oqs_gates = lang_schema
+                .parse_file(self.entries[(j - 1) as usize].path().to_str().context(OutOfBounds)?)
+                .await?;
+
+            // TODO should have depth and width?
+            let (mut oqs_gates, mut inv_gates) = oqs_parse_circuit(oqs_gates, i32::MAX, width)?;
+
+            use CircuitBenchType::*;
+
+            match self.args.bench {
+                Mirror => {
+                    // TODO interleave with barriers??
+                    oqs_gates.push(LangGate::builder().t(LangGateType::Barrier).i(-1).build());
+                    oqs_gates.extend(inv_gates.into_iter());
+                }
+                Cycle => {
+                    inv_gates.reverse();
+                    oqs_gates = interleave(oqs_gates, inv_gates).collect();
+                }
+                None => {}
             }
+
+            // Add NOT gate when should change init state
+            if self.args.init_one {
+                let mut gates = vec![];
+                for i in 0..width {
+                    gates.push(LangGate::builder().t(LangGateType::X).i(i).build());
+                }
+                gates.push(LangGate::builder().t(LangGateType::Barrier).i(-1).build());
+                gates.extend(oqs_gates);
+                oqs_gates = gates;
+            }
+
+            Ok(Some(LangCircuit::builder().width(width).gates(oqs_gates).build()))
         }
     }
 }

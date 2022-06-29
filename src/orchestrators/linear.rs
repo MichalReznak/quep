@@ -11,7 +11,7 @@ use crate::args::CliArgsOrch;
 use crate::chooser::Chooser;
 use crate::error::RegexCapture;
 use crate::ext::outputer::OutValue;
-use crate::ext::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
+use crate::ext::{CircuitGenerator, LangSchema, Orchestrator, Outputer, QcProvider};
 
 /// Linear iteration from 0 to MAX
 pub struct LinearOrchestrator {
@@ -40,6 +40,7 @@ impl Orchestrator for LinearOrchestrator {
         // generate test suite -> CircuitGenerator
         let mut generator = chooser.get_circuit_generator()?;
         let outputer = chooser.get_outputer()?;
+        let mut lang_schema = chooser.get_lang_schema()?;
 
         // connect to the provider -> QcProvider
         let mut provider = chooser.get_provider()?;
@@ -55,7 +56,8 @@ impl Orchestrator for LinearOrchestrator {
         };
 
         // It runs dummy circuit to make the speed measurement more precise
-        if self.args.preheat && let Some(circuit) = generator.generate(1, 1, 0).await? {
+        if self.args.preheat && let Some(circuit) = generator.generate(&lang_schema, 1, 1, 0).await? {
+            let circuit = lang_schema.as_string(circuit.clone()).await?;
             provider.append_circuit(circuit.clone()).await?;
             provider.run().await?;
 
@@ -67,11 +69,12 @@ impl Orchestrator for LinearOrchestrator {
         if self.args.collect {
             'main: for j in 1..=i {
                 for ii in 0..iter {
-                    if let Some(c) = generator.generate(depth, j, ii).await? {
+                    if let Some(c) = generator.generate(&lang_schema, depth, j, ii).await? {
+                        let c = lang_schema.as_string(c.clone()).await?;
                         provider.append_circuit(c.clone()).await?;
 
                         if !mirror {
-                            simulator.as_mut().unwrap().append_circuit(c.clone()).await?;
+                            simulator.as_mut().unwrap().append_circuit(c).await?;
                         }
                     }
                     else {
@@ -161,8 +164,11 @@ impl Orchestrator for LinearOrchestrator {
                 }
 
                 for ii in 0..iter {
-                    if let Some(circuit) = generator.generate(depth, j, ii).await? {
-                        provider.append_circuit(circuit.clone()).await?;
+                    // TODO is there a no mirror option implemented?
+
+                    if let Some(circuit) = generator.generate(&lang_schema, depth, j, ii).await? {
+                        let circuit = lang_schema.as_string(circuit.clone()).await?;
+                        provider.append_circuit(circuit).await?;
 
                         let res = provider.run().await?.get(0).unwrap().to_string();
                         time += provider.meta_info().await?.time;

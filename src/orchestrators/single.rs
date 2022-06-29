@@ -10,7 +10,7 @@ use crate::args::CliArgsOrch;
 use crate::chooser::Chooser;
 use crate::error::RegexCapture;
 use crate::ext::outputer::OutValue;
-use crate::ext::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
+use crate::ext::{CircuitGenerator, LangSchema, Orchestrator, Outputer, QcProvider};
 
 /// Does a single run of some specific size
 pub struct SingleOrchestrator {
@@ -36,6 +36,7 @@ impl Orchestrator for SingleOrchestrator {
         // generate test suite -> CircuitGenerator
         let mut generator = chooser.get_circuit_generator()?;
         let outputer = chooser.get_outputer()?;
+        let mut lang_schema = chooser.get_lang_schema()?;
 
         let re = Regex::new(r"(?P<result>\d+): (?P<val>\d+)")?;
 
@@ -53,7 +54,8 @@ impl Orchestrator for SingleOrchestrator {
         };
 
         // It runs dummy circuit to make the speed measurement more precise
-        if self.args.preheat && let Some(circuit) = generator.generate(1, 1, 0).await? {
+        if self.args.preheat && let Some(circuit) = generator.generate(&lang_schema, 1, 1, 0).await? {
+            let circuit = lang_schema.as_string(circuit.clone()).await?;
             provider.append_circuit(circuit.clone()).await?;
             provider.run().await?;
 
@@ -64,7 +66,8 @@ impl Orchestrator for SingleOrchestrator {
 
         if self.args.collect {
             for ii in 0..iter {
-                if let Some(c) = generator.generate(i, j, ii).await? {
+                if let Some(c) = generator.generate(&lang_schema, i, j, ii).await? {
+                    let c = lang_schema.as_string(c.clone()).await?;
                     provider.append_circuit(c.clone()).await?;
 
                     if !mirror {
@@ -119,9 +122,10 @@ impl Orchestrator for SingleOrchestrator {
                 OutValue::builder().result("".to_string()).correct(0).is_correct(false).build();
 
             for ii in 0..iter {
-                if let Some(circuit) = generator.generate(i, j, ii).await? {
+                if let Some(circuit) = generator.generate(&lang_schema, i, j, ii).await? {
                     // TODO if I do a multiple iterations and one falls below limit, how to
                     // solve this?
+                    let circuit = lang_schema.as_string(circuit.clone()).await?;
                     provider.append_circuit(circuit.clone()).await?;
 
                     let res = provider.run().await?.get(0).unwrap().to_string();

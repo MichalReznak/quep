@@ -5,17 +5,15 @@
 //! It is using **uniform sampling**
 
 use async_trait::async_trait;
-use log::debug;
 use rand::distributions::{Distribution, Uniform};
 use rand::SeedableRng;
 
 use crate::args::CliArgsCircuit;
-use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::LangGate;
-use crate::ext::{CircuitGenerator, LangSchema};
+use crate::ext::{CircuitGenerator, LangSchemaDyn};
 use crate::lang_schemas::LangCircuit;
 use crate::utils::{init_one, inverse};
-use crate::{Chooser, Error, CLIFFORD_GATES, CLIFFORD_GATES_2, CLIFFORD_GATES_INV, PAULI_GATES};
+use crate::{Error, CLIFFORD_GATES, CLIFFORD_GATES_2, CLIFFORD_GATES_INV, PAULI_GATES};
 
 pub struct RandCircuitGenerator {
     args: CliArgsCircuit,
@@ -29,7 +27,13 @@ impl RandCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for RandCircuitGenerator {
-    async fn generate(&mut self, i: i32, j: i32, _iter: i32) -> Result<Option<GenCircuit>, Error> {
+    async fn generate(
+        &mut self,
+        _lang_schema: &LangSchemaDyn,
+        i: i32,
+        j: i32,
+        _iter: i32,
+    ) -> Result<Option<LangCircuit>, Error> {
         let mut rng = rand::rngs::SmallRng::from_entropy();
         let p_rand: Uniform<usize> = Uniform::from(0..4);
         let c_rand: Uniform<usize> = Uniform::from(0..9);
@@ -98,10 +102,6 @@ impl CircuitGenerator for RandCircuitGenerator {
             oqs_gates = init_one(oqs_gates, i);
         }
 
-        let oqs = LangCircuit::builder().width(oqs_width).gates(oqs_gates).build();
-        let c = Chooser::get_lang_schema(self.args.schema).as_string(oqs).await?;
-        debug!("{}", c.circuit);
-
-        Ok(Some(c))
+        Ok(Some(LangCircuit::builder().width(oqs_width).gates(oqs_gates).build()))
     }
 }

@@ -2,11 +2,10 @@ use async_trait::async_trait;
 
 use crate::args::types::CircuitBenchType;
 use crate::args::CliArgsCircuit;
-use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
-use crate::ext::{CircuitGenerator, LangSchema};
+use crate::ext::{CircuitGenerator, LangSchemaDyn};
 use crate::lang_schemas::LangCircuit;
-use crate::{Chooser, Error};
+use crate::Error;
 
 #[allow(dead_code)]
 pub struct BasicCircuitGenerator {
@@ -22,7 +21,13 @@ impl BasicCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for BasicCircuitGenerator {
-    async fn generate(&mut self, _: i32, _: i32, _: i32) -> Result<Option<GenCircuit>, Error> {
+    async fn generate(
+        &mut self,
+        _lang_schema: &LangSchemaDyn,
+        _: i32,
+        _: i32,
+        _: i32,
+    ) -> Result<Option<LangCircuit>, Error> {
         use LangGateType::*;
         let mut gates = vec![
             LangGate::builder().t(X).i(0).build(),
@@ -49,7 +54,6 @@ impl CircuitGenerator for BasicCircuitGenerator {
             gates = tmp_gates;
         }
 
-        let c = LangCircuit::builder().gates(gates).width(2).build();
-        Ok(Some(Chooser::get_lang_schema(self.args.schema).as_string(c).await?))
+        Ok(Some(LangCircuit::builder().gates(gates).width(2).build()))
     }
 }

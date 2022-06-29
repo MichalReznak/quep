@@ -72,11 +72,7 @@ impl OpenQasmSchema {
 
 #[async_trait]
 impl LangSchema for OpenQasmSchema {
-    fn get_gates(&self) -> Vec<LangGate> {
-        self.gates.clone()
-    }
-
-    async fn parse_file(&mut self, path: &str) -> Result<(), Error> {
+    async fn parse_file(&self, path: &str) -> Result<Vec<LangGate>, Error> {
         // Type check
         let mut circuit = tokio::fs::read_to_string(path).await?;
         circuit.remove_matches("\r");
@@ -102,9 +98,7 @@ impl LangSchema for OpenQasmSchema {
 
         let mut pp = parser::ProgramParser::new();
         pp.visit_program(&program)?;
-
-        self.gates = pp.gates;
-        Ok(())
+        Ok(pp.gates)
     }
 
     // TODO check if is valid?

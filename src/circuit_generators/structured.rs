@@ -1,12 +1,11 @@
 use async_trait::async_trait;
 
 use crate::args::CliArgsCircuit;
-use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::LangGate;
-use crate::ext::{CircuitGenerator, LangSchema};
+use crate::ext::{CircuitGenerator, LangSchemaDyn};
 use crate::lang_schemas::LangCircuit;
 use crate::utils::{init_one, inverse};
-use crate::{Chooser, Error, CLIFFORD_GATES, CLIFFORD_GATES_2, CLIFFORD_GATES_INV, PAULI_GATES};
+use crate::{Error, CLIFFORD_GATES, CLIFFORD_GATES_2, CLIFFORD_GATES_INV, PAULI_GATES};
 
 pub struct StructCircuitGenerator {
     args: CliArgsCircuit,
@@ -25,7 +24,13 @@ impl StructCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for StructCircuitGenerator {
-    async fn generate(&mut self, i: i32, j: i32, iter: i32) -> Result<Option<GenCircuit>, Error> {
+    async fn generate(
+        &mut self,
+        _lang_schema: &LangSchemaDyn,
+        i: i32,
+        j: i32,
+        iter: i32,
+    ) -> Result<Option<LangCircuit>, Error> {
         let iter = if self.args.rand { iter } else { 0 };
 
         let oqs_i = i;
@@ -99,8 +104,6 @@ impl CircuitGenerator for StructCircuitGenerator {
             oqs_gates = init_one(oqs_gates, i);
         }
 
-        let oqs = LangCircuit::builder().width(oqs_i).gates(oqs_gates).build();
-        let circuit = Chooser::get_lang_schema(self.args.schema).as_string(oqs).await?;
-        Ok(Some(circuit))
+        Ok(Some(LangCircuit::builder().width(oqs_i).gates(oqs_gates).build()))
     }
 }

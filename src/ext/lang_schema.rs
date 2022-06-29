@@ -19,11 +19,8 @@ pub enum LangSchemaDyn {
 #[async_trait]
 #[enum_dispatch(LangSchemaDyn)]
 pub trait LangSchema {
-    /// Returns list of gates from the source file
-    fn get_gates(&self) -> Vec<LangGate>;
-
     /// Parse file from the fs path
-    async fn parse_file(&mut self, path: &str) -> Result<(), Error>;
+    async fn parse_file(&self, path: &str) -> Result<Vec<LangGate>, Error>;
 
     /// Outputs circuit as string
     async fn as_string(&mut self, circ: LangCircuit) -> Result<GenCircuit, Error>;

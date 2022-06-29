@@ -10,7 +10,7 @@ use crate::args::CliArgsOrch;
 use crate::chooser::Chooser;
 use crate::error::{OutOfBounds, RegexCapture};
 use crate::ext::outputer::OutValue;
-use crate::ext::{CircuitGenerator, Orchestrator, Outputer, QcProvider};
+use crate::ext::{CircuitGenerator, LangSchema, Orchestrator, Outputer, QcProvider};
 
 /// Iterates in all combination for 2D array
 pub struct LatticeOrchestrator {
@@ -39,6 +39,7 @@ impl Orchestrator for LatticeOrchestrator {
 
         // generate test suite -> CircuitGenerator
         let mut generator = chooser.get_circuit_generator()?;
+        let mut lang_schema = chooser.get_lang_schema()?;
         let outputer = chooser.get_outputer()?;
 
         // connect to the provider -> QcProvider
@@ -55,8 +56,8 @@ impl Orchestrator for LatticeOrchestrator {
         };
 
         // It runs dummy circuit to make the speed measurement more precise
-        if self.args.preheat && let Some(circuit) = generator.generate(1, 1, 0).await? {
-            provider.append_circuit(circuit.clone()).await?;
+        if self.args.preheat && let Some(circuit) = generator.generate(&lang_schema, 1, 1, 0).await? {
+            provider.append_circuit(lang_schema.as_string(circuit.clone()).await?).await?;
             provider.run().await?;
 
             println!("Pre-heat run done");
@@ -68,11 +69,17 @@ impl Orchestrator for LatticeOrchestrator {
             'main: for i in 1..=i {
                 for j in 1..=j {
                     for ii in 0..iter {
-                        if let Some(c) = generator.generate(i, j, ii).await? {
-                            provider.append_circuit(c.clone()).await?;
+                        if let Some(c) = generator.generate(&lang_schema, i, j, ii).await? {
+                            provider
+                                .append_circuit(lang_schema.as_string(c.clone()).await?)
+                                .await?;
 
                             if !mirror {
-                                simulator.as_mut().unwrap().append_circuit(c.clone()).await?;
+                                simulator
+                                    .as_mut()
+                                    .unwrap()
+                                    .append_circuit(lang_schema.as_string(c.clone()).await?)
+                                    .await?;
                             }
                         }
                         else {
@@ -173,10 +180,14 @@ impl Orchestrator for LatticeOrchestrator {
                     }
 
                     for ii in 0..iter {
-                        if let Some(circuit) = generator.generate(i, j, ii).await? {
+                        // TODO is there a no mirror option implemented?
+
+                        if let Some(circuit) = generator.generate(&lang_schema, i, j, ii).await? {
                             // TODO if I do a multiple iterations and one falls below limit, how to
                             // solve this?
-                            provider.append_circuit(circuit.clone()).await?;
+                            provider
+                                .append_circuit(lang_schema.as_string(circuit.clone()).await?)
+                                .await?;
 
                             let res = provider.run().await?.get(0).unwrap().to_string();
                             time += provider.meta_info().await?.time;

@@ -11,93 +11,16 @@
 //! Depth is number of gates on each qubit it's not with automatic identity
 //! gates
 
-use std::collections::HashMap;
-
 use async_trait::async_trait;
-use fehler::throws;
 use itertools::interleave;
 
 use crate::args::types::CircuitBenchType;
 use crate::args::CliArgsCircuit;
-use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::{CircuitGenerator, LangSchema, LangSchemaDyn};
 use crate::lang_schemas::LangCircuit;
-use crate::{Chooser, Error};
-
-#[throws]
-fn oqs_parse_circuit(
-    oqs: &LangSchemaDyn,
-    depth: i32,
-    width: i32,
-) -> (Vec<LangGate>, Vec<LangGate>) {
-    let mut counts = HashMap::<i32, i32>::new();
-    let mut gates = vec![];
-    let mut inv_gates = vec![];
-
-    for gate in &oqs.get_gates() {
-        if matches!(gate.t, LangGateType::Barrier) && gate.i < width {
-            gates.push(gate.clone());
-            inv_gates.push(gate.inverse());
-            continue;
-        }
-
-        let mut second_ok = true;
-
-        let count = if let Some(c) = counts.get_mut(&gate.i) {
-            *c
-        }
-        else {
-            0
-        };
-
-        let first_ok = count < depth && gate.i < width;
-
-        use LangGateType::*;
-        match gate.t {
-            Cx | Cz | Swap => {
-                let count = if let Some(c) = counts.get_mut(&gate.other.unwrap()) {
-                    *c
-                }
-                else {
-                    0
-                };
-
-                second_ok = count < depth && gate.other.unwrap() < width;
-            }
-            _ => {}
-        }
-
-        // Do all indices fulfill the limit?
-        if first_ok && second_ok {
-            // Add limits for the next gate
-            if let Some(c) = counts.get_mut(&gate.i) {
-                *c += 1;
-            }
-            else {
-                counts.insert(gate.i, 1);
-            }
-
-            match gate.t {
-                Cx | Cz | Swap => {
-                    if let Some(c) = counts.get_mut(&gate.other.unwrap()) {
-                        *c += 1;
-                    }
-                    else {
-                        counts.insert(gate.other.unwrap(), 1);
-                    }
-                }
-                _ => {}
-            }
-
-            gates.push(gate.clone());
-            inv_gates.push(gate.inverse());
-        }
-    }
-
-    inv_gates.reverse();
-    (gates, inv_gates)
-}
+use crate::utils::oqs_parse_circuit;
+use crate::Error;
 
 #[allow(dead_code)]
 #[derive(Debug)]
@@ -115,19 +38,19 @@ impl BaseCircuitGenerator {
 impl CircuitGenerator for BaseCircuitGenerator {
     async fn generate(
         &mut self,
+        lang_schema: &LangSchemaDyn,
         width: i32,
         depth: i32,
         _iter: i32, // TODO
-    ) -> Result<Option<GenCircuit>, Error> {
-        // TODO check circuit size
+    ) -> Result<Option<LangCircuit>, Error> {
+        // TODO check circuit size (Code from fs.rs)
         // TODO barriers support
         // TODO different order of operations
 
-        let mut lang_schema = Chooser::get_lang_schema(self.args.schema);
+        // TODO remove, don't know how
+        let oqs_gates = lang_schema.parse_file(&self.args.source).await?;
 
-        lang_schema.parse_file(&self.args.source).await?;
-
-        let (mut oqs_gates, mut inv_gates) = oqs_parse_circuit(&lang_schema, depth, width)?;
+        let (mut oqs_gates, mut inv_gates) = oqs_parse_circuit(oqs_gates, depth, width)?;
 
         use CircuitBenchType::*;
 
@@ -147,7 +70,7 @@ impl CircuitGenerator for BaseCircuitGenerator {
         // Add NOT gate when should change init state
         if self.args.init_one {
             let mut gates = vec![];
-            for i in 1..width {
+            for i in 0..width {
                 gates.push(LangGate::builder().t(LangGateType::X).i(i).build());
             }
             gates.push(LangGate::builder().t(LangGateType::Barrier).i(-1).build());
@@ -155,8 +78,6 @@ impl CircuitGenerator for BaseCircuitGenerator {
             oqs_gates = gates;
         }
 
-        let lang_circuit = LangCircuit::builder().width(width).gates(oqs_gates).build();
-        let circuit = lang_schema.as_string(lang_circuit).await?;
-        Ok(Some(circuit))
+        Ok(Some(LangCircuit::builder().width(width).gates(oqs_gates).build()))
     }
 }

@@ -4,8 +4,8 @@ use async_trait::async_trait;
 use pyo3::prelude::*;
 
 use crate::args::CliArgsCircuit;
-use crate::ext::types::circuit_generator::GenCircuit;
-use crate::ext::CircuitGenerator;
+use crate::ext::{CircuitGenerator, LangSchemaDyn};
+use crate::lang_schemas::LangCircuit;
 use crate::Error;
 
 #[allow(dead_code)]
@@ -28,10 +28,11 @@ impl PythonCircuitGenerator {
 impl CircuitGenerator for PythonCircuitGenerator {
     async fn generate(
         &mut self,
+        _lang_schema: &LangSchemaDyn,
         _i: i32,
         _j: i32,
         _iter: i32,
-    ) -> Result<Option<GenCircuit>, Error> {
+    ) -> Result<Option<LangCircuit>, Error> {
         todo!("Check if is working. Haven't tested it");
 
         // Python::with_gil(|py| {

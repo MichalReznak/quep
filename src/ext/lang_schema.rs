@@ -7,7 +7,7 @@ use enum_dispatch::enum_dispatch;
 
 use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::LangGate;
-use crate::lang_schemas::{LangCircuit, OpenQasmSchema, QiskitSchema, PythonSchema};
+use crate::lang_schemas::{LangCircuit, OpenQasmSchema, PythonSchema, QiskitSchema};
 use crate::Error;
 
 #[enum_dispatch]

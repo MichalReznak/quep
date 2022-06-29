@@ -9,7 +9,7 @@ use crate::ext::{
     CircuitGenerator, CircuitGeneratorDyn, LangSchemaDyn, Orchestrator, OrchestratorDyn, Outputer,
     OutputerDyn, QcProvider, QcProviderDyn,
 };
-use crate::lang_schemas::{OpenQasmSchema, QiskitSchema};
+use crate::lang_schemas::{OpenQasmSchema, PythonSchema, QiskitSchema};
 use crate::orchestrators::{
     LatticeOrchestrator, LinearOrchestrator, SingleOrchestrator, VolumeOrchestrator,
 };
@@ -27,21 +27,13 @@ impl Chooser {
         Self { args }
     }
 
-    // TODO remove
-    pub fn get_lang_schema_static(t: CircuitSchemaType) -> LangSchemaDyn {
-        use CircuitSchemaType::*;
-        match t {
-            OpenQasm => LangSchemaDyn::from(OpenQasmSchema::new()),
-            Qiskit => LangSchemaDyn::from(QiskitSchema::new()),
-        }
-    }
-
     #[throws]
     pub fn get_lang_schema(&self) -> LangSchemaDyn {
         use CircuitSchemaType::*;
         match self.args.circuit.schema {
             OpenQasm => LangSchemaDyn::from(OpenQasmSchema::new()),
             Qiskit => LangSchemaDyn::from(QiskitSchema::new()),
+            Python => LangSchemaDyn::from(PythonSchema::new()),
         }
     }
 

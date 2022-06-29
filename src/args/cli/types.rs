@@ -53,6 +53,7 @@ pub enum OutputSerType {
 pub enum CircuitSchemaType {
     OpenQasm,
     Qiskit,
+    Python,
 }
 
 #[derive(Debug, EnumString, Display, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]

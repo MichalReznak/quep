@@ -7,13 +7,14 @@ use enum_dispatch::enum_dispatch;
 
 use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::LangGate;
-use crate::lang_schemas::{LangCircuit, OpenQasmSchema, QiskitSchema};
+use crate::lang_schemas::{LangCircuit, OpenQasmSchema, QiskitSchema, PythonSchema};
 use crate::Error;
 
 #[enum_dispatch]
 pub enum LangSchemaDyn {
     OpenQasmSchema,
     QiskitSchema,
+    PythonSchema,
 }
 
 #[async_trait]

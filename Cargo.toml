@@ -32,7 +32,7 @@ strum = "0.24.0"
 strum_macros = "0.24.0"
 futures = "0.3.21"
 futures-async-stream = "0.2.5"
-pyo3 = { version = "0.16.2", features = ["auto-initialize"] }
+pyo3 = { version = "0.16.2", features = ["auto-initialize", "serde"] }
 openqasm = { version = "0.1.3", features = ["ariadne", "pretty", "serde"] }
 walkdir = "2.3.2"
 cli-table = "0.4.6"
@@ -56,6 +56,7 @@ json5 = "0.4.1"
 collection_literals = "1.0.1"
 itertools = "0.10.3"
 serde_with = "1.13.0"
+pythonize = "0.16.0"
 
 [dev-dependencies]
 pretty_assertions = "1.2.1"

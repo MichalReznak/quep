@@ -38,6 +38,7 @@ pub trait CircuitGenerator {
         Ok(())
     }
 
+    // TODO lang_schema doesn't make much of a sense
     async fn generate(
         &mut self,
         lang_schema: &LangSchemaDyn,

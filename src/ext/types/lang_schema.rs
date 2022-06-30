@@ -1,6 +1,7 @@
+use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, Serialize, Deserialize)]
 pub enum LangGateType {
     Id,
     X,
@@ -38,7 +39,7 @@ impl LangGateType {
     }
 }
 
-#[derive(TypedBuilder, Clone, Debug)]
+#[derive(TypedBuilder, Clone, Debug, Serialize, Deserialize)]
 pub struct LangGate {
     pub t: LangGateType,
 
@@ -59,7 +60,7 @@ impl LangGate {
     }
 }
 
-#[derive(TypedBuilder, Clone)]
+#[derive(TypedBuilder, Clone, Serialize, Deserialize)]
 pub struct LangCircuit {
     pub width: i32,
     pub gates: Vec<LangGate>,

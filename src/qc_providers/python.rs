@@ -29,7 +29,6 @@ use crate::utils::{debug, provider_meta_info, provider_run};
 use crate::Error;
 
 pub struct PythonQcProvider {
-    // args: CliArgsProvider,
     py_instance: PyObject,
 }
 
@@ -44,10 +43,7 @@ impl PythonQcProvider {
             qiskit.call0(py)
         })?;
 
-        Self {
-            py_instance,
-            // args: args.clone(),
-        }
+        Self { py_instance }
     }
 }
 

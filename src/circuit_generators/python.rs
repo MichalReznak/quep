@@ -1,8 +1,13 @@
-//! Add interface description
+//! # Python Circuit generator:
+//! class CircuitGenerator:
+//!     // TODO add init with args to all python versions
+//!     def generate(i: int, j: int, it: int) -> dict[str, any]:
+//!         return {'width': 4, 'gates': [{'t': 'X', 'i': 0, 'other': 0}]}
 
 use async_trait::async_trait;
-use pyo3::prelude::*;
 use fehler::throws;
+use pyo3::prelude::*;
+use pythonize::depythonize;
 
 use crate::args::CliArgsCircuit;
 use crate::ext::{CircuitGenerator, LangSchemaDyn};
@@ -21,8 +26,7 @@ impl PythonCircuitGenerator {
     pub fn from_args(args: &CliArgsCircuit) -> Self {
         // TODO should add some type of path to file
         let py_instance = Python::with_gil(|py| {
-            let code =
-                std::fs::read_to_string("./circuit_generator.py")?;
+            let code = std::fs::read_to_string("./circuit_generator.py")?;
             let module = PyModule::from_code(py, &code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("CircuitGenerator")?.into();
             qiskit.call0(py)
@@ -46,19 +50,12 @@ impl CircuitGenerator for PythonCircuitGenerator {
     ) -> Result<Option<LangCircuit>, Error> {
         Python::with_gil(|py| {
             let res = self.py_instance.call_method1(py, "generate", (i, j, iter))?;
-
-            unimplemented!("Check if is working. Haven't tested it");
-
-            // if res.is_none(py) {
-            //     Ok(None)
-            // }
-            // else {
-            //     Ok(Some(GenCircuit::builder()
-            //         .t(CircuitSchemaType::from_str("OpenQasm")?)
-            //         .circuit(res.to_string())
-            //         .build()
-            //     ))
-            // }
+            if res.is_none(py) {
+                Ok(None)
+            }
+            else {
+                Ok(Some(depythonize::<LangCircuit>(res.as_ref(py))?))
+            }
         })
     }
 }

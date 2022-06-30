@@ -1134,6 +1134,7 @@ dependencies = [
  "pyo3-build-config",
  "pyo3-ffi",
  "pyo3-macros",
+ "serde",
  "unindent",
 ]
 
@@ -1194,6 +1195,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "pythonize"
+version = "0.16.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "af9dc8ab903e422af4752dc4ad0d176147a71c9c1c982e1a513ba7a6438c1635"
+dependencies = [
+ "pyo3",
+ "serde",
+]
+
+[[package]]
 name = "quep"
 version = "1.0.0"
 dependencies = [
@@ -1219,6 +1230,7 @@ dependencies = [
  "openqasm",
  "pretty_assertions",
  "pyo3",
+ "pythonize",
  "quep_derive",
  "quep_utils",
  "quick-xml",

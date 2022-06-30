@@ -57,6 +57,9 @@ pub enum Error {
     #[snafu(display("{}", source), context(false))]
     SerdeRonError { source: ron::Error },
 
+    #[snafu(display("{}", source), context(false))]
+    PythonizeError { source: pythonize::PythonizeError },
+
     #[snafu(display("Constraint error: {}", reason))]
     ConstraintError { reason: String },
 

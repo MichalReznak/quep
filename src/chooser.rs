@@ -33,7 +33,7 @@ impl Chooser {
         match self.args.circuit.schema {
             OpenQasm => LangSchemaDyn::from(OpenQasmSchema::new()),
             Qiskit => LangSchemaDyn::from(QiskitSchema::new()),
-            Python => LangSchemaDyn::from(PythonSchema::new()),
+            Python => LangSchemaDyn::from(PythonSchema::from_args()?),
         }
     }
 
@@ -56,7 +56,7 @@ impl Chooser {
         let res = match self.args.output.t {
             Text => OutputerDyn::from(TextOutputer::new(&self.args.output)),
             Serial => OutputerDyn::from(SerialOutputer::new(&self.args.output)),
-            Python => OutputerDyn::from(PythonOutputer::new(&self.args.output)),
+            Python => OutputerDyn::from(PythonOutputer::from_args(&self.args.output)?),
         };
         res.check_constraints(&self.args)?;
         res
@@ -72,7 +72,9 @@ impl Chooser {
             Struct => CircuitGeneratorDyn::from(StructCircuitGenerator::new(&self.args.circuit)),
             Rand => CircuitGeneratorDyn::from(RandCircuitGenerator::new(&self.args.circuit)),
             Base => CircuitGeneratorDyn::from(BaseCircuitGenerator::new(&self.args.circuit)),
-            Python => CircuitGeneratorDyn::from(PythonCircuitGenerator::from_args(&self.args.circuit)?),
+            Python => {
+                CircuitGeneratorDyn::from(PythonCircuitGenerator::from_args(&self.args.circuit)?)
+            }
         };
         res.check_constraints(&self.args)?;
         res

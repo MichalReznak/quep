@@ -5,13 +5,14 @@
 
 use async_trait::async_trait;
 use enum_dispatch::enum_dispatch;
+use serde::{Deserialize, Serialize};
 use tokio::time::Duration;
 use typed_builder::TypedBuilder;
 
 use crate::outputers::{PythonOutputer, SerialOutputer, TextOutputer};
 use crate::{CliArgs, Error};
 
-#[derive(Debug, Clone, TypedBuilder)]
+#[derive(Debug, Clone, TypedBuilder, Serialize, Deserialize)]
 pub struct OutValue {
     pub result: String,   // result bit-string
     pub correct: i32,     // number of correct shots

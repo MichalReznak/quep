@@ -18,11 +18,10 @@
 //!         # in a form of Dict[str, int]
 
 use async_trait::async_trait;
+use fehler::throws;
 use pyo3::prelude::*;
-use snafu::OptionExt;
 
 use crate::args::CliArgsProvider;
-use crate::error::OutOfBounds;
 use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::MetaInfo;
 use crate::ext::QcProvider;
@@ -31,13 +30,22 @@ use crate::Error;
 
 pub struct PythonQcProvider {
     // args: CliArgsProvider,
-    py_instance: Option<PyObject>,
+    py_instance: PyObject,
 }
 
 impl PythonQcProvider {
-    pub fn new(_args: &CliArgsProvider) -> Self {
+    #[throws]
+    pub fn from_args(args: &CliArgsProvider) -> Self {
+        let py_instance = Python::with_gil(|py| {
+            // TODO should be python dir?
+            let code = std::fs::read_to_string(&format!("{}/qc_provider.py", args.python_dir))?;
+            let module = PyModule::from_code(py, &code, "", "")?;
+            let qiskit: Py<PyAny> = module.getattr("QcProvider")?.into();
+            qiskit.call0(py)
+        })?;
+
         Self {
-            py_instance: None,
+            py_instance,
             // args: args.clone(),
         }
     }
@@ -46,27 +54,15 @@ impl PythonQcProvider {
 #[async_trait]
 impl QcProvider for PythonQcProvider {
     async fn connect(&mut self) -> Result<(), Error> {
-        todo!("Check if is working. Haven't tested it");
-
-        // Python::with_gil(|py| {
-        //     // TODO should be python dir?
-        //     let code =
-        //         std::fs::read_to_string(&format!("{}/qc_provider.py",
-        // self.args.python_dir))?;     let module =
-        // PyModule::from_code(py, &code, "", "")?;     let qiskit:
-        // Py<PyAny> = module.getattr("QcProvider")?.into();
-        //     let qiskit = qiskit.call0(py)?;
-        //
-        //     qiskit.call_method0(py, "auth")?;
-        //
-        //     self.py_instance = Some(qiskit);
-        //     Ok(())
-        // })
+        Python::with_gil(|py| {
+            self.py_instance.call_method0(py, "auth")?;
+            Ok(())
+        })
     }
 
     async fn append_circuit(&mut self, circuit: GenCircuit) -> Result<(), Error> {
         Python::with_gil(|py| {
-            self.py_instance.as_ref().context(OutOfBounds)?.call_method1(
+            self.py_instance.call_method1(
                 py,
                 "append_circuit",
                 (circuit.circuit, circuit.t.to_string(), debug()),
@@ -76,10 +72,10 @@ impl QcProvider for PythonQcProvider {
     }
 
     async fn run(&self) -> Result<Vec<String>, Error> {
-        provider_run(self.py_instance.as_ref().context(OutOfBounds)?).await
+        provider_run(&self.py_instance).await
     }
 
     async fn meta_info(&self) -> Result<MetaInfo, Error> {
-        provider_meta_info(self.py_instance.as_ref().context(OutOfBounds)?).await
+        provider_meta_info(&self.py_instance).await
     }
 }

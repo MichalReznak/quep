@@ -41,10 +41,10 @@ impl Chooser {
     pub fn get_provider(&self) -> QcProviderDyn {
         use ProviderType::*;
         let res = match self.args.provider.t {
-            Ibmq => QcProviderDyn::from(IbmqQcProvider::new(&self.args.provider)),
-            Simple => QcProviderDyn::from(SimpleQcProvider::new(&self.args.provider)),
-            Noisy => QcProviderDyn::from(NoisyQcProvider::new(&self.args.provider)),
-            Python => QcProviderDyn::from(PythonQcProvider::new(&self.args.provider)),
+            Ibmq => QcProviderDyn::from(IbmqQcProvider::from_args(&self.args.provider)?),
+            Simple => QcProviderDyn::from(SimpleQcProvider::from_args(&self.args.provider)?),
+            Noisy => QcProviderDyn::from(NoisyQcProvider::from_args(&self.args.provider)?),
+            Python => QcProviderDyn::from(PythonQcProvider::from_args(&self.args.provider)?),
         };
         res.check_constraints(&self.args)?;
         res
@@ -93,6 +93,6 @@ impl Chooser {
 
     #[throws]
     pub fn get_simulator(&self) -> SimpleQcProvider {
-        SimpleQcProvider::new(&self.args.provider)
+        SimpleQcProvider::from_args(&self.args.provider)?
     }
 }

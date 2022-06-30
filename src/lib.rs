@@ -50,7 +50,8 @@ impl Quep {
     pub async fn new(args: CliArgs) -> Self {
         // Use python only when needed
         use ProviderType::*;
-        if matches!(args.provider.t, Simple | Ibmq | Noisy)
+        // TODO allow for other parts that are also in python mode
+        if matches!(args.provider.t, Simple | Ibmq | Noisy | Python)
             || matches!(args.circuit.bench, CircuitBenchType::None)
         {
             pyvenv::PyVenv::init(&args.provider.python_dir).await?;

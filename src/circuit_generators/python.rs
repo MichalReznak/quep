@@ -2,6 +2,7 @@
 
 use async_trait::async_trait;
 use pyo3::prelude::*;
+use fehler::throws;
 
 use crate::args::CliArgsCircuit;
 use crate::ext::{CircuitGenerator, LangSchemaDyn};
@@ -11,15 +12,25 @@ use crate::Error;
 #[allow(dead_code)]
 pub struct PythonCircuitGenerator {
     args: CliArgsCircuit,
-    instance: Option<PyObject>,
+    py_instance: PyObject,
 }
 
 #[allow(dead_code)]
 impl PythonCircuitGenerator {
-    pub fn new(args: &CliArgsCircuit) -> Self {
+    #[throws]
+    pub fn from_args(args: &CliArgsCircuit) -> Self {
+        // TODO should add some type of path to file
+        let py_instance = Python::with_gil(|py| {
+            let code =
+                std::fs::read_to_string("./circuit_generator.py")?;
+            let module = PyModule::from_code(py, &code, "", "")?;
+            let qiskit: Py<PyAny> = module.getattr("CircuitGenerator")?.into();
+            qiskit.call0(py)
+        })?;
+
         Self {
             args: args.clone(),
-            instance: None,
+            py_instance,
         }
     }
 }
@@ -29,36 +40,25 @@ impl CircuitGenerator for PythonCircuitGenerator {
     async fn generate(
         &mut self,
         _lang_schema: &LangSchemaDyn,
-        _i: i32,
-        _j: i32,
-        _iter: i32,
+        i: i32,
+        j: i32,
+        iter: i32,
     ) -> Result<Option<LangCircuit>, Error> {
-        todo!("Check if is working. Haven't tested it");
+        Python::with_gil(|py| {
+            let res = self.py_instance.call_method1(py, "generate", (i, j, iter))?;
 
-        // Python::with_gil(|py| {
-        //     if self.instance.is_none() {
-        //         // TODO should add some type of path to file
-        //         let code =
-        //
-        // std::fs::read_to_string(&format!("./circuit_generator.py"))?;
-        //         let module = PyModule::from_code(py, &code, "", "")?;
-        //         let qiskit: Py<PyAny> =
-        // module.getattr("CircuitGenerator")?.into();         self.
-        // instance = Some(qiskit.call0(py)?);     }
-        //
-        //     let instance = self.instance.as_ref().unwrap(); // TODO
-        //     let res = instance.call_method1(py, "generate", (i, j, iter))?;
-        //
-        //     if res.is_none(py) {
-        //         Ok(None)
-        //     }
-        //     else {
-        //         Ok(Some(GenCircuit::builder()
-        //             .t(CircuitSchemaType::from_str("OpenQasm")?)
-        //             .circuit(res.to_string())
-        //             .build()
-        //         ))
-        //     }
-        // })
+            unimplemented!("Check if is working. Haven't tested it");
+
+            // if res.is_none(py) {
+            //     Ok(None)
+            // }
+            // else {
+            //     Ok(Some(GenCircuit::builder()
+            //         .t(CircuitSchemaType::from_str("OpenQasm")?)
+            //         .circuit(res.to_string())
+            //         .build()
+            //     ))
+            // }
+        })
     }
 }

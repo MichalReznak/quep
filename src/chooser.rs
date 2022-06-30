@@ -72,7 +72,7 @@ impl Chooser {
             Struct => CircuitGeneratorDyn::from(StructCircuitGenerator::new(&self.args.circuit)),
             Rand => CircuitGeneratorDyn::from(RandCircuitGenerator::new(&self.args.circuit)),
             Base => CircuitGeneratorDyn::from(BaseCircuitGenerator::new(&self.args.circuit)),
-            Python => CircuitGeneratorDyn::from(PythonCircuitGenerator::new(&self.args.circuit)),
+            Python => CircuitGeneratorDyn::from(PythonCircuitGenerator::from_args(&self.args.circuit)?),
         };
         res.check_constraints(&self.args)?;
         res

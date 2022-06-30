@@ -1,6 +1,6 @@
+use pyo3::pyclass;
 use serde::{Deserialize, Serialize};
 use strum_macros::{Display, EnumString};
-use pyo3::pyclass;
 
 #[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 pub enum ProviderType {

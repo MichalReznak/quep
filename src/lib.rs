@@ -21,8 +21,8 @@ use fehler::throws;
 
 mod chooser;
 mod error;
-mod globals;
 mod extimpls;
+mod globals;
 pub use extimpls::*;
 
 pub mod args;

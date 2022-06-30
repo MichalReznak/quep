@@ -34,10 +34,10 @@ pub struct PythonQcProvider {
 
 impl PythonQcProvider {
     #[throws]
-    pub fn from_args(args: &CliArgsProvider) -> Self {
+    pub fn from_args(_args: &CliArgsProvider) -> Self {
         let py_instance = Python::with_gil(|py| {
             // TODO should be python dir?
-            let code = std::fs::read_to_string(&format!("./python/ext/qc_provider.py"))?;
+            let code = std::fs::read_to_string("./python/ext/qc_provider.py")?;
             let module = PyModule::from_code(py, &code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("QcProvider")?.into();
             qiskit.call0(py)

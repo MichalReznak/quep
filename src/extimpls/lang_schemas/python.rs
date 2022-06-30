@@ -10,7 +10,7 @@ use async_trait::async_trait;
 use fehler::throws;
 use pyo3::prelude::*;
 use pyo3::{PyObject, Python};
-use pythonize::{depythonize, pythonize};
+use pythonize::depythonize;
 
 use crate::error::Constraint;
 use crate::ext::types::circuit_generator::GenCircuit;

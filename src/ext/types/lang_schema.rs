@@ -1,6 +1,6 @@
+use pyo3::pyclass;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
-use pyo3::pyclass;
 
 #[pyclass]
 #[derive(Copy, Clone, Debug, Serialize, Deserialize)]

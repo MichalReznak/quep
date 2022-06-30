@@ -15,7 +15,6 @@
 use async_trait::async_trait;
 use fehler::throws;
 use pyo3::prelude::*;
-use pythonize::pythonize;
 use tokio::time::Duration;
 
 use crate::args::CliArgsOutput;

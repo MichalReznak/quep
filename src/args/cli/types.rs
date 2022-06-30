@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use strum_macros::{Display, EnumString};
+use pyo3::pyclass;
 
 #[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 pub enum ProviderType {
@@ -50,6 +51,7 @@ pub enum OutputSerType {
 
 #[derive(Debug, EnumString, Display, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
 #[strum(ascii_case_insensitive)]
+#[pyclass]
 pub enum CircuitSchemaType {
     OpenQasm,
     Qiskit,

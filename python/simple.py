@@ -1,5 +1,12 @@
 import time
+from enum import Enum
+
 from qiskit import *
+
+
+class CircuitSchemaType(str, Enum):
+    OpenQasm = 'OpenQasm'
+    Qiskit = 'Qiskit'
 
 
 class Simple:
@@ -19,10 +26,10 @@ class Simple:
     def append_circuit(self: 'Simple', circuit: str, t: str, log: bool):
         parsed_c = None
 
-        if t == 'OpenQasm':
+        if t == CircuitSchemaType.OpenQasm:
             parsed_c = QuantumCircuit.from_qasm_str(circuit)
 
-        elif t == 'Qiskit':
+        elif t == CircuitSchemaType.Qiskit:
             exec_res = {}
             exec(circuit, None, exec_res)
             parsed_c = exec_res["circ"]

@@ -1,5 +1,10 @@
 //! # LangSchema interface:
-//! TODO
+//! class LangSchema:
+//!     def parse_file(path: str) -> [dict[str, any]]:
+//!         return [{ t: 'X', i: 0, other: 0}]
+//!
+//!     def as_string(circ: dict[str, any]) -> dict[str, any]:
+//!         return {circuit: '', t: 'OpenQasm'}
 
 use async_trait::async_trait;
 use fehler::throws;
@@ -24,7 +29,7 @@ impl PythonSchema {
     pub fn from_args() -> Self {
         // TODO should add some type of path to file
         let py_instance = Python::with_gil(|py| {
-            let code = std::fs::read_to_string("./lang_schema.py")?;
+            let code = std::fs::read_to_string("./python/ext/lang_schema.py")?;
             let module = PyModule::from_code(py, &code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("LangSchema")?.into();
             qiskit.call0(py)
@@ -56,7 +61,6 @@ impl LangSchema for PythonSchema {
 
     async fn as_string(&mut self, circ: LangCircuit) -> Result<GenCircuit, Error> {
         Python::with_gil(|py| {
-            let circ = pythonize(py, &circ)?;
             let res = self.py_instance.call_method1(py, "as_string", (circ,))?;
             if res.is_none(py) {
                 Constraint {

@@ -37,7 +37,7 @@ impl PythonQcProvider {
     pub fn from_args(args: &CliArgsProvider) -> Self {
         let py_instance = Python::with_gil(|py| {
             // TODO should be python dir?
-            let code = std::fs::read_to_string(&format!("{}/qc_provider.py", args.python_dir))?;
+            let code = std::fs::read_to_string(&format!("./python/ext/qc_provider.py"))?;
             let module = PyModule::from_code(py, &code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("QcProvider")?.into();
             qiskit.call0(py)

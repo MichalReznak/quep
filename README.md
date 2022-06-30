@@ -46,6 +46,8 @@ grcov . `
 * Split results from correct shots if mirror is not used
     * Do not compare only the most common number when no mirror is turn on
 
+* Move extimpls to separate folder
+
 * NO: Extend with toffoli gate? (This is complex gate on a circuit)
 
 * NO: Add option to increase mirror/cycle circuit size only by one with inverted result?

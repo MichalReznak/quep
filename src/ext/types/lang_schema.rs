@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
+use pyo3::pyclass;
 
+#[pyclass]
 #[derive(Copy, Clone, Debug, Serialize, Deserialize)]
 pub enum LangGateType {
     Id,
@@ -39,12 +41,16 @@ impl LangGateType {
     }
 }
 
+#[pyclass]
 #[derive(TypedBuilder, Clone, Debug, Serialize, Deserialize)]
 pub struct LangGate {
+    #[pyo3(get, set)]
     pub t: LangGateType,
 
+    #[pyo3(get, set)]
     pub i: i32,
 
+    #[pyo3(get, set)]
     #[builder(default, setter(strip_option))]
     pub other: Option<i32>,
 }
@@ -60,8 +66,12 @@ impl LangGate {
     }
 }
 
+#[pyclass]
 #[derive(TypedBuilder, Clone, Serialize, Deserialize)]
 pub struct LangCircuit {
+    #[pyo3(get, set)]
     pub width: i32,
+
+    #[pyo3(get, set)]
     pub gates: Vec<LangGate>,
 }

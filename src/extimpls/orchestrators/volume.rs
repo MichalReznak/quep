@@ -38,7 +38,7 @@ impl Orchestrator for VolumeOrchestrator {
         Ok(())
     }
 
-    async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<String, Error> {
+    async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<Option<String>, Error> {
         let from_i = self.args.from_size;
         let width = self.args.size;
         let iter = self.args.iter;

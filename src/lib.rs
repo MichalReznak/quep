@@ -34,7 +34,9 @@ pub use error::Error;
 pub use globals::*;
 
 use crate::args::config;
-use crate::args::types::{CircuitBenchType, ProviderType};
+use crate::args::types::{
+    CircuitBenchType, CircuitSchemaType, CircuitType, OutputType, ProviderType,
+};
 use crate::utils::dir;
 
 pub struct Quep {
@@ -46,9 +48,13 @@ impl Quep {
     pub async fn new(args: CliArgs) -> Self {
         // Use python only when needed
         use ProviderType::*;
-        // TODO allow for other parts that are also in python mode
+
         if matches!(args.provider.t, Simple | Ibmq | Noisy | Python)
             || matches!(args.circuit.bench, CircuitBenchType::None)
+            || matches!(args.output.t, OutputType::Python)
+            || matches!(args.provider.t, ProviderType::Python)
+            || matches!(args.circuit.t, CircuitType::Python)
+            || matches!(args.circuit.schema, CircuitSchemaType::Python)
         {
             pyvenv::PyVenv::init(&args.provider.python_dir).await?;
             println!("Done");
@@ -73,7 +79,7 @@ impl Quep {
     }
 
     #[throws]
-    pub async fn run(self) -> String {
+    pub async fn run(self) -> Option<String> {
         let chooser = Chooser::new(self.args.clone());
         let orch = chooser.get_orchestrator()?;
         let mirror = !matches!(self.args.circuit.bench, CircuitBenchType::None);

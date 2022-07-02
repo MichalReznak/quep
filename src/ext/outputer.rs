@@ -47,7 +47,7 @@ pub trait Outputer {
         value: Vec<Vec<OutValue>>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
-    ) -> Result<String, Error>;
+    ) -> Result<Option<String>, Error>;
 
     /// Output with increasing width and depth always by one
     async fn output_volume(
@@ -55,7 +55,7 @@ pub trait Outputer {
         values: Vec<OutValue>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
-    ) -> Result<String, Error>;
+    ) -> Result<Option<String>, Error>;
 
     /// Output as a linear list of values
     async fn output_linear(
@@ -64,5 +64,5 @@ pub trait Outputer {
         durations: Option<Vec<Duration>>,
         width: i32,
         runtime: Duration,
-    ) -> Result<String, Error>;
+    ) -> Result<Option<String>, Error>;
 }

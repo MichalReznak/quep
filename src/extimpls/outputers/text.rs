@@ -29,7 +29,7 @@ impl Outputer for TextOutputer {
         values: Vec<Vec<OutValue>>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
-    ) -> Result<String, Error> {
+    ) -> Result<Option<String>, Error> {
         let mut table_dur = vec![];
         let mut table = vec![];
 
@@ -99,7 +99,7 @@ impl Outputer for TextOutputer {
         }
 
         println!("\nApplication Runtime: {} ms", runtime.as_millis());
-        Ok("".to_string()) // TODO Cannot return as a string
+        Ok(None)
     }
 
     async fn output_volume(
@@ -107,7 +107,7 @@ impl Outputer for TextOutputer {
         values: Vec<OutValue>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
-    ) -> Result<String, Error> {
+    ) -> Result<Option<String>, Error> {
         let include_durs = matches!(durations, Some(_));
         let durations = durations.unwrap_or_else(|| {
             vec![Duration::from_millis(0)].into_iter().cycle().take(values.len()).collect()
@@ -148,7 +148,7 @@ impl Outputer for TextOutputer {
         println!("\nQuantum Volume (log): {}", qv);
 
         println!("\nApplication Runtime: {} ms", runtime.as_millis());
-        Ok("".to_string()) // TODO Cannot return as a string
+        Ok(None)
     }
 
     async fn output_linear(
@@ -157,7 +157,7 @@ impl Outputer for TextOutputer {
         durations: Option<Vec<Duration>>,
         width: i32,
         runtime: Duration,
-    ) -> Result<String, Error> {
+    ) -> Result<Option<String>, Error> {
         let include_durs = matches!(durations, Some(_));
         let durations = durations.unwrap_or_else(|| {
             vec![Duration::from_millis(0)].into_iter().cycle().take(values.len()).collect()
@@ -188,6 +188,6 @@ impl Outputer for TextOutputer {
         print_stdout(table.table())?;
 
         println!("\nApplication Runtime: {} ms", runtime.as_millis());
-        Ok("".to_string()) // TODO Cannot return as a string
+        Ok(None)
     }
 }

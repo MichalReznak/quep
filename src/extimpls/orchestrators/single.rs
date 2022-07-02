@@ -25,7 +25,7 @@ impl SingleOrchestrator {
 
 #[async_trait]
 impl Orchestrator for SingleOrchestrator {
-    async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<String, crate::Error> {
+    async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<Option<String>, crate::Error> {
         let i = self.args.size;
         let j = self.args.size_2;
         let iter = self.args.iter;

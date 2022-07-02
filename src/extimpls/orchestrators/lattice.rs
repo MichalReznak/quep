@@ -25,7 +25,7 @@ impl LatticeOrchestrator {
 
 #[async_trait]
 impl Orchestrator for LatticeOrchestrator {
-    async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<String, crate::Error> {
+    async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<Option<String>, crate::Error> {
         let from_i = self.args.from_size;
         let from_j = self.args.from_size_2;
         let i = self.args.size;

@@ -26,7 +26,7 @@ impl LinearOrchestrator {
 
 #[async_trait]
 impl Orchestrator for LinearOrchestrator {
-    async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<String, crate::Error> {
+    async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<Option<String>, crate::Error> {
         let from_i = self.args.from_size;
         let i = self.args.size;
         let depth = self.args.size_2;

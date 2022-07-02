@@ -18,7 +18,6 @@ use pyo3::prelude::*;
 use tokio::time::Duration;
 
 use crate::args::CliArgsOutput;
-use crate::error::Constraint;
 use crate::ext::outputer::OutValue;
 use crate::ext::Outputer;
 use crate::Error;
@@ -49,7 +48,7 @@ impl Outputer for PythonOutputer {
         values: Vec<Vec<OutValue>>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
-    ) -> Result<String, Error> {
+    ) -> Result<Option<String>, Error> {
         Python::with_gil(|py| {
             let durations =
                 durations.map(|e| e.into_iter().map(|e| e.as_millis()).collect::<Vec<_>>());
@@ -59,15 +58,13 @@ impl Outputer for PythonOutputer {
                 "output_table",
                 (values, durations, runtime.as_millis()),
             )?;
-            if res.is_none(py) {
-                Constraint {
-                    reason: "Shouldn't be a constraint" // TODO
-                        .to_string(),
-                }
-                .fail()?;
-            }
 
-            Ok(res.to_string()) // TODO not sure if should be to_string
+            Ok(if res.is_none(py) {
+                None
+            }
+            else {
+                Some(res.to_string())
+            })
         })
     }
 
@@ -76,7 +73,7 @@ impl Outputer for PythonOutputer {
         values: Vec<OutValue>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
-    ) -> Result<String, Error> {
+    ) -> Result<Option<String>, Error> {
         Python::with_gil(|py| {
             let durations =
                 durations.map(|e| e.into_iter().map(|e| e.as_millis()).collect::<Vec<_>>());
@@ -86,15 +83,13 @@ impl Outputer for PythonOutputer {
                 "output_volume",
                 (values, durations, runtime.as_millis()),
             )?;
-            if res.is_none(py) {
-                Constraint {
-                    reason: "Shouldn't be a constraint" // TODO
-                        .to_string(),
-                }
-                .fail()?;
-            }
 
-            Ok(res.to_string()) // TODO not sure if should be to_string
+            Ok(if res.is_none(py) {
+                None
+            }
+            else {
+                Some(res.to_string())
+            })
         })
     }
 
@@ -104,7 +99,7 @@ impl Outputer for PythonOutputer {
         durations: Option<Vec<Duration>>,
         width: i32,
         runtime: Duration,
-    ) -> Result<String, Error> {
+    ) -> Result<Option<String>, Error> {
         Python::with_gil(|py| {
             let durations =
                 durations.map(|e| e.into_iter().map(|e| e.as_millis()).collect::<Vec<_>>());
@@ -114,15 +109,13 @@ impl Outputer for PythonOutputer {
                 "output_linear",
                 (values, durations, runtime.as_millis(), width),
             )?;
-            if res.is_none(py) {
-                Constraint {
-                    reason: "Shouldn't be a constraint" // TODO
-                        .to_string(),
-                }
-                .fail()?;
-            }
 
-            Ok(res.to_string()) // TODO not sure if should be to_string
+            Ok(if res.is_none(py) {
+                None
+            }
+            else {
+                Some(res.to_string())
+            })
         })
     }
 }

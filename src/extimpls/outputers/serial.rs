@@ -79,7 +79,7 @@ impl Outputer for SerialOutputer {
         values: Vec<Vec<OutValue>>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
-    ) -> Result<String, Error> {
+    ) -> Result<Option<String>, Error> {
         let mut table = Vec::new();
 
         for (i, value) in values.iter().enumerate() {
@@ -105,7 +105,7 @@ impl Outputer for SerialOutputer {
         }
 
         let table = Output::builder().records(table).runtime_ms(runtime.as_millis() as i32).build();
-        serialize(self.args.ser, &table, self.args.pretty)
+        Ok(Some(serialize(self.args.ser, &table, self.args.pretty)?))
     }
 
     async fn output_volume(
@@ -113,7 +113,7 @@ impl Outputer for SerialOutputer {
         values: Vec<OutValue>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
-    ) -> Result<String, Error> {
+    ) -> Result<Option<String>, Error> {
         let include_durs = matches!(durations, Some(_));
         let durations = durations.unwrap_or_else(|| {
             vec![Duration::from_millis(0)].into_iter().cycle().take(values.len()).collect()
@@ -146,7 +146,7 @@ impl Outputer for SerialOutputer {
             .runtime_ms(runtime.as_millis() as i32)
             .quantum_volume(len.try_into()?)
             .build();
-        serialize(self.args.ser, &table, self.args.pretty)
+        Ok(Some(serialize(self.args.ser, &table, self.args.pretty)?))
     }
 
     async fn output_linear(
@@ -155,7 +155,7 @@ impl Outputer for SerialOutputer {
         durations: Option<Vec<Duration>>,
         width: i32,
         runtime: Duration,
-    ) -> Result<String, Error> {
+    ) -> Result<Option<String>, Error> {
         let include_durs = matches!(durations, Some(_));
         let durations = durations.unwrap_or_else(|| {
             vec![Duration::from_millis(0)].into_iter().cycle().take(values.len()).collect()
@@ -183,6 +183,6 @@ impl Outputer for SerialOutputer {
         }
 
         let table = Output::builder().records(table).runtime_ms(runtime.as_millis() as i32).build();
-        serialize(self.args.ser, &table, self.args.pretty)
+        Ok(Some(serialize(self.args.ser, &table, self.args.pretty)?))
     }
 }

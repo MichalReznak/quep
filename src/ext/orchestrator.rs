@@ -28,5 +28,5 @@ pub trait Orchestrator {
     }
 
     /// Execute algorithm using the chosen extensions
-    async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<String, Error>;
+    async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<Option<String>, Error>;
 }

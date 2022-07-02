@@ -7,8 +7,7 @@ use tokio::main;
 async fn main() {
     env_logger::try_init()?;
 
-    let res = quep_core::Quep::from_env().await?.run().await?;
-    if !res.is_empty() {
+    if let Some(res) = quep_core::Quep::from_env().await?.run().await? {
         println!("\nResult:");
         println!("{res}");
     }

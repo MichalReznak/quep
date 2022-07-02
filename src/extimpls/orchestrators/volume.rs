@@ -1,6 +1,7 @@
 use std::time::Duration;
 
 use async_trait::async_trait;
+use fehler::throws;
 use itertools::Itertools;
 use regex::Regex;
 use snafu::OptionExt;
@@ -21,7 +22,8 @@ pub struct VolumeOrchestrator {
 }
 
 impl VolumeOrchestrator {
-    pub fn new(args: &CliArgsOrch) -> Self {
+    #[throws]
+    pub fn from_args(args: &CliArgsOrch) -> Self {
         Self { args: args.clone() }
     }
 }

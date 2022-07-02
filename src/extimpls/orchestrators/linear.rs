@@ -1,6 +1,7 @@
 use std::time::Duration;
 
 use async_trait::async_trait;
+use fehler::throws;
 use itertools::Itertools;
 use regex::Regex;
 use snafu::OptionExt;
@@ -12,6 +13,7 @@ use crate::chooser::Chooser;
 use crate::error::RegexCapture;
 use crate::ext::outputer::OutValue;
 use crate::ext::{CircuitGenerator, LangSchema, Orchestrator, Outputer, QcProvider};
+use crate::Error;
 
 /// Linear iteration from 0 to MAX
 pub struct LinearOrchestrator {
@@ -19,7 +21,8 @@ pub struct LinearOrchestrator {
 }
 
 impl LinearOrchestrator {
-    pub fn new(args: &CliArgsOrch) -> Self {
+    #[throws]
+    pub fn from_args(args: &CliArgsOrch) -> Self {
         Self { args: args.clone() }
     }
 }

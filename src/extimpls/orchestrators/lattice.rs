@@ -1,6 +1,7 @@
 use std::time::Duration;
 
 use async_trait::async_trait;
+use fehler::throws;
 use regex::Regex;
 use snafu::OptionExt;
 use tokio::time::Instant;
@@ -11,6 +12,7 @@ use crate::chooser::Chooser;
 use crate::error::{OutOfBounds, RegexCapture};
 use crate::ext::outputer::OutValue;
 use crate::ext::{CircuitGenerator, LangSchema, Orchestrator, Outputer, QcProvider};
+use crate::Error;
 
 /// Iterates in all combination for 2D array
 pub struct LatticeOrchestrator {
@@ -18,7 +20,8 @@ pub struct LatticeOrchestrator {
 }
 
 impl LatticeOrchestrator {
-    pub fn new(args: &CliArgsOrch) -> Self {
+    #[throws]
+    pub fn from_args(args: &CliArgsOrch) -> Self {
         Self { args: args.clone() }
     }
 }

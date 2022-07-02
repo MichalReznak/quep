@@ -1,5 +1,8 @@
 //! # Python implementation provider:
 //! class QcProvider:
+//!     def check_constraints(self) -> bool:
+//!         return True
+//!
 //!     def get_meta_info(self):
 //!         return <meta-info>
 //!
@@ -22,11 +25,12 @@ use fehler::throws;
 use pyo3::prelude::*;
 
 use crate::args::CliArgsProvider;
+use crate::error::Constraint;
 use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::MetaInfo;
 use crate::ext::QcProvider;
 use crate::utils::{debug, provider_meta_info, provider_run};
-use crate::Error;
+use crate::{CliArgs, Error};
 
 pub struct PythonQcProvider {
     py_instance: PyObject,
@@ -49,6 +53,21 @@ impl PythonQcProvider {
 
 #[async_trait]
 impl QcProvider for PythonQcProvider {
+    fn check_constraints(&self, _args: &CliArgs) -> Result<(), Error> {
+        Python::with_gil(|py| {
+            if let Ok(_) = self.py_instance.getattr(py, "check_constraints") {
+                let res = self.py_instance.call_method0(py, "check_constraints")?;
+                if !res.extract::<bool>(py)? {
+                    Constraint {
+                        reason: "TODO".to_string(),
+                    }
+                    .fail()?;
+                }
+            }
+            Ok(())
+        })
+    }
+
     async fn connect(&mut self) -> Result<(), Error> {
         Python::with_gil(|py| {
             self.py_instance.call_method0(py, "auth")?;

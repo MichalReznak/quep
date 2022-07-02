@@ -2,6 +2,7 @@ use std::fmt::Write;
 use std::path::Path;
 
 use async_trait::async_trait;
+use fehler::throws;
 use regex::Regex;
 use tokio::fs::File;
 use tokio::io::{AsyncBufReadExt, BufReader};
@@ -86,7 +87,8 @@ pub struct QiskitSchema {
 }
 
 impl QiskitSchema {
-    pub fn new() -> Self {
+    #[throws]
+    pub fn from_args() -> Self {
         Self { gates: vec![] }
     }
 }

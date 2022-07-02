@@ -28,6 +28,8 @@ grcov . `
 ```
 
 # TODOs:
+* Send arguments to custom python extimpls
+
 * Circuit generator should return only intermediate circuit format and then it should be serialized by lang_schema.
 
 * Serialize to python, allow to define python extensions 
@@ -46,7 +48,7 @@ grcov . `
 * Split results from correct shots if mirror is not used
     * Do not compare only the most common number when no mirror is turn on
 
-* Move extimpls to separate folder
+X Move extimpls to separate folder
 
 * NO: Extend with toffoli gate? (This is complex gate on a circuit)
 

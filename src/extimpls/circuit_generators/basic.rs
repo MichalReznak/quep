@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use fehler::throws;
 
 use crate::args::types::CircuitBenchType;
 use crate::args::CliArgsCircuit;
@@ -14,7 +15,8 @@ pub struct BasicCircuitGenerator {
 
 #[allow(dead_code)]
 impl BasicCircuitGenerator {
-    pub fn new(args: &CliArgsCircuit) -> Self {
+    #[throws]
+    pub fn from_args(args: &CliArgsCircuit) -> Self {
         Self { args: args.clone() }
     }
 }

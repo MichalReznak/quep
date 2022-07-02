@@ -1,5 +1,8 @@
 //! # Outputer interface:
 //! class Outputer:
+//!     def check_constraints(self) -> bool:
+//!         return True
+//!
 //!     def output_table(self, values: [[dict[str, any]]], durations: [int],
 //! runtime: int) -> str:         # Format table in any way
 //!         return ""
@@ -18,9 +21,10 @@ use pyo3::prelude::*;
 use tokio::time::Duration;
 
 use crate::args::CliArgsOutput;
+use crate::error::Constraint;
 use crate::ext::outputer::OutValue;
 use crate::ext::Outputer;
-use crate::Error;
+use crate::{CliArgs, Error};
 
 pub struct PythonOutputer {
     py_instance: PyObject,
@@ -43,6 +47,21 @@ impl PythonOutputer {
 
 #[async_trait]
 impl Outputer for PythonOutputer {
+    fn check_constraints(&self, _args: &CliArgs) -> Result<(), Error> {
+        Python::with_gil(|py| {
+            if let Ok(_) = self.py_instance.getattr(py, "check_constraints") {
+                let res = self.py_instance.call_method0(py, "check_constraints")?;
+                if !res.extract::<bool>(py)? {
+                    Constraint {
+                        reason: "TODO".to_string(),
+                    }
+                    .fail()?;
+                }
+            }
+            Ok(())
+        })
+    }
+
     async fn output_table(
         &self,
         values: Vec<Vec<OutValue>>,

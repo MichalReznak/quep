@@ -1,5 +1,8 @@
 //! # LangSchema interface:
 //! class LangSchema:
+//!     def check_constraints(self) -> bool:
+//!         return True
+//!
 //!     def parse_file(path: str) -> [dict[str, any]]:
 //!         return [{ t: 'X', i: 0, other: 0}]
 //!
@@ -17,7 +20,7 @@ use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::LangGate;
 use crate::ext::LangSchema;
 use crate::lang_schemas::LangCircuit;
-use crate::Error;
+use crate::{CliArgs, Error};
 
 pub struct PythonSchema {
     pub gates: Vec<LangGate>,
@@ -44,6 +47,21 @@ impl PythonSchema {
 
 #[async_trait]
 impl LangSchema for PythonSchema {
+    fn check_constraints(&self, _args: &CliArgs) -> Result<(), Error> {
+        Python::with_gil(|py| {
+            if let Ok(_) = self.py_instance.getattr(py, "check_constraints") {
+                let res = self.py_instance.call_method0(py, "check_constraints")?;
+                if !res.extract::<bool>(py)? {
+                    Constraint {
+                        reason: "TODO".to_string(),
+                    }
+                    .fail()?;
+                }
+            }
+            Ok(())
+        })
+    }
+
     async fn parse_file(&self, path: &str) -> Result<Vec<LangGate>, Error> {
         Python::with_gil(|py| {
             let res = self.py_instance.call_method1(py, "parse_file", (path,))?;

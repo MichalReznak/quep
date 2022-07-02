@@ -1,6 +1,7 @@
 use std::path::Path;
 
 use async_trait::async_trait;
+use fehler::throws;
 use itertools::interleave;
 use log::error;
 use openqasm as oq;
@@ -15,7 +16,7 @@ use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::{CircuitGenerator, LangSchema, LangSchemaDyn};
 use crate::lang_schemas::LangCircuit;
 use crate::utils::oqs_parse_circuit;
-use crate::{CliArgs, Error};
+use crate::{dir, CliArgs, Error};
 
 #[allow(dead_code)]
 #[derive(Debug)]
@@ -26,8 +27,11 @@ pub struct FsCircuitGenerator {
 }
 
 impl FsCircuitGenerator {
-    pub fn new(args: &CliArgsCircuit) -> Self {
-        let entries = WalkDir::new("data") // TODO needs to be arg
+    #[throws]
+    pub fn from_args(args: &CliArgsCircuit) -> Self {
+        let source = dir(&args.source)?;
+
+        let entries = WalkDir::new(&source)
             .into_iter()
             .filter_map(|e| e.ok())
             .filter(|e| e.file_type().is_file())

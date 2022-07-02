@@ -43,7 +43,8 @@ pub struct SerialOutputer {
 }
 
 impl SerialOutputer {
-    pub fn new(args: &CliArgsOutput) -> Self {
+    #[throws]
+    pub fn from_args(args: &CliArgsOutput) -> Self {
         Self { args: args.clone() }
     }
 }

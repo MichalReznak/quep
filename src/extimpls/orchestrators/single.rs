@@ -1,6 +1,7 @@
 use std::time::Duration;
 
 use async_trait::async_trait;
+use fehler::throws;
 use regex::Regex;
 use snafu::OptionExt;
 use tokio::time::Instant;
@@ -11,6 +12,7 @@ use crate::chooser::Chooser;
 use crate::error::RegexCapture;
 use crate::ext::outputer::OutValue;
 use crate::ext::{CircuitGenerator, LangSchema, Orchestrator, Outputer, QcProvider};
+use crate::Error;
 
 /// Does a single run of some specific size
 pub struct SingleOrchestrator {
@@ -18,14 +20,15 @@ pub struct SingleOrchestrator {
 }
 
 impl SingleOrchestrator {
-    pub fn new(args: &CliArgsOrch) -> Self {
+    #[throws]
+    pub fn from_args(args: &CliArgsOrch) -> Self {
         Self { args: args.clone() }
     }
 }
 
 #[async_trait]
 impl Orchestrator for SingleOrchestrator {
-    async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<Option<String>, crate::Error> {
+    async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<Option<String>, Error> {
         let i = self.args.size;
         let j = self.args.size_2;
         let iter = self.args.iter;

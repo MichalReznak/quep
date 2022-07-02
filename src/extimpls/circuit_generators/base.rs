@@ -12,6 +12,7 @@
 //! gates
 
 use async_trait::async_trait;
+use fehler::throws;
 use itertools::interleave;
 
 use crate::args::types::CircuitBenchType;
@@ -29,7 +30,8 @@ pub struct BaseCircuitGenerator {
 }
 
 impl BaseCircuitGenerator {
-    pub fn new(args: &CliArgsCircuit) -> Self {
+    #[throws]
+    pub fn from_args(args: &CliArgsCircuit) -> Self {
         Self { args: args.clone() }
     }
 }

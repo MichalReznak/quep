@@ -8,7 +8,7 @@ use enum_dispatch::enum_dispatch;
 use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::LangGate;
 use crate::lang_schemas::{LangCircuit, OpenQasmSchema, PythonSchema, QiskitSchema};
-use crate::Error;
+use crate::{CliArgs, Error};
 
 #[enum_dispatch]
 pub enum LangSchemaDyn {
@@ -20,6 +20,11 @@ pub enum LangSchemaDyn {
 #[async_trait]
 #[enum_dispatch(LangSchemaDyn)]
 pub trait LangSchema {
+    /// Check whether arguments are correct
+    fn check_constraints(&self, _args: &CliArgs) -> Result<(), Error> {
+        Ok(())
+    }
+
     /// Parse file from the fs path
     async fn parse_file(&self, path: &str) -> Result<Vec<LangGate>, Error>;
 

@@ -1,6 +1,7 @@
 use async_trait::async_trait;
 use cli_table::format::Justify;
 use cli_table::{print_stdout, Cell, Style, Table};
+use fehler::throws;
 use snafu::OptionExt;
 use termcolor::Color;
 use tokio::time::Duration;
@@ -17,7 +18,8 @@ pub struct TextOutputer {
 }
 
 impl TextOutputer {
-    pub fn new(args: &CliArgsOutput) -> Self {
+    #[throws]
+    pub fn from_args(args: &CliArgsOutput) -> Self {
         Self { args: args.clone() }
     }
 }

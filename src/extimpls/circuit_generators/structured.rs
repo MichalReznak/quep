@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use fehler::throws;
 
 use crate::args::CliArgsCircuit;
 use crate::ext::types::lang_schema::LangGate;
@@ -17,7 +18,8 @@ pub struct StructCircuitGenerator {
 // Length is counted as 2d.
 
 impl StructCircuitGenerator {
-    pub fn new(args: &CliArgsCircuit) -> Self {
+    #[throws]
+    pub fn from_args(args: &CliArgsCircuit) -> Self {
         Self { args: args.clone() }
     }
 }

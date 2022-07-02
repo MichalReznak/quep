@@ -1,5 +1,8 @@
 //! # Python Circuit generator:
 //! class CircuitGenerator:
+//!     def check_constraints(self) -> bool:
+//!         return True
+//!
 //!     // TODO add init with args to all python versions
 //!     def generate(i: int, j: int, it: int) -> dict[str, any]:
 //!         return {'width': 4, 'gates': [{'t': 'X', 'i': 0, 'other': 0}]}
@@ -10,9 +13,10 @@ use pyo3::prelude::*;
 use pythonize::depythonize;
 
 use crate::args::CliArgsCircuit;
+use crate::error::Constraint;
 use crate::ext::{CircuitGenerator, LangSchemaDyn};
 use crate::lang_schemas::LangCircuit;
-use crate::Error;
+use crate::{CliArgs, Error};
 
 #[allow(dead_code)]
 pub struct PythonCircuitGenerator {
@@ -41,6 +45,21 @@ impl PythonCircuitGenerator {
 
 #[async_trait]
 impl CircuitGenerator for PythonCircuitGenerator {
+    fn check_constraints(&self, _args: &CliArgs) -> Result<(), Error> {
+        Python::with_gil(|py| {
+            if let Ok(_) = self.py_instance.getattr(py, "check_constraints") {
+                let res = self.py_instance.call_method0(py, "check_constraints")?;
+                if !res.extract::<bool>(py)? {
+                    Constraint {
+                        reason: "TODO".to_string(),
+                    }
+                    .fail()?;
+                }
+            }
+            Ok(())
+        })
+    }
+
     async fn generate(
         &mut self,
         _lang_schema: &LangSchemaDyn,

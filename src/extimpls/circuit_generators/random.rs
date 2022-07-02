@@ -5,6 +5,7 @@
 //! It is using **uniform sampling**
 
 use async_trait::async_trait;
+use fehler::throws;
 use rand::distributions::{Distribution, Uniform};
 use rand::SeedableRng;
 
@@ -20,7 +21,8 @@ pub struct RandCircuitGenerator {
 }
 
 impl RandCircuitGenerator {
-    pub fn new(args: &CliArgsCircuit) -> Self {
+    #[throws]
+    pub fn from_args(args: &CliArgsCircuit) -> Self {
         Self { args: args.clone() }
     }
 }

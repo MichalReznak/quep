@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use fehler::throws;
 
 use crate::args::types::{CircuitBenchType, OrchestratorType};
 use crate::args::CliArgsCircuit;
@@ -15,7 +16,8 @@ pub struct VolumeCircuitGenerator {
 }
 
 impl VolumeCircuitGenerator {
-    pub fn new(args: &CliArgsCircuit) -> Self {
+    #[throws]
+    pub fn from_args(args: &CliArgsCircuit) -> Self {
         Self { args: args.clone() }
     }
 }

@@ -31,14 +31,10 @@ pub struct CliArgs {
 
 #[throws]
 pub fn parse_provider(clap: &CliArgsEnv, config: CliArgsProviderConfig) -> CliArgsProvider {
-    let python_dir = dir(".")?; // TODO use executable directory
-    let path = dir("./qc_provider.py")?;
-    let provider_type = clap.provider.or(config.t).unwrap_or(ProviderType::Simple);
-
     CliArgsProvider::builder()
-        .t(provider_type)
-        .path(clap.provider_path.clone().or(config.path).unwrap_or(path))
-        .python_dir(clap.provider_python_dir.clone().or(config.python_dir).unwrap_or(python_dir))
+        .t(clap.provider.or(config.t).unwrap_or(ProviderType::Simple))
+        .path(clap.provider_path.clone().or(config.path).unwrap_or_else(|| dir("./qc_provider.py").unwrap_or_else(|_| "".to_string())))
+        .python_dir(clap.provider_python_dir.clone().or(config.python_dir).unwrap_or_else(|| dir(".").unwrap_or_else(|_| "".to_string())))
         .account_id(
             clap.provider_account_id
                 .clone()
@@ -50,11 +46,9 @@ pub fn parse_provider(clap: &CliArgsEnv, config: CliArgsProviderConfig) -> CliAr
 
 #[throws]
 pub fn parse_output(clap: &CliArgsEnv, config: CliArgsOutputConfig) -> CliArgsOutput {
-    let path = dir("./outputer.py")?;
-
     CliArgsOutput::builder()
         .t(clap.output.or(config.t).unwrap_or(OutputType::Text))
-        .path(clap.circuit_path.clone().or(config.path).unwrap_or(path))
+        .path(clap.circuit_path.clone().or(config.path).unwrap_or_else(|| dir("./outputer.py").unwrap_or_else(|_| "".to_string())))
         .ser(clap.output_ser.or(config.ser).unwrap_or(OutputSerType::Json))
         .pretty(clap.output_pretty.or(config.pretty).unwrap_or(true))
         .build()
@@ -62,20 +56,18 @@ pub fn parse_output(clap: &CliArgsEnv, config: CliArgsOutputConfig) -> CliArgsOu
 
 #[throws]
 pub fn parse_circuit(clap: &CliArgsEnv, config: CliArgsCircuitConfig) -> CliArgsCircuit {
-    let circuit_source = dir("./template.qasm")?;
-    let path = dir("./circuit_generator.py")?;
-    let schema_path = dir("./lang_schema.py")?;
+    // TODO all dir calls should not fail when file does not exist
 
     CliArgsCircuit::builder()
         .t(clap.circuit.or(config.t).unwrap_or(CircuitType::Struct))
-        .path(clap.circuit_path.clone().or(config.path).unwrap_or(path))
+        .path(clap.circuit_path.clone().or(config.path).unwrap_or_else(|| dir("./circuit_generator.py").unwrap_or_else(|_| "".to_string())))
         .bench(clap.circuit_bench.or(config.bench).unwrap_or(CircuitBenchType::Mirror))
         .schema(clap.circuit_schema.or(config.schema).unwrap_or(CircuitSchemaType::OpenQasm))
-        .schema_path(clap.circuit_schema_path.clone().or(config.schema_path).unwrap_or(schema_path))
+        .schema_path(clap.circuit_schema_path.clone().or(config.schema_path).unwrap_or_else(|| dir("./lang_schema.py").unwrap_or_else(|_| "".to_string())))
         .init_one(clap.circuit_init_one.or(config.init_one).unwrap_or(false))
         .rand(clap.circuit_rand.or(config.rand).unwrap_or(false))
         .parse(clap.circuit_parse.or(config.parse).unwrap_or(false))
-        .source(clap.circuit_source.clone().or(config.source).unwrap_or(circuit_source))
+        .source(clap.circuit_source.clone().or(config.source).unwrap_or_else(|| dir("./templates/example.qasm").unwrap_or_else(|_| "".to_string())))
         .inverse_gates(clap.circuit_inverse_gates.clone().or(config.inverse_gates).unwrap_or(
             collection! {
                 HashMap<String, String>;
@@ -88,11 +80,9 @@ pub fn parse_circuit(clap: &CliArgsEnv, config: CliArgsCircuitConfig) -> CliArgs
 
 #[throws]
 pub fn parse_orch(clap: &CliArgsEnv, config: CliArgsOrchConfig) -> CliArgsOrch {
-    let orch_data_dir = dir("./data")?;
-
     CliArgsOrch::builder()
         .t(clap.orch.or(config.t).unwrap_or(OrchestratorType::Single))
-        .data(clap.orch_data.clone().or(config.data).unwrap_or(orch_data_dir))
+        .data(clap.orch_data.clone().or(config.data).unwrap_or_else(|| dir("./data").unwrap_or_else(|_| "".to_string())))
         .iter(clap.orch_iter.or(config.iter).unwrap_or(1))
         .size(clap.orch_size.or(config.size).unwrap_or(1))
         .from_size(clap.orch_from_size.or(config.from_size).unwrap_or(1))

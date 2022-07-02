@@ -47,9 +47,8 @@ impl PythonCircuitGenerator {
 impl CircuitGenerator for PythonCircuitGenerator {
     fn check_constraints(&self, _args: &CliArgs) -> Result<(), Error> {
         Python::with_gil(|py| {
-            if let Ok(_) = self.py_instance.getattr(py, "check_constraints") {
-                let res = self.py_instance.call_method0(py, "check_constraints")?;
-                if !res.extract::<bool>(py)? {
+            if let Ok(method) = self.py_instance.getattr(py, "check_constraints") {
+                if !method.call0(py)?.extract::<bool>(py)? {
                     Constraint {
                         reason: "TODO".to_string(),
                     }

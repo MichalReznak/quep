@@ -4,6 +4,8 @@ class OutValue:
     is_correct: bool
 
 
+# TODO missing check_constraints in all ext examples
+
 class Outputer:
     def output_table(self, values: [[OutValue]], durations: [int], runtime: int) -> str:
         print('Results')

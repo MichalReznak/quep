@@ -55,13 +55,19 @@ fn get_prov(t: ProviderType) -> CliArgsProvider {
     CliArgsProvider::builder()
         .t(t)
         .python_dir(get_dir("./python")?)
+        .path(get_dir("")?)
         .account_id(ACCOUNT_ID.to_string())
         .build()
 }
 
 #[throws]
 fn get_out(t: OutputType) -> CliArgsOutput {
-    CliArgsOutput::builder().t(t).ser(OutputSerType::Json).pretty(true).build()
+    CliArgsOutput::builder()
+        .t(t)
+        .ser(OutputSerType::Json)
+        .pretty(true)
+        .path(get_dir("")?)
+        .build()
 }
 
 #[throws]
@@ -69,7 +75,9 @@ fn get_cir(t: CircuitType) -> CliArgsCircuit {
     CliArgsCircuit::builder()
         .t(t)
         .bench(CircuitBenchType::Mirror)
+        .path(get_dir("")?)
         .schema(CircuitSchemaType::OpenQasm)
+        .schema_path(get_dir("")?)
         .init_one(false)
         .rand(true)
         .parse(false)

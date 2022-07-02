@@ -11,8 +11,6 @@ pub struct PyVenv;
 impl PyVenv {
     #[throws]
     pub async fn init(dir: &str) -> Self {
-        // TODO maybe shouldn't be customizable the path
-
         // check if python dir is available
         let venv_dir = format!("{}/.venv", dir);
         let pip = format!("{}/.venv/Scripts/pip", dir);

@@ -16,18 +16,25 @@ use quep_core::CliArgs;
 #[derive(Clone, Debug)]
 struct QuepyConfig {
     pub provider: Option<ProviderType>,
+    pub provider_path: Option<String>,
     pub provider_python_dir: Option<String>,
     pub provider_account_id: Option<String>,
+
     pub output: Option<OutputType>,
+    pub output_path: Option<String>,
     pub output_ser: Option<OutputSerType>,
     pub output_pretty: Option<bool>,
+
     pub circuit: Option<CircuitType>,
+    pub circuit_path: Option<String>,
     pub circuit_bench: Option<CircuitBenchType>,
     pub circuit_schema: Option<CircuitSchemaType>,
+    pub circuit_schema_path: Option<String>,
     pub circuit_init_one: Option<bool>,
     pub circuit_rand: Option<bool>,
     pub circuit_parse: Option<bool>,
     pub circuit_source: Option<String>,
+
     pub orch: Option<OrchestratorType>,
     pub orch_data: Option<String>,
     pub orch_iter: Option<i32>,
@@ -45,16 +52,20 @@ impl QuepyConfig {
     #[new]
     fn new(
         provider: Option<String>,
+        provider_path: Option<String>,
         provider_python_dir: Option<String>,
         provider_account_id: Option<String>,
 
         output: Option<String>,
+        output_path: Option<String>,
         output_ser: Option<String>,
         output_pretty: Option<bool>,
 
         circuit: Option<String>,
+        circuit_path: Option<String>,
         circuit_bench: Option<String>,
         circuit_schema: Option<String>,
+        circuit_schema_path: Option<String>,
         circuit_init_one: Option<bool>,
         circuit_rand: Option<bool>,
         circuit_parse: Option<bool>,
@@ -72,15 +83,21 @@ impl QuepyConfig {
     ) -> PyResult<Self> {
         Ok(Self {
             provider: provider.map(|e| ProviderType::from_str(&e).unwrap()),
+            provider_path,
             provider_python_dir,
             provider_account_id,
+
             output: output.map(|e| OutputType::from_str(&e).unwrap()),
+            output_path,
             output_ser: output_ser.map(|e| OutputSerType::from_str(&e).unwrap()),
             output_pretty,
+
             circuit: circuit.map(|e| CircuitType::from_str(&e).unwrap()),
+            circuit_path,
             circuit_bench: circuit_bench.map(|e| CircuitBenchType::from_str(&e).unwrap()),
             circuit_init_one,
             circuit_schema: circuit_schema.map(|e| CircuitSchemaType::from_str(&e).unwrap()),
+            circuit_schema_path,
             circuit_rand,
             circuit_parse,
             circuit_source,
@@ -102,13 +119,16 @@ impl From<QuepyConfig> for CliArgsConfig {
         Self {
             provider: CliArgsProviderConfig {
                 t: qc.provider,
+                path: qc.provider_path,
                 python_dir: qc.provider_python_dir,
                 account_id: qc.provider_account_id,
             },
             circuit: CliArgsCircuitConfig {
                 t: qc.circuit,
+                path: qc.circuit_path,
                 bench: qc.circuit_bench,
                 schema: qc.circuit_schema,
+                schema_path: qc.circuit_schema_path,
                 init_one: qc.circuit_init_one,
                 rand: qc.circuit_rand,
                 parse: qc.circuit_parse,
@@ -128,6 +148,7 @@ impl From<QuepyConfig> for CliArgsConfig {
             },
             output: CliArgsOutputConfig {
                 t: qc.output,
+                path: qc.output_path,
                 ser: qc.output_ser,
                 pretty: qc.output_pretty,
             },

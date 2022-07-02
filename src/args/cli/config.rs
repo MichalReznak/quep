@@ -30,7 +30,12 @@ pub struct CliArgsProviderConfig {
 
     #[serde(default)]
     #[serde(deserialize_with = "parse_from_os_str")]
+    pub path: Option<String>,
+
+    #[serde(default)]
+    #[serde(deserialize_with = "parse_from_os_str")]
     pub python_dir: Option<String>,
+
     pub account_id: Option<String>,
 }
 
@@ -38,8 +43,18 @@ pub struct CliArgsProviderConfig {
 #[serde(rename_all = "camelCase")]
 pub struct CliArgsCircuitConfig {
     pub t: Option<CircuitType>,
+
+    #[serde(default)]
+    #[serde(deserialize_with = "parse_from_os_str")]
+    pub path: Option<String>,
+
     pub bench: Option<CircuitBenchType>,
     pub schema: Option<CircuitSchemaType>,
+
+    #[serde(default)]
+    #[serde(deserialize_with = "parse_from_os_str")]
+    pub schema_path: Option<String>,
+
     pub init_one: Option<bool>,
     pub rand: Option<bool>,
     pub parse: Option<bool>,
@@ -51,6 +66,11 @@ pub struct CliArgsCircuitConfig {
 #[serde(rename_all = "camelCase")]
 pub struct CliArgsOutputConfig {
     pub t: Option<OutputType>,
+
+    #[serde(default)]
+    #[serde(deserialize_with = "parse_from_os_str")]
+    pub path: Option<String>,
+
     pub ser: Option<OutputSerType>,
     pub pretty: Option<bool>,
 }

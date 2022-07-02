@@ -9,6 +9,9 @@ use crate::args::types::{CircuitBenchType, CircuitSchemaType};
 pub struct CliArgsProvider {
     pub t: ProviderType,
 
+    /// Path to Custom provider
+    pub path: String,
+
     /// Python script files location
     pub python_dir: String,
 
@@ -19,6 +22,9 @@ pub struct CliArgsProvider {
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct CliArgsOutput {
     pub t: OutputType,
+
+    /// Path to Custom Outputer
+    pub path: String,
 
     /// Serialize format
     pub ser: OutputSerType,
@@ -31,11 +37,17 @@ pub struct CliArgsOutput {
 pub struct CliArgsCircuit {
     pub t: CircuitType,
 
+    /// Path to Custom Circuit Generator
+    pub path: String,
+
     /// Circuit benchmark type
     pub bench: CircuitBenchType,
 
     /// Used language schema
     pub schema: CircuitSchemaType,
+
+    /// Path to Custom Language Schema
+    pub schema_path: String,
 
     /// Initializes all qubits to |1>
     pub init_one: bool,

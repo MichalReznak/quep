@@ -13,7 +13,6 @@
 #![feature(new_uninit)]
 #![feature(iter_intersperse)]
 #![feature(let_chains)]
-#![feature(path_try_exists)]
 
 use chooser::Chooser;
 use ext::Orchestrator;

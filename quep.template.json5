@@ -1,23 +1,27 @@
 // TODO define all default values correctly
 {
     provider: {
-        t: 'Noisy', // Simple, Noisy, Ibmq
-        pythonDir: '.', // Python providers implementation
+        t: 'Noisy', // Simple, Noisy, Ibmq, Python
+        path: './qc_provider.py', // Path to Custom provider
+        pythonDir: '.', // Python Virtual environment
         accountId: '', // IbmQ only
     },
     circuit: {
-        t: 'Struct', // Base, Struct, Rand, Fs, Volume, Basic
+        t: 'Struct', // Base, Struct, Rand, Fs, Volume, Basic, Python
+        path: './circuit_generator.py', // Path to Custom Circuit Generator
         bench: 'Mirror', // Mirror, Cycle, None
-        schema: 'OpenQasm', // OpenQasm, Qiskit
-        initOne: true, // Set state to one or zero
-        rand: true, // Outputs different circuits for each iteration
-        source: './templates/example.qasm', // Base circuit source
-        inverse_gates: { // Custom defined inverse gates
+        schema: 'OpenQasm', // OpenQasm, Qiskit, Python
+        schemaPath: './lang_schema.py', // Path to Custom Language Schema
+        initOne: false, // Set state to one or zero
+        rand: false, // Outputs different circuits for each iteration
+        source: './template.qasm', // Base circuit source
+        inverseGates: { // Custom defined inverse gates
             's': 'sdg',
         },
     },
     output: {
-        t: 'Text', // Serial, Text
+        t: 'Text', // Serial, Text, Python
+        path: './outputer.py', // Path to Custom Outputer
         ser: 'Json', // Json, Xml, Yaml, Toml, Ron, ...
         pretty: true, // Pretty format
     },
@@ -30,6 +34,6 @@
         iter: 1, // Iterations of circuits of the same size
         data: './data', // Fs: Circuits source
         collect: false, // Run all circuits in a bunch
-        preheat: false, // Do a dummy run
+        preheat: true, // Do a dummy run
     },
 }

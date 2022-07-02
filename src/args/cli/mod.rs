@@ -32,10 +32,12 @@ pub struct CliArgs {
 #[throws]
 pub fn parse_provider(clap: &CliArgsEnv, config: CliArgsProviderConfig) -> CliArgsProvider {
     let python_dir = dir(".")?; // TODO use executable directory
+    let path = dir("./qc_provider.py")?;
     let provider_type = clap.provider.or(config.t).unwrap_or(ProviderType::Simple);
 
     CliArgsProvider::builder()
         .t(provider_type)
+        .path(clap.provider_path.clone().or(config.path).unwrap_or(path))
         .python_dir(clap.provider_python_dir.clone().or(config.python_dir).unwrap_or(python_dir))
         .account_id(
             clap.provider_account_id
@@ -48,8 +50,11 @@ pub fn parse_provider(clap: &CliArgsEnv, config: CliArgsProviderConfig) -> CliAr
 
 #[throws]
 pub fn parse_output(clap: &CliArgsEnv, config: CliArgsOutputConfig) -> CliArgsOutput {
+    let path = dir("./outputer.py")?;
+
     CliArgsOutput::builder()
         .t(clap.output.or(config.t).unwrap_or(OutputType::Text))
+        .path(clap.circuit_path.clone().or(config.path).unwrap_or(path))
         .ser(clap.output_ser.or(config.ser).unwrap_or(OutputSerType::Json))
         .pretty(clap.output_pretty.or(config.pretty).unwrap_or(true))
         .build()
@@ -57,12 +62,16 @@ pub fn parse_output(clap: &CliArgsEnv, config: CliArgsOutputConfig) -> CliArgsOu
 
 #[throws]
 pub fn parse_circuit(clap: &CliArgsEnv, config: CliArgsCircuitConfig) -> CliArgsCircuit {
-    let circuit_source = dir("./templates/example.qasm")?;
+    let circuit_source = dir("./template.qasm")?;
+    let path = dir("./circuit_generator.py")?;
+    let schema_path = dir("./lang_schema.py")?;
 
     CliArgsCircuit::builder()
-        .t(clap.circuit.or(config.t).unwrap_or(CircuitType::Basic))
+        .t(clap.circuit.or(config.t).unwrap_or(CircuitType::Struct))
+        .path(clap.circuit_path.clone().or(config.path).unwrap_or(path))
         .bench(clap.circuit_bench.or(config.bench).unwrap_or(CircuitBenchType::Mirror))
         .schema(clap.circuit_schema.or(config.schema).unwrap_or(CircuitSchemaType::OpenQasm))
+        .schema_path(clap.circuit_schema_path.clone().or(config.schema_path).unwrap_or(schema_path))
         .init_one(clap.circuit_init_one.or(config.init_one).unwrap_or(false))
         .rand(clap.circuit_rand.or(config.rand).unwrap_or(false))
         .parse(clap.circuit_parse.or(config.parse).unwrap_or(false))

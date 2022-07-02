@@ -24,8 +24,14 @@ pub struct CliArgsEnv {
     #[clap(long, env = "QUEP_PROVIDER_ACCOUNT_ID")]
     pub provider_account_id: Option<String>,
 
+    #[clap(long, env = "QUEP_PROVIDER_PATH", parse(try_from_os_str = parse_from_os_str))]
+    pub provider_path: Option<String>,
+
     #[clap(long, env = "QUEP_OUTPUT")]
     pub output: Option<OutputType>,
+
+    #[clap(long, env = "QUEP_OUTPUT_PATH", parse(try_from_os_str = parse_from_os_str))]
+    pub output_path: Option<String>,
 
     #[clap(long, env = "QUEP_OUTPUT_SER")]
     pub output_ser: Option<OutputSerType>,
@@ -36,11 +42,17 @@ pub struct CliArgsEnv {
     #[clap(long, env = "QUEP_CIRCUIT")]
     pub circuit: Option<CircuitType>,
 
+    #[clap(long, env = "QUEP_CIRCUIT_PATH", parse(try_from_os_str = parse_from_os_str))]
+    pub circuit_path: Option<String>,
+
     #[clap(long, env = "QUEP_CIRCUIT_BENCH")]
     pub circuit_bench: Option<CircuitBenchType>,
 
     #[clap(long, env = "QUEP_CIRCUIT_SCHEMA")]
     pub circuit_schema: Option<CircuitSchemaType>,
+
+    #[clap(long, env = "QUEP_CIRCUIT_SCHEMA_PATH", parse(try_from_os_str = parse_from_os_str))]
+    pub circuit_schema_path: Option<String>,
 
     #[clap(long, env = "QUEP_CIRCUIT_INIT_ONE")]
     pub circuit_init_one: Option<bool>,
@@ -84,7 +96,7 @@ pub struct CliArgsEnv {
     #[clap(long, env = "QUEP_ORCH_PREHEAT")]
     pub orch_preheat: Option<bool>,
 
-    // TODO just for testing only
+    // just for testing only
     #[clap(long)]
     pub test_threads: Option<i32>,
 

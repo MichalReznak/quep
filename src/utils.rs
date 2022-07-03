@@ -52,7 +52,6 @@ pub fn cycle(gates: Vec<LangGate>, inv_gates: Vec<LangGate>, i: i32) -> Vec<Lang
     let inv_gates = oqs_inv_gates2.chunks(i as usize).map(|e| e.iter().rev().cloned().collect());
     let result = interleave(gates, inv_gates).flatten().collect::<Vec<_>>();
 
-    // TODO should be just "i" instead of "2 * i" for Volume
     result
         .chunks((2 * i) as usize)
         .intersperse(&[LangGate::builder().t(LangGateType::Barrier).i(-1).build()])
@@ -72,7 +71,6 @@ pub fn inverse(
 
     match bench {
         Mirror => {
-            // TODO interleave with barriers??
             gates_inv.reverse();
             gates.push(LangGate::builder().t(Barrier).i(-1).build());
             gates.extend(gates_inv.into_iter());

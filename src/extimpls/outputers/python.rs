@@ -4,7 +4,7 @@
 //!         pass
 //!
 //!     def check_constraints(self, config) -> bool:
-//!         return True
+//!         return {'correct': False, 'reason': 'Some reason'}
 //!
 //!     def output_table(self, values: [[dict[str, any]]],
 //!         durations: [int], runtime: int) -> str:
@@ -24,12 +24,14 @@
 use async_trait::async_trait;
 use fehler::throws;
 use pyo3::prelude::*;
+use pyo3::types::PyDict;
 use tokio::time::Duration;
 
 use crate::args::CliArgsOutput;
 use crate::error::Constraint;
 use crate::ext::outputer::OutValue;
 use crate::ext::Outputer;
+use crate::Error::PyDowncastError;
 use crate::{CliArgs, Error};
 
 pub struct PythonOutputer {
@@ -55,9 +57,11 @@ impl Outputer for PythonOutputer {
     fn check_constraints(&self, args: &CliArgs) -> Result<(), Error> {
         Python::with_gil(|py| {
             if let Ok(method) = self.py_instance.getattr(py, "check_constraints") {
-                if !method.call1(py, (args.clone(),))?.extract::<bool>(py)? {
+                let res = method.call1(py, (args.clone(),))?;
+                let res = res.cast_as::<PyDict>(py).map_err(|_| PyDowncastError).unwrap();
+                if !res.get_item("correct").unwrap().extract::<bool>()? {
                     Constraint {
-                        reason: "TODO".to_string(),
+                        reason: res.get_item("reason").unwrap().to_string(),
                     }
                     .fail()?;
                 }
@@ -75,7 +79,6 @@ impl Outputer for PythonOutputer {
         Python::with_gil(|py| {
             let durations =
                 durations.map(|e| e.into_iter().map(|e| e.as_millis()).collect::<Vec<_>>());
-            // TODO add durations and runtime
             let res = self.py_instance.call_method1(
                 py,
                 "output_table",
@@ -100,7 +103,6 @@ impl Outputer for PythonOutputer {
         Python::with_gil(|py| {
             let durations =
                 durations.map(|e| e.into_iter().map(|e| e.as_millis()).collect::<Vec<_>>());
-            // TODO add durations and runtime
             let res = self.py_instance.call_method1(
                 py,
                 "output_volume",
@@ -126,7 +128,6 @@ impl Outputer for PythonOutputer {
         Python::with_gil(|py| {
             let durations =
                 durations.map(|e| e.into_iter().map(|e| e.as_millis()).collect::<Vec<_>>());
-            // TODO add durations and runtime
             let res = self.py_instance.call_method1(
                 py,
                 "output_linear",

@@ -201,8 +201,20 @@ impl Orchestrator for LatticeOrchestrator {
                             val.result = c["result"].parse::<String>().unwrap_infallible();
                             val.correct += c["val"].parse::<i32>()?;
 
-                            sim_val.result = c["result"].parse::<String>().unwrap_infallible();
-                            sim_val.correct += c["val"].parse::<i32>()?;
+                            if !mirror {
+                                provider
+                                    .append_circuit(lang_schema.as_string(circuit.clone()).await?)
+                                    .await?;
+
+                                let res = provider.run().await?.get(0).unwrap().to_string();
+                                time += provider.meta_info().await?.time;
+
+                                // TODO value is always overwritten in all orch
+                                let c = re.captures(&res).context(RegexCapture)?;
+
+                                sim_val.result = c["result"].parse::<String>().unwrap_infallible();
+                                sim_val.correct += c["val"].parse::<i32>()?;
+                            }
                         }
                         else {
                             result.push(sr.clone());

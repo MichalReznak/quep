@@ -4,7 +4,7 @@
 //!         pass
 //!
 //!     def check_constraints(self, config) -> bool:
-//!         return True
+//!         return {'correct': False, 'reason': 'Some reason'}
 //!
 //!     def get_meta_info(self):
 //!         return {'time': 42}
@@ -30,6 +30,7 @@
 use async_trait::async_trait;
 use fehler::throws;
 use pyo3::prelude::*;
+use pyo3::types::PyDict;
 
 use crate::args::CliArgsProvider;
 use crate::error::Constraint;
@@ -37,6 +38,7 @@ use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::MetaInfo;
 use crate::ext::QcProvider;
 use crate::utils::{debug, provider_meta_info, provider_run};
+use crate::Error::PyDowncastError;
 use crate::{CliArgs, Error};
 
 pub struct PythonQcProvider {
@@ -62,9 +64,11 @@ impl QcProvider for PythonQcProvider {
     fn check_constraints(&self, args: &CliArgs) -> Result<(), Error> {
         Python::with_gil(|py| {
             if let Ok(method) = self.py_instance.getattr(py, "check_constraints") {
-                if !method.call1(py, (args.clone(),))?.extract::<bool>(py)? {
+                let res = method.call1(py, (args.clone(),))?;
+                let res = res.cast_as::<PyDict>(py).map_err(|_| PyDowncastError).unwrap();
+                if !res.get_item("correct").unwrap().extract::<bool>()? {
                     Constraint {
-                        reason: "TODO".to_string(),
+                        reason: res.get_item("reason").unwrap().to_string(),
                     }
                     .fail()?;
                 }

@@ -70,7 +70,6 @@ pub fn parse_output(clap: &CliArgsEnv, config: CliArgsOutputConfig) -> CliArgsOu
 
 #[throws]
 pub fn parse_circuit(clap: &CliArgsEnv, config: CliArgsCircuitConfig) -> CliArgsCircuit {
-    // TODO all dir calls should not fail when file does not exist
     let path = || dir("./circuit_generator.py").unwrap_or_else(|_| "".to_string());
     let source = || dir("./templates/example.qasm").unwrap_or_else(|_| "".to_string());
 

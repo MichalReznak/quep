@@ -18,6 +18,12 @@ class LangCircuit(TypedDict):
 
 
 class CircuitGenerator:
+    def __init__(self, args):
+        pass
+
+    def check_constraints(self, config) -> dict[str, any]:
+        return {'correct': False, 'reason': 'Some wild reason'}
+
     def generate(self, i: int, j: int, it: int) -> LangCircuit:
         return {
             'width': 4,

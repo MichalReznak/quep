@@ -15,8 +15,6 @@ pub enum LangGateType {
     Cx,
     Cz,
     Swap,
-
-    // TODO other types of gates
     Barrier,
     Dummy,
 }
@@ -35,7 +33,7 @@ impl LangGateType {
             Cx => Cx,
             Cz => Cz,
             Swap => Swap,
-            Barrier => Barrier, // TODO support with multiple definitions -1 is with no index
+            Barrier => Barrier,
             Dummy => Dummy,
         }
     }

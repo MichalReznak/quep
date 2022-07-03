@@ -68,7 +68,6 @@ impl CircuitGenerator for VolumeCircuitGenerator {
             use CircuitBenchType::*;
             match self.args.bench {
                 Mirror => {
-                    // TODO interleave with barriers??
                     result.push(LangGate::builder().t(Barrier).i(-1).build());
                     result.extend(inv_result.into_iter());
                 }

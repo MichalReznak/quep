@@ -36,7 +36,6 @@ pub struct PythonSchema {
 impl PythonSchema {
     #[throws]
     pub fn from_args(args: &CliArgsLangSchema) -> Self {
-        // TODO should add some type of path to file
         let py_instance = Python::with_gil(|py| {
             let code = std::fs::read_to_string(&args.path)?;
             let module = PyModule::from_code(py, &code, "", "")?;

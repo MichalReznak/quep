@@ -44,7 +44,6 @@ impl FsCircuitGenerator {
     }
 }
 
-// TODO use mirror somehow, set state to one
 #[async_trait]
 impl CircuitGenerator for FsCircuitGenerator {
     fn check_constraints(&self, args: &CliArgs) -> Result<(), Error> {
@@ -65,7 +64,6 @@ impl CircuitGenerator for FsCircuitGenerator {
         Ok(())
     }
 
-    // TODO switch arguments
     async fn generate(
         &mut self,
         lang_schema: &LangSchemaDyn,
@@ -96,20 +94,17 @@ impl CircuitGenerator for FsCircuitGenerator {
                 }
             }
 
-            // TODO copied code from base.rs
             // TODO remove, don't know how
             let oqs_gates = lang_schema
                 .parse_file(self.entries[(j - 1) as usize].path().to_str().context(OutOfBounds)?)
                 .await?;
 
-            // TODO should have depth and width?
             let (mut oqs_gates, mut inv_gates) = oqs_parse_circuit(oqs_gates, i32::MAX, width)?;
 
             use CircuitBenchType::*;
 
             match self.args.bench {
                 Mirror => {
-                    // TODO interleave with barriers??
                     oqs_gates.push(LangGate::builder().t(LangGateType::Barrier).i(-1).build());
                     oqs_gates.extend(inv_gates.into_iter());
                 }

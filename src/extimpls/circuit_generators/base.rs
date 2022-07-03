@@ -58,7 +58,6 @@ impl CircuitGenerator for BaseCircuitGenerator {
 
         match self.args.bench {
             Mirror => {
-                // TODO interleave with barriers??
                 oqs_gates.push(LangGate::builder().t(LangGateType::Barrier).i(-1).build());
                 oqs_gates.extend(inv_gates.into_iter());
             }

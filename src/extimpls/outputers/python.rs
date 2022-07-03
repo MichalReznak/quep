@@ -1,19 +1,25 @@
 //! # Outputer interface:
 //! class Outputer:
-//!     def check_constraints(self) -> bool:
+//!     def __init__(self, args):
+//!         pass
+//!
+//!     def check_constraints(self, config) -> bool:
 //!         return True
 //!
-//!     def output_table(self, values: [[dict[str, any]]], durations: [int],
-//! runtime: int) -> str:         # Format table in any way
-//!         return ""
+//!     def output_table(self, values: [[dict[str, any]]],
+//!         durations: [int], runtime: int) -> str:
+//!         # Format table in any way
+//!         return ''
 //!
-//!     def output_volume(self, values: [dict[str, any]], durations: [int],
-//! runtime: int) -> str:         # Format volume in any way
-//!         return ""
+//!     def output_volume(self, values: [dict[str, any]],
+//!         durations: [int], runtime: int) -> str:
+//!         # Format volume in any way
+//!         return ''
 //!
-//!     def output_linear(self, values: [dict[str, any]], durations: [int],
-//! runtime: int, width: int) -> str:         # Format linear in any way
-//!         return ""
+//!     def output_linear(self, values: [dict[str, any]],
+//!     durations: [int], runtime: int, width: int) -> str:
+//!         # Format linear in any way
+//!         return ''
 
 use async_trait::async_trait;
 use fehler::throws;
@@ -46,10 +52,10 @@ impl PythonOutputer {
 
 #[async_trait]
 impl Outputer for PythonOutputer {
-    fn check_constraints(&self, _args: &CliArgs) -> Result<(), Error> {
+    fn check_constraints(&self, args: &CliArgs) -> Result<(), Error> {
         Python::with_gil(|py| {
             if let Ok(method) = self.py_instance.getattr(py, "check_constraints") {
-                if !method.call0(py)?.extract::<bool>(py)? {
+                if !method.call1(py, (args.clone(),))?.extract::<bool>(py)? {
                     Constraint {
                         reason: "TODO".to_string(),
                     }

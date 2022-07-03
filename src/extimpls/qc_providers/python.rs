@@ -1,24 +1,31 @@
 //! # Python implementation provider:
 //! class QcProvider:
-//!     def check_constraints(self) -> bool:
+//!     def __init__(self, args):
+//!         pass
+//!
+//!     def check_constraints(self, config) -> bool:
 //!         return True
 //!
 //!     def get_meta_info(self):
-//!         return <meta-info>
+//!         return {'time': 42}
 //!
 //!     def auth(self):
 //!         # Any authorization necessary
+//!         pass
 //!
 //!     def clear_circuits(self: 'QcProvider'):
 //!         # Clear circuits
+//!         pass
 //!
 //!     def append_circuit(self: 'QcProvider',
 //!             circuit: str, lang_schema_type: str, log: bool):
 //!         # These are the circuits that will be executed
+//!         pass
 //!
 //!     def run_all(self: 'QcProvider') -> str:
 //!         # Execute on provider and return the result
 //!         # in a form of Dict[str, int]
+//!         return ''
 
 use async_trait::async_trait;
 use fehler::throws;
@@ -52,10 +59,10 @@ impl PythonQcProvider {
 
 #[async_trait]
 impl QcProvider for PythonQcProvider {
-    fn check_constraints(&self, _args: &CliArgs) -> Result<(), Error> {
+    fn check_constraints(&self, args: &CliArgs) -> Result<(), Error> {
         Python::with_gil(|py| {
             if let Ok(method) = self.py_instance.getattr(py, "check_constraints") {
-                if !method.call0(py)?.extract::<bool>(py)? {
+                if !method.call1(py, (args.clone(),))?.extract::<bool>(py)? {
                     Constraint {
                         reason: "TODO".to_string(),
                     }

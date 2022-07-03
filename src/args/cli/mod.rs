@@ -11,6 +11,7 @@ use collection_literals::collection;
 pub use config::CliArgsConfig;
 pub use env::CliArgsEnv;
 use fehler::throws;
+use pyo3::pyclass;
 use typed_builder::TypedBuilder;
 use types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
 
@@ -22,6 +23,7 @@ use crate::config::{
 use crate::error::Constraint;
 use crate::{dir, Error};
 
+#[pyclass]
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct CliArgs {
     pub provider: CliArgsProvider,

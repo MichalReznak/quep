@@ -1,13 +1,16 @@
 //! # LangSchema interface:
 //! class LangSchema:
-//!     def check_constraints(self) -> bool:
+//!     def __init__(self, args):
+//!         pass
+//!
+//!     def check_constraints(self, config) -> bool:
 //!         return True
 //!
 //!     def parse_file(path: str) -> [dict[str, any]]:
-//!         return [{ t: 'X', i: 0, other: 0}]
+//!         return [{'t': 'X', 'i': 0, 'other': 0}]
 //!
 //!     def as_string(circ: dict[str, any]) -> dict[str, any]:
-//!         return {circuit: '', t: 'OpenQasm'}
+//!         return {'circuit': '', 't': 'OpenQasm'}
 
 use async_trait::async_trait;
 use fehler::throws;
@@ -36,7 +39,7 @@ impl PythonSchema {
             let code = std::fs::read_to_string(&args.path)?;
             let module = PyModule::from_code(py, &code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("LangSchema")?.into();
-            qiskit.call0(py)
+            qiskit.call1(py, (args.clone(),))
         })?;
 
         Self {
@@ -48,10 +51,10 @@ impl PythonSchema {
 
 #[async_trait]
 impl LangSchema for PythonSchema {
-    fn check_constraints(&self, _args: &CliArgs) -> Result<(), Error> {
+    fn check_constraints(&self, args: &CliArgs) -> Result<(), Error> {
         Python::with_gil(|py| {
             if let Ok(method) = self.py_instance.getattr(py, "check_constraints") {
-                if !method.call0(py)?.extract::<bool>(py)? {
+                if !method.call1(py, (args.clone(),))?.extract::<bool>(py)? {
                     Constraint {
                         reason: "TODO".to_string(),
                     }

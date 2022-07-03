@@ -44,6 +44,6 @@ pub trait CircuitGenerator {
         lang_schema: &LangSchemaDyn,
         i: i32,
         j: i32,
-        rand: i32,
+        iter: i32,
     ) -> Result<Option<LangCircuit>, Error>;
 }

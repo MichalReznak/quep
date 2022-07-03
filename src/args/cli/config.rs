@@ -4,7 +4,7 @@ use fehler::throws;
 use serde::{Deserialize, Deserializer, Serialize};
 
 use super::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
-use crate::args::types::{CircuitBenchType, CircuitSchemaType};
+use crate::args::types::{CircuitBenchType, LangSchemaType};
 use crate::utils::dir;
 
 #[derive(Serialize, Deserialize, Default)]
@@ -15,6 +15,9 @@ pub struct CliArgsConfig {
 
     #[serde(default)]
     pub circuit: CliArgsCircuitConfig,
+
+    #[serde(default)]
+    pub lang_schema: CliArgsLangSchemaConfig,
 
     #[serde(default)]
     pub orch: CliArgsOrchConfig,
@@ -49,12 +52,6 @@ pub struct CliArgsCircuitConfig {
     pub path: Option<String>,
 
     pub bench: Option<CircuitBenchType>,
-    pub schema: Option<CircuitSchemaType>,
-
-    #[serde(default)]
-    #[serde(deserialize_with = "parse_from_os_str")]
-    pub schema_path: Option<String>,
-
     pub init_one: Option<bool>,
     pub rand: Option<bool>,
     pub parse: Option<bool>,
@@ -73,6 +70,16 @@ pub struct CliArgsOutputConfig {
 
     pub ser: Option<OutputSerType>,
     pub pretty: Option<bool>,
+}
+
+#[derive(Serialize, Deserialize, Default, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct CliArgsLangSchemaConfig {
+    pub t: Option<LangSchemaType>,
+
+    #[serde(default)]
+    #[serde(deserialize_with = "parse_from_os_str")]
+    pub path: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Default, Clone)]

@@ -1,6 +1,8 @@
 use anyhow::Error;
 use fehler::throws;
-use quep_core::args::types::{CircuitType, OrchestratorType, OutputType, ProviderType};
+use quep_core::args::types::{
+    CircuitType, LangSchemaType, OrchestratorType, OutputType, ProviderType,
+};
 use quep_core::Quep;
 
 use crate::common::{get_args, Config};
@@ -15,6 +17,7 @@ async fn volume_a() {
             .cir(CircuitType::Volume)
             .orch(OrchestratorType::Volume)
             .out(OutputType::Serial)
+            .ls(LangSchemaType::OpenQasm)
             .prov(ProviderType::Noisy)
             .build(),
     )?;
@@ -29,6 +32,7 @@ async fn volume_b() {
             .cir(CircuitType::Volume)
             .orch(OrchestratorType::Volume)
             .out(OutputType::Text)
+            .ls(LangSchemaType::OpenQasm)
             .prov(ProviderType::Noisy)
             .build(),
     )?;
@@ -43,6 +47,7 @@ async fn volume_c() {
             .cir(CircuitType::Volume)
             .orch(OrchestratorType::Volume)
             .out(OutputType::Serial)
+            .ls(LangSchemaType::OpenQasm)
             .prov(ProviderType::Simple)
             .build(),
     )?;
@@ -57,6 +62,7 @@ async fn volume_d() {
             .cir(CircuitType::Volume)
             .orch(OrchestratorType::Volume)
             .out(OutputType::Text)
+            .ls(LangSchemaType::OpenQasm)
             .prov(ProviderType::Simple)
             .build(),
     )?;
@@ -71,6 +77,7 @@ async fn single_a() {
             .cir(CircuitType::Volume)
             .orch(OrchestratorType::Single)
             .out(OutputType::Serial)
+            .ls(LangSchemaType::OpenQasm)
             .prov(ProviderType::Noisy)
             .build(),
     )?;
@@ -85,6 +92,7 @@ async fn single_b() {
             .cir(CircuitType::Volume)
             .orch(OrchestratorType::Single)
             .out(OutputType::Text)
+            .ls(LangSchemaType::OpenQasm)
             .prov(ProviderType::Noisy)
             .build(),
     )?;
@@ -99,6 +107,7 @@ async fn single_c() {
             .cir(CircuitType::Volume)
             .orch(OrchestratorType::Single)
             .out(OutputType::Serial)
+            .ls(LangSchemaType::OpenQasm)
             .prov(ProviderType::Simple)
             .build(),
     )?;
@@ -113,6 +122,7 @@ async fn single_d() {
             .cir(CircuitType::Volume)
             .orch(OrchestratorType::Single)
             .out(OutputType::Text)
+            .ls(LangSchemaType::OpenQasm)
             .prov(ProviderType::Simple)
             .build(),
     )?;

@@ -34,9 +34,7 @@ pub use error::Error;
 pub use globals::*;
 
 use crate::args::config;
-use crate::args::types::{
-    CircuitBenchType, CircuitSchemaType, CircuitType, OutputType, ProviderType,
-};
+use crate::args::types::{CircuitBenchType, CircuitType, LangSchemaType, OutputType, ProviderType};
 use crate::utils::dir;
 
 pub struct Quep {
@@ -54,7 +52,7 @@ impl Quep {
             || matches!(args.output.t, OutputType::Python)
             || matches!(args.provider.t, ProviderType::Python)
             || matches!(args.circuit.t, CircuitType::Python)
-            || matches!(args.circuit.schema, CircuitSchemaType::Python)
+            || matches!(args.lang_schema.t, LangSchemaType::Python)
         {
             pyvenv::PyVenv::init(&args.provider.python_dir).await?;
             println!("Done");

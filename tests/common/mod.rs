@@ -4,10 +4,12 @@ use anyhow::{Context, Error};
 use collection_literals::collection;
 use fehler::throws;
 use quep_core::args::types::{
-    CircuitBenchType, CircuitSchemaType, CircuitType, OrchestratorType, OutputSerType, OutputType,
+    CircuitBenchType, CircuitType, LangSchemaType, OrchestratorType, OutputSerType, OutputType,
     ProviderType,
 };
-use quep_core::args::{CliArgsCircuit, CliArgsOrch, CliArgsOutput, CliArgsProvider};
+use quep_core::args::{
+    CliArgsCircuit, CliArgsLangSchema, CliArgsOrch, CliArgsOutput, CliArgsProvider,
+};
 use quep_core::CliArgs;
 use typed_builder::TypedBuilder;
 const ACCOUNT_ID: &str = "9ee04b444ed1c767fcd01b66027a391d8df5938df51dd27e6eaaed0a45f5da67c19dcfb2f2f46dcff893c3a54d054b4b392e1a54618d8cfea9d70d9f3378ea51";
@@ -18,6 +20,7 @@ pub struct Config {
     pub prov: ProviderType,
     pub out: OutputType,
     pub cir: CircuitType,
+    pub ls: LangSchemaType,
 }
 
 #[throws]
@@ -27,6 +30,7 @@ pub fn get_args(config: Config) -> CliArgs {
         .provider(get_prov(config.prov)?)
         .output(get_out(config.out)?)
         .circuit(get_cir(config.cir)?)
+        .lang_schema(get_ls(config.ls)?)
         .build()
 }
 
@@ -76,12 +80,15 @@ fn get_cir(t: CircuitType) -> CliArgsCircuit {
         .t(t)
         .bench(CircuitBenchType::Mirror)
         .path(get_dir("")?)
-        .schema(CircuitSchemaType::OpenQasm)
-        .schema_path(get_dir("")?)
         .init_one(false)
         .rand(true)
         .parse(false)
         .source(get_dir("./templates/example.qasm")?)
         .inverse_gates(collection! { HashMap<String, String>; })
         .build()
+}
+
+#[throws]
+fn get_ls(t: LangSchemaType) -> CliArgsLangSchema {
+    CliArgsLangSchema::builder().t(t).path(get_dir("")?).build()
 }

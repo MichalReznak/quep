@@ -2,6 +2,7 @@ use pyo3::pyclass;
 use serde::{Deserialize, Serialize};
 use strum_macros::{Display, EnumString};
 
+#[pyclass]
 #[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 pub enum ProviderType {
     Ibmq,
@@ -10,6 +11,7 @@ pub enum ProviderType {
     Python,
 }
 
+#[pyclass]
 #[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
 #[strum(ascii_case_insensitive)]
 pub enum OutputType {
@@ -18,6 +20,7 @@ pub enum OutputType {
     Python,
 }
 
+#[pyclass]
 #[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
 #[strum(ascii_case_insensitive)]
 pub enum CircuitType {
@@ -30,6 +33,7 @@ pub enum CircuitType {
     Python,
 }
 
+#[pyclass]
 #[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
 #[strum(ascii_case_insensitive)]
 pub enum OrchestratorType {
@@ -39,6 +43,7 @@ pub enum OrchestratorType {
     Volume, // QuantumVolume
 }
 
+#[pyclass]
 #[derive(Debug, EnumString, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
 #[strum(ascii_case_insensitive)]
 pub enum OutputSerType {
@@ -49,15 +54,16 @@ pub enum OutputSerType {
     Ron,
 }
 
+#[pyclass]
 #[derive(Debug, EnumString, Display, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
 #[strum(ascii_case_insensitive)]
-#[pyclass]
-pub enum CircuitSchemaType {
+pub enum LangSchemaType {
     OpenQasm,
     Qiskit,
     Python,
 }
 
+#[pyclass]
 #[derive(Debug, EnumString, Display, Clone, Copy, Serialize, Deserialize, Eq, PartialEq)]
 #[strum(ascii_case_insensitive)]
 pub enum CircuitBenchType {

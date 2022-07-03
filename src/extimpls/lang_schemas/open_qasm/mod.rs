@@ -5,7 +5,8 @@ use async_trait::async_trait;
 use fehler::{throw, throws};
 use openqasm::{Errors, GenericError, Parser, ProgramVisitor, SourceCache};
 
-use crate::args::types::CircuitSchemaType;
+use crate::args::types::LangSchemaType;
+use crate::args::CliArgsLangSchema;
 use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::LangSchema;
@@ -66,7 +67,7 @@ pub struct OpenQasmSchema {
 
 impl OpenQasmSchema {
     #[throws]
-    pub fn from_args() -> Self {
+    pub fn from_args(_: &CliArgsLangSchema) -> Self {
         Self { gates: vec![] }
     }
 }
@@ -121,6 +122,6 @@ impl LangSchema for OpenQasmSchema {
         }
         let res = res.replace("%GATES%", &gates);
 
-        Ok(GenCircuit::builder().circuit(res).t(CircuitSchemaType::OpenQasm).build())
+        Ok(GenCircuit::builder().circuit(res).t(LangSchemaType::OpenQasm).build())
     }
 }

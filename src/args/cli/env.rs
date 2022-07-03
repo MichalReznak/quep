@@ -8,7 +8,7 @@ use snafu::OptionExt;
 use unwrap_infallible::UnwrapInfallible;
 
 use super::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
-use crate::args::types::{CircuitBenchType, CircuitSchemaType};
+use crate::args::types::{CircuitBenchType, LangSchemaType};
 pub use crate::config::CliArgsConfig;
 use crate::error::{Error, Utf16};
 
@@ -48,12 +48,6 @@ pub struct CliArgsEnv {
     #[clap(long, env = "QUEP_CIRCUIT_BENCH")]
     pub circuit_bench: Option<CircuitBenchType>,
 
-    #[clap(long, env = "QUEP_CIRCUIT_SCHEMA")]
-    pub circuit_schema: Option<CircuitSchemaType>,
-
-    #[clap(long, env = "QUEP_CIRCUIT_SCHEMA_PATH", parse(try_from_os_str = parse_from_os_str))]
-    pub circuit_schema_path: Option<String>,
-
     #[clap(long, env = "QUEP_CIRCUIT_INIT_ONE")]
     pub circuit_init_one: Option<bool>,
 
@@ -68,6 +62,12 @@ pub struct CliArgsEnv {
 
     #[clap(long, env = "QUEP_CIRCUIT_INVERSE_GATES", parse(try_from_str = parse_to_map))]
     pub circuit_inverse_gates: Option<HashMap<String, String>>,
+
+    #[clap(long, env = "QUEP_LANG_SCHEMA")]
+    pub lang_schema: Option<LangSchemaType>,
+
+    #[clap(long, env = "QUEP_LANG_SCHEMA_PATH", parse(try_from_os_str = parse_from_os_str))]
+    pub lang_schema_path: Option<String>,
 
     #[clap(long, env = "QUEP_ORCH")]
     pub orch: Option<OrchestratorType>,

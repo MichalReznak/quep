@@ -15,6 +15,7 @@ use pyo3::prelude::*;
 use pyo3::{PyObject, Python};
 use pythonize::depythonize;
 
+use crate::args::CliArgsLangSchema;
 use crate::error::Constraint;
 use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::LangGate;
@@ -29,10 +30,10 @@ pub struct PythonSchema {
 
 impl PythonSchema {
     #[throws]
-    pub fn from_args() -> Self {
+    pub fn from_args(args: &CliArgsLangSchema) -> Self {
         // TODO should add some type of path to file
         let py_instance = Python::with_gil(|py| {
-            let code = std::fs::read_to_string("./python/ext/lang_schema.py")?;
+            let code = std::fs::read_to_string(&args.path)?;
             let module = PyModule::from_code(py, &code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("LangSchema")?.into();
             qiskit.call0(py)

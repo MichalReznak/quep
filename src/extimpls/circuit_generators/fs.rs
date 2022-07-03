@@ -9,7 +9,7 @@ use oq::GenericError;
 use snafu::OptionExt;
 use walkdir::{DirEntry, WalkDir};
 
-use crate::args::types::{CircuitBenchType, CircuitSchemaType, OrchestratorType};
+use crate::args::types::{CircuitBenchType, LangSchemaType, OrchestratorType};
 use crate::args::CliArgsCircuit;
 use crate::error::{Constraint, OutOfBounds};
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
@@ -56,7 +56,7 @@ impl CircuitGenerator for FsCircuitGenerator {
             .fail()?;
         }
 
-        if !matches!(args.circuit.schema, CircuitSchemaType::OpenQasm) {
+        if !matches!(args.lang_schema.t, LangSchemaType::OpenQasm) {
             Constraint {
                 reason: "FileSystem Circuit Generator supports OpenQasm files only".to_string(),
             }

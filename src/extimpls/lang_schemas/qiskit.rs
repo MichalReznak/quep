@@ -8,7 +8,8 @@ use tokio::fs::File;
 use tokio::io::{AsyncBufReadExt, BufReader};
 use unwrap_infallible::UnwrapInfallible;
 
-use crate::args::types::CircuitSchemaType;
+use crate::args::types::LangSchemaType;
+use crate::args::CliArgsLangSchema;
 use crate::ext::types::circuit_generator::GenCircuit;
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::LangSchema;
@@ -88,7 +89,7 @@ pub struct QiskitSchema {
 
 impl QiskitSchema {
     #[throws]
-    pub fn from_args() -> Self {
+    pub fn from_args(_: &CliArgsLangSchema) -> Self {
         Self { gates: vec![] }
     }
 }
@@ -164,6 +165,6 @@ impl LangSchema for QiskitSchema {
 
         println!("{res}");
 
-        Ok(GenCircuit::builder().circuit(res).t(CircuitSchemaType::Qiskit).build())
+        Ok(GenCircuit::builder().circuit(res).t(LangSchemaType::Qiskit).build())
     }
 }

@@ -6,7 +6,7 @@ use quep_core::args::config::{
     CliArgsCircuitConfig, CliArgsOrchConfig, CliArgsOutputConfig, CliArgsProviderConfig,
 };
 use quep_core::args::types::{
-    CircuitBenchType, CircuitSchemaType, CircuitType, OrchestratorType, OutputSerType, OutputType,
+    CircuitBenchType, CircuitType, LangSchemaType, OrchestratorType, OutputSerType, OutputType,
     ProviderType,
 };
 use quep_core::args::CliArgsConfig;
@@ -28,7 +28,7 @@ struct QuepyConfig {
     pub circuit: Option<CircuitType>,
     pub circuit_path: Option<String>,
     pub circuit_bench: Option<CircuitBenchType>,
-    pub circuit_schema: Option<CircuitSchemaType>,
+    pub circuit_schema: Option<LangSchemaType>,
     pub circuit_schema_path: Option<String>,
     pub circuit_init_one: Option<bool>,
     pub circuit_rand: Option<bool>,
@@ -96,7 +96,7 @@ impl QuepyConfig {
             circuit_path,
             circuit_bench: circuit_bench.map(|e| CircuitBenchType::from_str(&e).unwrap()),
             circuit_init_one,
-            circuit_schema: circuit_schema.map(|e| CircuitSchemaType::from_str(&e).unwrap()),
+            circuit_schema: circuit_schema.map(|e| LangSchemaType::from_str(&e).unwrap()),
             circuit_schema_path,
             circuit_rand,
             circuit_parse,

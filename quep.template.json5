@@ -10,8 +10,6 @@
         t: 'Struct', // Base, Struct, Rand, Fs, Volume, Basic, Python
         path: './circuit_generator.py', // Path to Custom Circuit Generator
         bench: 'Mirror', // Mirror, Cycle, None
-        schema: 'OpenQasm', // OpenQasm, Qiskit, Python
-        schemaPath: './lang_schema.py', // Path to Custom Language Schema
         initOne: false, // Set state to one or zero
         rand: false, // Outputs different circuits for each iteration
         source: './template.qasm', // Base circuit source
@@ -24,6 +22,10 @@
         path: './outputer.py', // Path to Custom Outputer
         ser: 'Json', // Json, Xml, Yaml, Toml, Ron, ...
         pretty: true, // Pretty format
+    },
+    langSchema: {
+        t: 'OpenQasm', // OpenQasm, Qiskit, Python
+        path: './lang_schema.py', // Path to Custom Language Schema
     },
     orch: {
         t: 'Lattice', // Lattice, Volume, Linear, Single

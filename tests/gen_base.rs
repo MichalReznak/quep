@@ -1,6 +1,8 @@
 use anyhow::Error;
 use fehler::throws;
-use quep_core::args::types::{CircuitType, OrchestratorType, OutputType, ProviderType};
+use quep_core::args::types::{
+    CircuitType, LangSchemaType, OrchestratorType, OutputType, ProviderType,
+};
 use quep_core::Quep;
 
 use crate::common::{get_args, Config};
@@ -15,6 +17,7 @@ async fn lattice_a() {
             .cir(CircuitType::Base)
             .orch(OrchestratorType::Lattice)
             .out(OutputType::Serial)
+            .ls(LangSchemaType::OpenQasm)
             .prov(ProviderType::Noisy)
             .build(),
     )?;
@@ -29,6 +32,7 @@ async fn lattice_b() {
             .cir(CircuitType::Base)
             .orch(OrchestratorType::Lattice)
             .out(OutputType::Text)
+            .ls(LangSchemaType::OpenQasm)
             .prov(ProviderType::Noisy)
             .build(),
     )?;
@@ -43,6 +47,7 @@ async fn lattice_c() {
             .cir(CircuitType::Base)
             .orch(OrchestratorType::Lattice)
             .out(OutputType::Serial)
+            .ls(LangSchemaType::OpenQasm)
             .prov(ProviderType::Simple)
             .build(),
     )?;
@@ -57,6 +62,7 @@ async fn lattice_d() {
             .cir(CircuitType::Base)
             .orch(OrchestratorType::Lattice)
             .out(OutputType::Text)
+            .ls(LangSchemaType::OpenQasm)
             .prov(ProviderType::Simple)
             .build(),
     )?;
@@ -71,6 +77,7 @@ async fn single_a() {
             .cir(CircuitType::Base)
             .orch(OrchestratorType::Single)
             .out(OutputType::Serial)
+            .ls(LangSchemaType::OpenQasm)
             .prov(ProviderType::Noisy)
             .build(),
     )?;
@@ -85,6 +92,7 @@ async fn single_b() {
             .cir(CircuitType::Base)
             .orch(OrchestratorType::Single)
             .out(OutputType::Text)
+            .ls(LangSchemaType::OpenQasm)
             .prov(ProviderType::Noisy)
             .build(),
     )?;
@@ -99,6 +107,7 @@ async fn single_c() {
             .cir(CircuitType::Base)
             .orch(OrchestratorType::Single)
             .out(OutputType::Serial)
+            .ls(LangSchemaType::OpenQasm)
             .prov(ProviderType::Simple)
             .build(),
     )?;
@@ -113,6 +122,7 @@ async fn single_d() {
             .cir(CircuitType::Base)
             .orch(OrchestratorType::Single)
             .out(OutputType::Text)
+            .ls(LangSchemaType::OpenQasm)
             .prov(ProviderType::Simple)
             .build(),
     )?;
@@ -127,6 +137,7 @@ async fn linear_a() {
             .cir(CircuitType::Base)
             .orch(OrchestratorType::Linear)
             .out(OutputType::Serial)
+            .ls(LangSchemaType::OpenQasm)
             .prov(ProviderType::Noisy)
             .build(),
     )?;
@@ -141,6 +152,7 @@ async fn linear_b() {
             .cir(CircuitType::Base)
             .orch(OrchestratorType::Linear)
             .out(OutputType::Text)
+            .ls(LangSchemaType::OpenQasm)
             .prov(ProviderType::Noisy)
             .build(),
     )?;
@@ -155,6 +167,7 @@ async fn linear_c() {
             .cir(CircuitType::Base)
             .orch(OrchestratorType::Linear)
             .out(OutputType::Serial)
+            .ls(LangSchemaType::OpenQasm)
             .prov(ProviderType::Simple)
             .build(),
     )?;
@@ -169,6 +182,7 @@ async fn linear_d() {
             .cir(CircuitType::Base)
             .orch(OrchestratorType::Linear)
             .out(OutputType::Text)
+            .ls(LangSchemaType::OpenQasm)
             .prov(ProviderType::Simple)
             .build(),
     )?;

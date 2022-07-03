@@ -14,9 +14,10 @@ use fehler::throws;
 use typed_builder::TypedBuilder;
 use types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
 
-use crate::args::types::{CircuitBenchType, CircuitSchemaType};
+use crate::args::types::{CircuitBenchType, LangSchemaType};
 use crate::config::{
-    CliArgsCircuitConfig, CliArgsOrchConfig, CliArgsOutputConfig, CliArgsProviderConfig,
+    CliArgsCircuitConfig, CliArgsLangSchemaConfig, CliArgsOrchConfig, CliArgsOutputConfig,
+    CliArgsProviderConfig,
 };
 use crate::error::Constraint;
 use crate::{dir, Error};
@@ -26,6 +27,7 @@ pub struct CliArgs {
     pub provider: CliArgsProvider,
     pub output: CliArgsOutput,
     pub circuit: CliArgsCircuit,
+    pub lang_schema: CliArgsLangSchema,
     pub orch: CliArgsOrch,
 }
 
@@ -68,20 +70,12 @@ pub fn parse_output(clap: &CliArgsEnv, config: CliArgsOutputConfig) -> CliArgsOu
 pub fn parse_circuit(clap: &CliArgsEnv, config: CliArgsCircuitConfig) -> CliArgsCircuit {
     // TODO all dir calls should not fail when file does not exist
     let path = || dir("./circuit_generator.py").unwrap_or_else(|_| "".to_string());
-    let schema_path = || dir("./lang_schema.py").unwrap_or_else(|_| "".to_string());
     let source = || dir("./templates/example.qasm").unwrap_or_else(|_| "".to_string());
 
     CliArgsCircuit::builder()
         .t(clap.circuit.or(config.t).unwrap_or(CircuitType::Struct))
         .path(clap.circuit_path.clone().or(config.path).unwrap_or_else(path))
         .bench(clap.circuit_bench.or(config.bench).unwrap_or(CircuitBenchType::Mirror))
-        .schema(clap.circuit_schema.or(config.schema).unwrap_or(CircuitSchemaType::OpenQasm))
-        .schema_path(
-            clap.circuit_schema_path
-                .clone()
-                .or(config.schema_path)
-                .unwrap_or_else(schema_path),
-        )
         .init_one(clap.circuit_init_one.or(config.init_one).unwrap_or(false))
         .rand(clap.circuit_rand.or(config.rand).unwrap_or(false))
         .parse(clap.circuit_parse.or(config.parse).unwrap_or(false))
@@ -93,6 +87,16 @@ pub fn parse_circuit(clap: &CliArgsEnv, config: CliArgsCircuitConfig) -> CliArgs
                 "t".to_string() => "tdg".to_string(),
             },
         ))
+        .build()
+}
+
+#[throws]
+pub fn parse_lang_schema(clap: &CliArgsEnv, config: CliArgsLangSchemaConfig) -> CliArgsLangSchema {
+    let path = || dir("./lang_schema.py").unwrap_or_else(|_| "".to_string());
+
+    CliArgsLangSchema::builder()
+        .t(clap.lang_schema.or(config.t).unwrap_or(LangSchemaType::OpenQasm))
+        .path(clap.lang_schema_path.clone().or(config.path).unwrap_or_else(path))
         .build()
 }
 
@@ -138,6 +142,7 @@ impl CliArgs {
             .provider(parse_provider(&clap, config.provider)?)
             .output(parse_output(&clap, config.output)?)
             .circuit(parse_circuit(&clap, config.circuit)?)
+            .lang_schema(parse_lang_schema(&clap, config.lang_schema)?)
             .orch(parse_orch(&clap, config.orch)?)
             .build();
         check_constraints(&res)?;
@@ -152,6 +157,7 @@ impl CliArgs {
             .provider(parse_provider(&clap, config.provider)?)
             .output(parse_output(&clap, config.output)?)
             .circuit(parse_circuit(&clap, config.circuit)?)
+            .lang_schema(parse_lang_schema(&clap, config.lang_schema)?)
             .orch(parse_orch(&clap, config.orch)?)
             .build();
         check_constraints(&res)?;
@@ -171,6 +177,7 @@ impl CliArgs {
             .provider(parse_provider(&clap, config.provider)?)
             .output(parse_output(&clap, config.output)?)
             .circuit(parse_circuit(&clap, config.circuit)?)
+            .lang_schema(parse_lang_schema(&clap, config.lang_schema)?)
             .orch(parse_orch(&clap, config.orch)?)
             .build();
 

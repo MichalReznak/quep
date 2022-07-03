@@ -29,11 +29,11 @@ impl Chooser {
 
     #[throws]
     pub fn get_lang_schema(&self) -> LangSchemaDyn {
-        use CircuitSchemaType::*;
-        let res = match self.args.circuit.schema {
-            OpenQasm => LangSchemaDyn::from(OpenQasmSchema::from_args()?),
-            Qiskit => LangSchemaDyn::from(QiskitSchema::from_args()?),
-            Python => LangSchemaDyn::from(PythonSchema::from_args()?),
+        use LangSchemaType::*;
+        let res = match self.args.lang_schema.t {
+            OpenQasm => LangSchemaDyn::from(OpenQasmSchema::from_args(&self.args.lang_schema)?),
+            Qiskit => LangSchemaDyn::from(QiskitSchema::from_args(&self.args.lang_schema)?),
+            Python => LangSchemaDyn::from(PythonSchema::from_args(&self.args.lang_schema)?),
         };
         res.check_constraints(&self.args)?;
         res

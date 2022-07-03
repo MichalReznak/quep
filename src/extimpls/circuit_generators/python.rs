@@ -28,12 +28,11 @@ pub struct PythonCircuitGenerator {
 impl PythonCircuitGenerator {
     #[throws]
     pub fn from_args(args: &CliArgsCircuit) -> Self {
-        // TODO should add some type of path to file
         let py_instance = Python::with_gil(|py| {
-            let code = std::fs::read_to_string("./python/ext/circuit_generator.py")?;
+            let code = std::fs::read_to_string(&args.path)?;
             let module = PyModule::from_code(py, &code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("CircuitGenerator")?.into();
-            qiskit.call0(py)
+            qiskit.call1(py, (args.clone(),))
         })?;
 
         Self {

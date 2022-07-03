@@ -32,13 +32,12 @@ pub struct PythonOutputer {
 
 impl PythonOutputer {
     #[throws]
-    pub fn from_args(_args: &CliArgsOutput) -> Self {
-        // TODO should add some type of path to file
+    pub fn from_args(args: &CliArgsOutput) -> Self {
         let py_instance = Python::with_gil(|py| {
-            let code = std::fs::read_to_string("./python/ext/outputer.py")?;
+            let code = std::fs::read_to_string(&args.path)?;
             let module = PyModule::from_code(py, &code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Outputer")?.into();
-            qiskit.call0(py)
+            qiskit.call1(py, (args.clone(),))
         })?;
 
         Self { py_instance }

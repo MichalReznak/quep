@@ -1,10 +1,12 @@
 use std::collections::HashMap;
 
+use pyo3::pyclass;
 use typed_builder::TypedBuilder;
 
 use super::types::{CircuitType, OrchestratorType, OutputSerType, OutputType, ProviderType};
-use crate::args::types::{CircuitBenchType, CircuitSchemaType};
+use crate::args::types::{CircuitBenchType, LangSchemaType};
 
+#[pyclass]
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct CliArgsProvider {
     pub t: ProviderType,
@@ -19,6 +21,7 @@ pub struct CliArgsProvider {
     pub account_id: String,
 }
 
+#[pyclass]
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct CliArgsOutput {
     pub t: OutputType,
@@ -33,6 +36,7 @@ pub struct CliArgsOutput {
     pub pretty: bool,
 }
 
+#[pyclass]
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct CliArgsCircuit {
     pub t: CircuitType,
@@ -42,12 +46,6 @@ pub struct CliArgsCircuit {
 
     /// Circuit benchmark type
     pub bench: CircuitBenchType,
-
-    /// Used language schema
-    pub schema: CircuitSchemaType,
-
-    /// Path to Custom Language Schema
-    pub schema_path: String,
 
     /// Initializes all qubits to |1>
     pub init_one: bool,
@@ -65,6 +63,17 @@ pub struct CliArgsCircuit {
     pub inverse_gates: HashMap<String, String>,
 }
 
+#[pyclass]
+#[derive(Debug, Clone, TypedBuilder)]
+pub struct CliArgsLangSchema {
+    /// Used language schema
+    pub t: LangSchemaType,
+
+    /// Path to Custom Language Schema
+    pub path: String,
+}
+
+#[pyclass]
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct CliArgsOrch {
     pub t: OrchestratorType,

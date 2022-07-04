@@ -73,8 +73,7 @@ impl LangSchema for PythonSchema {
             let res = self.py_instance.call_method1(py, "parse_file", (path,))?;
             if res.is_none(py) {
                 Constraint {
-                    reason: "Shouldn't be a constraint" // TODO
-                        .to_string(),
+                    reason: "Parse file error".to_string(),
                 }
                 .fail()?;
             }
@@ -88,8 +87,7 @@ impl LangSchema for PythonSchema {
             let res = self.py_instance.call_method1(py, "as_string", (circ,))?;
             if res.is_none(py) {
                 Constraint {
-                    reason: "Shouldn't be a constraint" // TODO
-                        .to_string(),
+                    reason: "Stringification error".to_string(),
                 }
                 .fail()?;
             }

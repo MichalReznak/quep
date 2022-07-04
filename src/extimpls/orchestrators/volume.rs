@@ -79,7 +79,6 @@ impl Orchestrator for VolumeOrchestrator {
         let runtime = Instant::now();
 
         if self.args.collect {
-            // TODO add iterations
             'main: for i in 1..=width {
                 for ii in 0..iter {
                     if let Some(c) = generator.generate(&lang_schema, i, i, ii).await? {
@@ -189,8 +188,17 @@ impl Orchestrator for VolumeOrchestrator {
                         val.result = c["result"].parse::<String>().unwrap_infallible();
                         val.correct += c["val"].parse::<i32>()?;
 
-                        sim_val.result = c["result"].parse::<String>().unwrap_infallible();
-                        sim_val.correct += c["val"].parse::<i32>()?;
+                        if !mirror {
+                            provider.append_circuit(circuit.clone()).await?;
+
+                            let res = provider.run().await?.get(0).unwrap().to_string();
+                            time += provider.meta_info().await?.time;
+
+                            // TODO value is always overwritten in all orch
+                            let c = re.captures(&res).context(RegexCapture)?;
+                            sim_val.result = c["result"].parse::<String>().unwrap_infallible();
+                            sim_val.correct += c["val"].parse::<i32>()?;
+                        }
                     }
                     else {
                         break 'main2;

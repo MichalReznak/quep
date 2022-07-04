@@ -3,7 +3,8 @@ use std::str::FromStr;
 use pyo3::prelude::*;
 use pyo3_asyncio::tokio::future_into_py;
 use quep_core::args::config::{
-    CliArgsCircuitConfig, CliArgsOrchConfig, CliArgsOutputConfig, CliArgsProviderConfig,
+    CliArgsCircuitConfig, CliArgsLangSchemaConfig, CliArgsOrchConfig, CliArgsOutputConfig,
+    CliArgsProviderConfig,
 };
 use quep_core::args::types::{
     CircuitBenchType, CircuitType, LangSchemaType, OrchestratorType, OutputSerType, OutputType,
@@ -28,12 +29,13 @@ struct QuepyConfig {
     pub circuit: Option<CircuitType>,
     pub circuit_path: Option<String>,
     pub circuit_bench: Option<CircuitBenchType>,
-    pub circuit_schema: Option<LangSchemaType>,
-    pub circuit_schema_path: Option<String>,
     pub circuit_init_one: Option<bool>,
     pub circuit_rand: Option<bool>,
     pub circuit_parse: Option<bool>,
     pub circuit_source: Option<String>,
+
+    pub lang_schema: Option<LangSchemaType>,
+    pub lang_schema_path: Option<String>,
 
     pub orch: Option<OrchestratorType>,
     pub orch_data: Option<String>,
@@ -48,7 +50,6 @@ struct QuepyConfig {
 
 #[pymethods]
 impl QuepyConfig {
-    // TODO
     #[new]
     fn new(
         provider: Option<String>,
@@ -64,12 +65,13 @@ impl QuepyConfig {
         circuit: Option<String>,
         circuit_path: Option<String>,
         circuit_bench: Option<String>,
-        circuit_schema: Option<String>,
-        circuit_schema_path: Option<String>,
         circuit_init_one: Option<bool>,
         circuit_rand: Option<bool>,
         circuit_parse: Option<bool>,
         circuit_source: Option<String>,
+
+        lang_schema: Option<String>,
+        lang_schema_path: Option<String>,
 
         orch: Option<String>,
         orch_data: Option<String>,
@@ -96,11 +98,13 @@ impl QuepyConfig {
             circuit_path,
             circuit_bench: circuit_bench.map(|e| CircuitBenchType::from_str(&e).unwrap()),
             circuit_init_one,
-            circuit_schema: circuit_schema.map(|e| LangSchemaType::from_str(&e).unwrap()),
-            circuit_schema_path,
             circuit_rand,
             circuit_parse,
             circuit_source,
+
+            lang_schema: lang_schema.map(|e| LangSchemaType::from_str(&e).unwrap()),
+            lang_schema_path,
+
             orch: orch.map(|e| OrchestratorType::from_str(&e).unwrap()),
             orch_data,
             orch_iter,
@@ -127,13 +131,15 @@ impl From<QuepyConfig> for CliArgsConfig {
                 t: qc.circuit,
                 path: qc.circuit_path,
                 bench: qc.circuit_bench,
-                schema: qc.circuit_schema,
-                schema_path: qc.circuit_schema_path,
                 init_one: qc.circuit_init_one,
                 rand: qc.circuit_rand,
                 parse: qc.circuit_parse,
                 source: qc.circuit_source,
-                inverse_gates: None, // TODO
+                inverse_gates: None,
+            },
+            lang_schema: CliArgsLangSchemaConfig {
+                t: qc.lang_schema,
+                path: qc.lang_schema_path,
             },
             orch: CliArgsOrchConfig {
                 t: qc.orch,

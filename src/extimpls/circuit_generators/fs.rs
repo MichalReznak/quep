@@ -1,13 +1,8 @@
 //! Iter: How many valid gates should be skipped
 
-use std::path::Path;
-
 use async_trait::async_trait;
 use fehler::throws;
 use itertools::interleave;
-use log::error;
-use openqasm as oq;
-use oq::GenericError;
 use snafu::OptionExt;
 use walkdir::{DirEntry, WalkDir};
 
@@ -77,25 +72,6 @@ impl CircuitGenerator for FsCircuitGenerator {
             Ok(None)
         }
         else {
-            let path = self.entries[(j - 1) as usize].path();
-            let mut circuit = std::fs::read_to_string(path)?;
-            circuit.remove_matches("\r");
-
-            {
-                let mut cache = oq::SourceCache::new();
-                let check: Result<_, oq::Errors> = try {
-                    let mut parser = oq::Parser::new(&mut cache);
-                    parser.parse_source(circuit.to_string(), Some(&Path::new(".")));
-                    parser.done().to_errors()?.type_check().to_errors()?;
-                };
-
-                if let Err(errors) = check {
-                    errors.print(&mut cache)?;
-                    error!("{errors:#?}");
-                    return Err(Error::SomeError);
-                }
-            }
-
             // TODO remove, don't know how
             let oqs_gates = lang_schema
                 .parse_file(self.entries[(j - 1) as usize].path().to_str().context(OutOfBounds)?)

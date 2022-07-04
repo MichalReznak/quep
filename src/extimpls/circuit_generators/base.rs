@@ -46,9 +46,6 @@ impl CircuitGenerator for BaseCircuitGenerator {
         depth: i32,
         iter: i32,
     ) -> Result<Option<LangCircuit>, Error> {
-        // TODO check circuit size (Code from fs.rs)
-        // TODO different order of operations (using iterator)
-
         // TODO remove, don't know how
         let oqs_gates = lang_schema.parse_file(&self.args.source).await?;
 

@@ -72,7 +72,6 @@ impl CircuitGenerator for FsCircuitGenerator {
             Ok(None)
         }
         else {
-            // TODO remove, don't know how
             let oqs_gates = lang_schema
                 .parse_file(self.entries[(j - 1) as usize].path().to_str().context(OutOfBounds)?)
                 .await?;

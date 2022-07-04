@@ -183,8 +183,6 @@ impl Orchestrator for LatticeOrchestrator {
                     }
 
                     for ii in 0..iter {
-                        // TODO is there a no mirror option implemented?
-
                         if let Some(circuit) = generator.generate(&lang_schema, i, j, ii).await? {
                             // TODO if I do a multiple iterations and one falls below limit, how to
                             // solve this?

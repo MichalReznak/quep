@@ -147,6 +147,7 @@ pub fn oqs_parse_circuit(
     oqs_gates: Vec<LangGate>,
     depth: i32,
     width: i32,
+    mut iter: i32,
 ) -> (Vec<LangGate>, Vec<LangGate>) {
     let mut counts = HashMap::<i32, i32>::new();
     let mut gates = vec![];
@@ -154,6 +155,12 @@ pub fn oqs_parse_circuit(
 
     for gate in &oqs_gates {
         if matches!(gate.t, LangGateType::Barrier) && gate.i < width {
+            // Skip first N matches
+            if iter > 0 {
+                iter -= 1;
+                continue;
+            }
+
             gates.push(gate.clone());
             inv_gates.push(gate.inverse());
             continue;
@@ -205,6 +212,12 @@ pub fn oqs_parse_circuit(
                     }
                 }
                 _ => {}
+            }
+
+            // Skip first N matches
+            if iter > 0 {
+                iter -= 1;
+                continue;
             }
 
             gates.push(gate.clone());

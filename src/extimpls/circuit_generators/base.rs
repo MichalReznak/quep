@@ -10,6 +10,7 @@
 //! Gates needs to be defined only in an entry file (otherwise order is wrong)
 //! Depth is number of gates on each qubit it's not with automatic identity
 //! gates
+//! Iter: How many valid gates should be skipped
 
 use async_trait::async_trait;
 use fehler::throws;
@@ -43,16 +44,15 @@ impl CircuitGenerator for BaseCircuitGenerator {
         lang_schema: &LangSchemaDyn,
         width: i32,
         depth: i32,
-        _iter: i32, // TODO
+        iter: i32,
     ) -> Result<Option<LangCircuit>, Error> {
         // TODO check circuit size (Code from fs.rs)
-        // TODO barriers support
-        // TODO different order of operations
+        // TODO different order of operations (using iterator)
 
         // TODO remove, don't know how
         let oqs_gates = lang_schema.parse_file(&self.args.source).await?;
 
-        let (mut oqs_gates, mut inv_gates) = oqs_parse_circuit(oqs_gates, depth, width)?;
+        let (mut oqs_gates, mut inv_gates) = oqs_parse_circuit(oqs_gates, depth, width, iter)?;
 
         use CircuitBenchType::*;
 

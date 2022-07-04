@@ -15,7 +15,6 @@ use crate::Error;
 
 mod parser;
 
-// TODO do it gate independent
 const CIRCUIT_TEMPLATE: &str = r#"
 OPENQASM 2.0;
 include "qelib1.inc";
@@ -34,7 +33,6 @@ barrier q;
 measure q -> c;
 "#;
 
-// TODO remove fixed q
 fn gate_to_string(gate: &LangGate) -> String {
     use LangGateType::*;
     match gate.t {
@@ -103,7 +101,6 @@ impl LangSchema for OpenQasmSchema {
         Ok(pp.gates)
     }
 
-    // TODO check if is valid?
     async fn as_string(&mut self, circ: LangCircuit) -> Result<GenCircuit, Error> {
         // Add width
         let res = CIRCUIT_TEMPLATE.replace("%WIDTH%", &circ.width.to_string());

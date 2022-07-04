@@ -167,8 +167,6 @@ impl Orchestrator for LinearOrchestrator {
                 }
 
                 for ii in 0..iter {
-                    // TODO is there a no mirror option implemented?
-
                     if let Some(circuit) = generator.generate(&lang_schema, depth, j, ii).await? {
                         let circuit = lang_schema.as_string(circuit.clone()).await?;
                         provider.append_circuit(circuit.clone()).await?;

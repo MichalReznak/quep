@@ -16,7 +16,6 @@ use crate::ext::LangSchema;
 use crate::lang_schemas::LangCircuit;
 use crate::Error;
 
-// TODO do it gate independent
 const CIRCUIT_TEMPLATE: &str = r#"
 from qiskit import *
 
@@ -33,9 +32,6 @@ circ.barrier()
 %MEASURE%
 "#;
 
-// TODO add all measures
-
-// TODO remove fixed reg name
 fn gate_to_string(gate: &LangGate) -> String {
     use LangGateType::*;
     match gate.t {

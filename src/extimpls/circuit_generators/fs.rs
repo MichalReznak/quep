@@ -1,3 +1,5 @@
+//! Iter: How many valid gates should be skipped
+
 use std::path::Path;
 
 use async_trait::async_trait;
@@ -69,7 +71,7 @@ impl CircuitGenerator for FsCircuitGenerator {
         lang_schema: &LangSchemaDyn,
         width: i32,
         j: i32,
-        _: i32,
+        iter: i32,
     ) -> Result<Option<LangCircuit>, Error> {
         if j > self.entries.len() as i32 {
             Ok(None)
@@ -99,7 +101,8 @@ impl CircuitGenerator for FsCircuitGenerator {
                 .parse_file(self.entries[(j - 1) as usize].path().to_str().context(OutOfBounds)?)
                 .await?;
 
-            let (mut oqs_gates, mut inv_gates) = oqs_parse_circuit(oqs_gates, i32::MAX, width)?;
+            let (mut oqs_gates, mut inv_gates) =
+                oqs_parse_circuit(oqs_gates, i32::MAX, width, iter)?;
 
             use CircuitBenchType::*;
 

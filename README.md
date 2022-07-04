@@ -60,6 +60,9 @@ X Move extimpls to separate folder
 * NO: Extend supported gates with custom defined and their inverse
   (Will not be base gate anymore, no point of doing that)
 
+* NO: From Lang Schema allow to define custom registers (Extension)
+
+
 #### Changes after image inserted:
 X Add arg to say whether circuits should be mirrored or computed on a simulator
 X implement cycle benchmarking (inverse gate is inserted directly behind the correct gate, otherwise it is the same as mirror)

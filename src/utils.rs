@@ -9,6 +9,7 @@ use pyo3::{PyObject, Python};
 use snafu::OptionExt;
 
 use crate::error::Utf16;
+use crate::ext::outputer::OutValue;
 use crate::ext::types::lang_schema::LangGateType::{Barrier, X};
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::types::MetaInfo;
@@ -227,4 +228,30 @@ pub fn oqs_parse_circuit(
 
     inv_gates.reverse();
     (gates, inv_gates)
+}
+
+#[throws]
+pub fn filter_incorrect_values(values: Vec<OutValue>) -> OutValue {
+    // Get count of occurrences
+    let mut m: HashMap<String, usize> = HashMap::new();
+    for value in &values {
+        *m.entry(value.result.clone()).or_default() += 1;
+    }
+
+    // Get highest
+    let mm = dbg!(m.clone());
+    let key = dbg!(m.into_iter().max_by_key(|(_, v)| *v).map(|(k, _)| k).unwrap());
+    let c = dbg!(*mm.get(&key.clone()).unwrap() as i32);
+
+    // Filter out
+    let mut value = dbg!(dbg!(values.into_iter().filter(|e| e.result == key)).reduce(|acc, e| {
+        OutValue::builder()
+            .result(acc.result)
+            .correct(acc.correct + e.correct)
+            .is_correct(true)
+            .build()
+    }))
+    .unwrap();
+    value.correct /= c;
+    value
 }

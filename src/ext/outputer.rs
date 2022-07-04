@@ -14,7 +14,7 @@ use crate::outputers::{PythonOutputer, SerialOutputer, TextOutputer};
 use crate::{CliArgs, Error};
 
 #[pyclass]
-#[derive(Debug, Clone, TypedBuilder, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, TypedBuilder, Serialize, Deserialize)]
 pub struct OutValue {
     #[pyo3(get, set)]
     pub result: String, // result bit-string
@@ -23,6 +23,7 @@ pub struct OutValue {
     pub correct: i32, // number of correct shots
 
     #[pyo3(get, set)]
+    #[builder(default)]
     pub is_correct: bool, // is correct?
 }
 

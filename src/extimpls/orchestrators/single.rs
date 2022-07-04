@@ -131,8 +131,6 @@ impl Orchestrator for SingleOrchestrator {
 
             for ii in 0..iter {
                 if let Some(circuit) = generator.generate(&lang_schema, i, j, ii).await? {
-                    // TODO if I do a multiple iterations and one falls below limit, how to
-                    // solve this?
                     let circuit = lang_schema.as_string(circuit.clone()).await?;
                     provider.append_circuit(circuit.clone()).await?;
 

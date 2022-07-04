@@ -28,27 +28,11 @@ grcov . `
 ```
 
 # TODOs:
-* Send arguments to custom python extimpls
+* Skip zero values in output so fromSize is not written as 0
 
-* Circuit generator should return only intermediate circuit format and then it should be serialized by lang_schema.
 
-* Serialize to python, allow to define python extensions 
-    X Can define custom requirements.txt
-    X Extended with Python QcProvider
-    Add option to check for constraints
-    Send arguments
-    Test it
-    Rename Python to external (or something like that and allow it to be dynlib)
-    Add other extensions to this system
-
-* Allow to ext define custom arguments? (Nah, just write it in future work)
-
-* Allow to define custom layer size? (Nah, just write it in future work)
-
-* Split results from correct shots if mirror is not used
-    * Do not compare only the most common number when no mirror is turn on
-
-X Move extimpls to separate folder
+##### Skipped (Future work):
+* NO: Allow to define custom layer size? (Nah, just write it in future work)
 
 * NO: Extend with toffoli gate? (This is complex gate on a circuit)
 
@@ -62,6 +46,8 @@ X Move extimpls to separate folder
 
 * NO: From Lang Schema allow to define custom registers (Extension)
 
+* NO: Allow to ext define custom arguments? (Nah, just write it in future work)
+
 
 #### Changes after image inserted:
 X Add arg to say whether circuits should be mirrored or computed on a simulator
@@ -73,3 +59,12 @@ X rename mirror and rand mirror to structured and random generators
 X Add constraints
 X Add a workaround for odd circuit for mirror circuits
 X add from_size and from_size_2 options
+X Send arguments to custom python extimpls
+X Move extimpls to separate folder
+X Circuit generator should return only intermediate circuit format and then it should be serialized by lang_schema.
+X Serialize to python, allow to define python extensions
+    X Can define custom requirements.txt
+    X Extended with Python QcProvider
+    X Add option to check for constraints
+    X Send arguments
+    X Test it

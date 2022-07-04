@@ -241,7 +241,7 @@ pub fn filter_incorrect_values(values: Vec<OutValue>) -> OutValue {
     // Get highest
     let mm = dbg!(m.clone());
     let key = dbg!(m.into_iter().max_by_key(|(_, v)| *v).map(|(k, _)| k).unwrap());
-    let c = dbg!(*mm.get(&key.clone()).unwrap() as i32);
+    let c = dbg!(*mm.get(&key).unwrap() as i32);
 
     // Filter out
     let mut value = dbg!(dbg!(values.into_iter().filter(|e| e.result == key)).reduce(|acc, e| {

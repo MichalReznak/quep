@@ -12,8 +12,8 @@ use crate::chooser::Chooser;
 use crate::error::{OutOfBounds, RegexCapture};
 use crate::ext::outputer::OutValue;
 use crate::ext::{CircuitGenerator, LangSchema, Orchestrator, Outputer, QcProvider};
-use crate::Error;
 use crate::utils::filter_incorrect_values;
+use crate::Error;
 
 /// Iterates in all combination for 2D array
 pub struct LatticeOrchestrator {
@@ -110,7 +110,6 @@ impl Orchestrator for LatticeOrchestrator {
                     let res = res.get((ci as usize)..(ci as usize + (iter as usize))).unwrap();
 
                     let mut vals = vec![];
-                    let mut val = OutValue::default();
 
                     // Skip first N iterations if defined
                     if ii < from_i - 1 || jj < from_j - 1 {
@@ -127,7 +126,7 @@ impl Orchestrator for LatticeOrchestrator {
                                 .build(),
                         );
                     }
-                    val = filter_incorrect_values(vals).unwrap();
+                    let mut val = filter_incorrect_values(vals).unwrap();
 
                     val.is_correct = if !mirror {
                         let sim_res =
@@ -143,7 +142,7 @@ impl Orchestrator for LatticeOrchestrator {
                                     .build(),
                             );
                         }
-                        let mut sim_val = filter_incorrect_values(sim_vals).unwrap();
+                        let sim_val = filter_incorrect_values(sim_vals).unwrap();
 
                         let d = (sim_val.correct as f64) * (1.0 / 3.0);
                         sim_val.result == val.result && (sim_val.correct - val.correct) as f64 <= d
@@ -178,8 +177,6 @@ impl Orchestrator for LatticeOrchestrator {
 
                     for ii in 0..iter {
                         if let Some(circuit) = generator.generate(&lang_schema, i, j, ii).await? {
-                            // TODO if I do a multiple iterations and one falls below limit, how to
-                            // solve this?
                             provider
                                 .append_circuit(lang_schema.as_string(circuit.clone()).await?)
                                 .await?;
@@ -194,7 +191,6 @@ impl Orchestrator for LatticeOrchestrator {
                                     .correct(c["val"].parse::<i32>()?)
                                     .build(),
                             );
-
 
                             if !mirror {
                                 provider
@@ -222,7 +218,7 @@ impl Orchestrator for LatticeOrchestrator {
                     let mut val = filter_incorrect_values(vals)?;
 
                     val.is_correct = if !mirror {
-                        let mut sim_val = filter_incorrect_values(sim_vals)?;
+                        let sim_val = filter_incorrect_values(sim_vals)?;
                         let d = (sim_val.correct as f64) * (1.0 / 3.0);
                         sim_val.result == val.result && (sim_val.correct - val.correct) as f64 <= d
                     }

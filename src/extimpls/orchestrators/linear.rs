@@ -13,8 +13,8 @@ use crate::chooser::Chooser;
 use crate::error::RegexCapture;
 use crate::ext::outputer::OutValue;
 use crate::ext::{CircuitGenerator, LangSchema, Orchestrator, Outputer, QcProvider};
-use crate::Error;
 use crate::utils::filter_incorrect_values;
+use crate::Error;
 
 /// Linear iteration from 0 to MAX
 pub struct LinearOrchestrator {
@@ -160,7 +160,7 @@ impl Orchestrator for LinearOrchestrator {
                 // Skip first N iterations if defined
                 if j < from_i {
                     durations.push(Duration::from_millis(0));
-                    result.push(OutValue::default()); // TODO look how it is filtered
+                    result.push(OutValue::default());
                     continue;
                 }
 
@@ -202,7 +202,7 @@ impl Orchestrator for LinearOrchestrator {
                 let mut val = filter_incorrect_values(vals)?;
 
                 val.is_correct = if !mirror {
-                    let mut sim_val = filter_incorrect_values(sim_vals)?;
+                    let sim_val = filter_incorrect_values(sim_vals)?;
                     let d = (sim_val.correct as f64) * (1.0 / 3.0);
                     sim_val.result == val.result && (sim_val.correct - val.correct) as f64 <= d
                 }

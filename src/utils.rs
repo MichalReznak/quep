@@ -8,7 +8,7 @@ use pyo3::types::{PyDict, PyList};
 use pyo3::{PyObject, Python};
 use snafu::OptionExt;
 
-use crate::error::Utf16;
+use crate::error::{OutOfBounds, Utf16};
 use crate::ext::outputer::OutValue;
 use crate::ext::types::lang_schema::LangGateType::{Barrier, X};
 use crate::ext::types::lang_schema::{LangGate, LangGateType};
@@ -232,6 +232,10 @@ pub fn oqs_parse_circuit(
 
 #[throws]
 pub fn filter_incorrect_values(values: Vec<OutValue>) -> OutValue {
+    if values.is_empty() {
+        return OutValue::default();
+    }
+
     // Get count of occurrences
     let mut m: HashMap<String, usize> = HashMap::new();
     for value in &values {
@@ -239,19 +243,23 @@ pub fn filter_incorrect_values(values: Vec<OutValue>) -> OutValue {
     }
 
     // Get highest
-    let mm = dbg!(m.clone());
-    let key = dbg!(m.into_iter().max_by_key(|(_, v)| *v).map(|(k, _)| k).unwrap());
-    let c = dbg!(*mm.get(&key).unwrap() as i32);
+    let mm = m.clone();
+    let key = m.into_iter().max_by_key(|(_, v)| *v).map(|(k, _)| k).context(OutOfBounds)?;
+    let c = *mm.get(&key).context(OutOfBounds)? as i32;
 
     // Filter out
-    let mut value = dbg!(dbg!(values.into_iter().filter(|e| e.result == key)).reduce(|acc, e| {
-        OutValue::builder()
-            .result(acc.result)
-            .correct(acc.correct + e.correct)
-            .is_correct(true)
-            .build()
-    }))
-    .unwrap();
+    let mut value = values
+        .into_iter()
+        .filter(|e| e.result == key)
+        .reduce(|acc, e| {
+            OutValue::builder()
+                .result(acc.result)
+                .correct(acc.correct + e.correct)
+                .is_correct(true)
+                .build()
+        })
+        .context(OutOfBounds)?;
+
     value.correct /= c;
     value
 }

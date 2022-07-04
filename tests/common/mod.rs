@@ -58,8 +58,8 @@ fn get_orch(t: OrchestratorType) -> CliArgsOrch {
 fn get_prov(t: ProviderType) -> CliArgsProvider {
     CliArgsProvider::builder()
         .t(t)
-        .python_dir(get_dir("./python")?)
-        .path(get_dir("")?)
+        .python_dir(get_dir(".")?)
+        .path(get_dir("./python/ext/qc_provider.py")?)
         .account_id(ACCOUNT_ID.to_string())
         .build()
 }
@@ -70,7 +70,7 @@ fn get_out(t: OutputType) -> CliArgsOutput {
         .t(t)
         .ser(OutputSerType::Json)
         .pretty(true)
-        .path(get_dir("")?)
+        .path(get_dir("./python/ext/outputer.py")?)
         .build()
 }
 
@@ -79,7 +79,7 @@ fn get_cir(t: CircuitType) -> CliArgsCircuit {
     CliArgsCircuit::builder()
         .t(t)
         .bench(CircuitBenchType::Mirror)
-        .path(get_dir("")?)
+        .path(get_dir("./python/ext/circuit_generator.py")?)
         .init_one(false)
         .rand(true)
         .parse(false)
@@ -90,5 +90,8 @@ fn get_cir(t: CircuitType) -> CliArgsCircuit {
 
 #[throws]
 fn get_ls(t: LangSchemaType) -> CliArgsLangSchema {
-    CliArgsLangSchema::builder().t(t).path(get_dir("")?).build()
+    CliArgsLangSchema::builder()
+        .t(t)
+        .path(get_dir("./python/ext/lang_schema.py")?)
+        .build()
 }

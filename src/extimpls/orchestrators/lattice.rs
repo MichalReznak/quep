@@ -13,6 +13,7 @@ use crate::error::{OutOfBounds, RegexCapture};
 use crate::ext::outputer::OutValue;
 use crate::ext::{CircuitGenerator, LangSchema, Orchestrator, Outputer, QcProvider};
 use crate::Error;
+use crate::utils::filter_incorrect_values;
 
 /// Iterates in all combination for 2D array
 pub struct LatticeOrchestrator {
@@ -108,40 +109,41 @@ impl Orchestrator for LatticeOrchestrator {
                     let ci = ((ii * j) + jj) * iter;
                     let res = res.get((ci as usize)..(ci as usize + (iter as usize))).unwrap();
 
-                    let mut val = OutValue::builder()
-                        .result("".to_string())
-                        .correct(0)
-                        .is_correct(false)
-                        .build();
+                    let mut vals = vec![];
+                    let mut val = OutValue::default();
 
                     // Skip first N iterations if defined
                     if ii < from_i - 1 || jj < from_j - 1 {
-                        sr.push(val.clone());
+                        sr.push(OutValue::default());
                         continue;
                     }
 
                     for r in res {
                         let c = re.captures(r).context(RegexCapture).unwrap();
-                        val.result = c["result"].parse::<String>().unwrap_infallible();
-                        val.correct += c["val"].parse::<i32>().unwrap();
+                        vals.push(
+                            OutValue::builder()
+                                .result(c["result"].parse::<String>().unwrap_infallible())
+                                .correct(c["val"].parse::<i32>().unwrap())
+                                .build(),
+                        );
                     }
-                    val.correct /= iter;
+                    val = filter_incorrect_values(vals).unwrap();
 
                     val.is_correct = if !mirror {
                         let sim_res =
                             sim_res.get((ci as usize)..(ci as usize + (iter as usize))).unwrap();
 
-                        let mut sim_val = OutValue::builder()
-                            .result("".to_string())
-                            .correct(0)
-                            .is_correct(false)
-                            .build();
+                        let mut sim_vals = vec![];
                         for r in sim_res.iter() {
                             let c = re.captures(r).context(RegexCapture).unwrap();
-                            sim_val.result = c["result"].parse::<String>().unwrap_infallible();
-                            sim_val.correct += c["val"].parse::<i32>().unwrap();
+                            sim_vals.push(
+                                OutValue::builder()
+                                    .result(c["result"].parse::<String>().unwrap_infallible())
+                                    .correct(c["val"].parse::<i32>().unwrap())
+                                    .build(),
+                            );
                         }
-                        sim_val.correct /= iter;
+                        let mut sim_val = filter_incorrect_values(sim_vals).unwrap();
 
                         let d = (sim_val.correct as f64) * (1.0 / 3.0);
                         sim_val.result == val.result && (sim_val.correct - val.correct) as f64 <= d
@@ -164,21 +166,13 @@ impl Orchestrator for LatticeOrchestrator {
 
                 for j in 1..=j {
                     let mut time = Duration::from_micros(0);
-                    let mut val = OutValue::builder()
-                        .result("".to_string())
-                        .correct(0)
-                        .is_correct(false)
-                        .build();
-                    let mut sim_val = OutValue::builder()
-                        .result("".to_string())
-                        .correct(0)
-                        .is_correct(false)
-                        .build();
+                    let mut vals = vec![];
+                    let mut sim_vals = vec![];
 
                     // Skip first N iterations if defined
                     if i < from_i || j < from_j {
                         durations.push(Duration::from_millis(0));
-                        sr.push(val.clone());
+                        sr.push(OutValue::default());
                         continue;
                     }
 
@@ -193,11 +187,14 @@ impl Orchestrator for LatticeOrchestrator {
                             let res = provider.run().await?.get(0).unwrap().to_string();
                             time += provider.meta_info().await?.time;
 
-                            // TODO value is always overwritten in all orch
                             let c = re.captures(&res).context(RegexCapture)?;
-                            // TODO check if result is the same
-                            val.result = c["result"].parse::<String>().unwrap_infallible();
-                            val.correct += c["val"].parse::<i32>()?;
+                            vals.push(
+                                OutValue::builder()
+                                    .result(c["result"].parse::<String>().unwrap_infallible())
+                                    .correct(c["val"].parse::<i32>()?)
+                                    .build(),
+                            );
+
 
                             if !mirror {
                                 provider
@@ -207,11 +204,13 @@ impl Orchestrator for LatticeOrchestrator {
                                 let res = provider.run().await?.get(0).unwrap().to_string();
                                 time += provider.meta_info().await?.time;
 
-                                // TODO value is always overwritten in all orch
                                 let c = re.captures(&res).context(RegexCapture)?;
-
-                                sim_val.result = c["result"].parse::<String>().unwrap_infallible();
-                                sim_val.correct += c["val"].parse::<i32>()?;
+                                sim_vals.push(
+                                    OutValue::builder()
+                                        .result(c["result"].parse::<String>().unwrap_infallible())
+                                        .correct(c["val"].parse::<i32>()?)
+                                        .build(),
+                                );
                             }
                         }
                         else {
@@ -220,10 +219,10 @@ impl Orchestrator for LatticeOrchestrator {
                         }
                     }
 
-                    val.correct /= iter;
-                    sim_val.correct /= iter;
+                    let mut val = filter_incorrect_values(vals)?;
 
                     val.is_correct = if !mirror {
+                        let mut sim_val = filter_incorrect_values(sim_vals)?;
                         let d = (sim_val.correct as f64) * (1.0 / 3.0);
                         sim_val.result == val.result && (sim_val.correct - val.correct) as f64 <= d
                     }

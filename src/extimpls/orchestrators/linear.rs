@@ -14,6 +14,7 @@ use crate::error::RegexCapture;
 use crate::ext::outputer::OutValue;
 use crate::ext::{CircuitGenerator, LangSchema, Orchestrator, Outputer, QcProvider};
 use crate::Error;
+use crate::utils::filter_incorrect_values;
 
 /// Linear iteration from 0 to MAX
 pub struct LinearOrchestrator {
@@ -101,40 +102,39 @@ impl Orchestrator for LinearOrchestrator {
                 .into_iter()
                 .enumerate()
                 .map(|(i, res)| {
-                    let mut val = OutValue::builder()
-                        .result("".to_string())
-                        .correct(0)
-                        .is_correct(false)
-                        .build();
+                    let mut vals = vec![];
+                    let mut val = OutValue::default();
 
                     // Skip first N iterations if defined
                     if i >= (from_i - 1) as usize {
                         for r in res {
                             let c = re.captures(&r).context(RegexCapture).unwrap();
-                            val.result = c["result"].parse::<String>().unwrap_infallible();
-                            val.correct += c["val"].parse::<i32>().unwrap();
+                            vals.push(
+                                OutValue::builder()
+                                    .result(c["result"].parse::<String>().unwrap_infallible())
+                                    .correct(c["val"].parse::<i32>().unwrap())
+                                    .build(),
+                            );
                         }
-                        val.correct /= iter;
+                        val = filter_incorrect_values(vals).unwrap();
 
                         val.is_correct = if !mirror {
                             let ci = i * (iter as usize);
                             let res = sim_res
                                 .get((ci as usize)..(ci as usize + (iter as usize)))
                                 .unwrap();
-                            println!("{res:?}");
 
-                            let mut sim_val = OutValue::builder()
-                                .result("".to_string())
-                                .correct(0)
-                                .is_correct(false)
-                                .build();
+                            let mut sim_vals = vec![];
                             for r in res.iter() {
                                 let c = re.captures(r).context(RegexCapture).unwrap();
-                                sim_val.result = c["result"].parse::<String>().unwrap_infallible();
-                                sim_val.correct += c["val"].parse::<i32>().unwrap();
+                                sim_vals.push(
+                                    OutValue::builder()
+                                        .result(c["result"].parse::<String>().unwrap_infallible())
+                                        .correct(c["val"].parse::<i32>().unwrap())
+                                        .build(),
+                                );
                             }
-                            sim_val.correct /= iter;
-                            println!("{sim_val:#?}");
+                            let sim_val = filter_incorrect_values(sim_vals).unwrap();
 
                             let d = (sim_val.correct as f64) * (1.0 / 3.0);
                             sim_val.result == val.result
@@ -154,15 +154,13 @@ impl Orchestrator for LinearOrchestrator {
         else {
             'main2: for j in 1..=i {
                 let mut time = Duration::from_micros(0);
-                let mut val =
-                    OutValue::builder().result("".to_string()).correct(0).is_correct(false).build();
-                let mut sim_val =
-                    OutValue::builder().result("".to_string()).correct(0).is_correct(false).build();
+                let mut vals = vec![];
+                let mut sim_vals = vec![];
 
                 // Skip first N iterations if defined
                 if j < from_i {
                     durations.push(Duration::from_millis(0));
-                    result.push(val.clone());
+                    result.push(OutValue::default()); // TODO look how it is filtered
                     continue;
                 }
 
@@ -175,9 +173,12 @@ impl Orchestrator for LinearOrchestrator {
                         time += provider.meta_info().await?.time;
 
                         let c = re.captures(&res).context(RegexCapture)?;
-                        // TODO check if result is the same
-                        val.result = c["result"].parse::<String>().unwrap_infallible();
-                        val.correct += c["val"].parse::<i32>()?;
+                        vals.push(
+                            OutValue::builder()
+                                .result(c["result"].parse::<String>().unwrap_infallible())
+                                .correct(c["val"].parse::<i32>()?)
+                                .build(),
+                        );
 
                         if !mirror {
                             provider.append_circuit(circuit.clone()).await?;
@@ -185,20 +186,23 @@ impl Orchestrator for LinearOrchestrator {
                             let res = provider.run().await?.get(0).unwrap().to_string();
                             time += provider.meta_info().await?.time;
 
-                            // TODO value is always overwritten in all orch
                             let c = re.captures(&res).context(RegexCapture)?;
-                            sim_val.result = c["result"].parse::<String>().unwrap_infallible();
-                            sim_val.correct += c["val"].parse::<i32>()?;
+                            sim_vals.push(
+                                OutValue::builder()
+                                    .result(c["result"].parse::<String>().unwrap_infallible())
+                                    .correct(c["val"].parse::<i32>()?)
+                                    .build(),
+                            );
                         }
                     }
                     else {
                         break 'main2;
                     }
                 }
-                val.correct /= iter;
-                sim_val.correct /= iter;
+                let mut val = filter_incorrect_values(vals)?;
 
                 val.is_correct = if !mirror {
+                    let mut sim_val = filter_incorrect_values(sim_vals)?;
                     let d = (sim_val.correct as f64) * (1.0 / 3.0);
                     sim_val.result == val.result && (sim_val.correct - val.correct) as f64 <= d
                 }

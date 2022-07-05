@@ -1,11 +1,10 @@
-// TODO define all default values correctly
 {
     provider: {
         t: 'Noisy', // Simple, Noisy, Ibmq, Python
         path: './qc_provider.py', // Path to Custom provider
         pythonDir: '.', // Python Virtual environment
         accountId: '', // IbmQ only
-        machineName: 'ibmq_quito',
+        machineName: '', // IbmQ only
     },
     circuit: {
         t: 'Struct', // Base, Struct, Rand, Fs, Volume, Basic, Python
@@ -13,7 +12,7 @@
         bench: 'Mirror', // Mirror, Cycle, None
         initOne: false, // Set state to one or zero
         rand: false, // Outputs different circuits for each iteration
-        source: './template.qasm', // Base circuit source
+        source: './templates/example.qasm', // Base circuit source
         inverseGates: { // Custom defined inverse gates
             's': 'sdg',
         },
@@ -32,8 +31,8 @@
         t: 'Lattice', // Lattice, Volume, Linear, Single
         fromSize: 1, // Start width
         fromSize2: 1, // Start depth
-        size: 4, // Width most of the time
-        size2: 4, // Depth most of the time
+        size: 12, // Width most of the time
+        size2: 12, // Depth most of the time
         iter: 1, // Iterations of circuits of the same size
         data: './data', // Fs: Circuits source
         collect: false, // Run all circuits in a bunch

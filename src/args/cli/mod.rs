@@ -39,7 +39,7 @@ pub fn parse_provider(clap: &CliArgsEnv, config: CliArgsProviderConfig) -> CliAr
     let python_dir = || dir(".").unwrap_or_else(|_| "".to_string());
 
     CliArgsProvider::builder()
-        .t(clap.provider.or(config.t).unwrap_or(ProviderType::Simple))
+        .t(clap.provider.or(config.t).unwrap_or(ProviderType::Noisy))
         .path(clap.provider_path.clone().or(config.path).unwrap_or_else(path))
         .python_dir(
             clap.provider_python_dir
@@ -85,7 +85,6 @@ pub fn parse_circuit(clap: &CliArgsEnv, config: CliArgsCircuitConfig) -> CliArgs
         .bench(clap.circuit_bench.or(config.bench).unwrap_or(CircuitBenchType::Mirror))
         .init_one(clap.circuit_init_one.or(config.init_one).unwrap_or(false))
         .rand(clap.circuit_rand.or(config.rand).unwrap_or(false))
-        .parse(clap.circuit_parse.or(config.parse).unwrap_or(false))
         .source(clap.circuit_source.clone().or(config.source).unwrap_or_else(source))
         .inverse_gates(clap.circuit_inverse_gates.clone().or(config.inverse_gates).unwrap_or(
             collection! {
@@ -112,12 +111,12 @@ pub fn parse_orch(clap: &CliArgsEnv, config: CliArgsOrchConfig) -> CliArgsOrch {
     let data = || dir("./data").unwrap_or_else(|_| "".to_string());
 
     CliArgsOrch::builder()
-        .t(clap.orch.or(config.t).unwrap_or(OrchestratorType::Single))
+        .t(clap.orch.or(config.t).unwrap_or(OrchestratorType::Lattice))
         .data(clap.orch_data.clone().or(config.data).unwrap_or_else(data))
         .iter(clap.orch_iter.or(config.iter).unwrap_or(1))
-        .size(clap.orch_size.or(config.size).unwrap_or(1))
+        .size(clap.orch_size.or(config.size).unwrap_or(12))
         .from_size(clap.orch_from_size.or(config.from_size).unwrap_or(1))
-        .size_2(clap.orch_size_2.or(config.size_2).unwrap_or(1))
+        .size_2(clap.orch_size_2.or(config.size_2).unwrap_or(12))
         .from_size_2(clap.orch_from_size_2.or(config.from_size_2).unwrap_or(1))
         .collect(clap.orch_collect.or(config.collect).unwrap_or(false))
         .preheat(clap.orch_preheat.or(config.preheat).unwrap_or(true))

@@ -56,9 +56,6 @@ pub struct CliArgsCircuit {
     /// Randomize circuit generation of the same size
     pub rand: bool,
 
-    /// Base: Parse gates to primitive ones
-    pub parse: bool,
-
     /// Base: Source file
     pub source: String,
 

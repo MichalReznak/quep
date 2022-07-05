@@ -55,7 +55,6 @@ pub struct CliArgsCircuitConfig {
     pub bench: Option<CircuitBenchType>,
     pub init_one: Option<bool>,
     pub rand: Option<bool>,
-    pub parse: Option<bool>,
     pub source: Option<String>,
     pub inverse_gates: Option<HashMap<String, String>>,
 }

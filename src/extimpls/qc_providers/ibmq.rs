@@ -47,7 +47,7 @@ impl QcProvider for IbmqQcProvider {
             Constraint {
                 reason: "Machine name needed".to_string(),
             }
-                .fail()?;
+            .fail()?;
         }
         Ok(())
     }

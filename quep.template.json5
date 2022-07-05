@@ -5,6 +5,7 @@
         path: './qc_provider.py', // Path to Custom provider
         pythonDir: '.', // Python Virtual environment
         accountId: '', // IbmQ only
+        machineName: 'ibmq_quito',
     },
     circuit: {
         t: 'Struct', // Base, Struct, Rand, Fs, Volume, Basic, Python

@@ -53,6 +53,12 @@ pub fn parse_provider(clap: &CliArgsEnv, config: CliArgsProviderConfig) -> CliAr
                 .or(config.account_id)
                 .unwrap_or_else(|| "".to_string()),
         )
+        .machine_name(
+            clap.provider_machine_name
+                .clone()
+                .or(config.machine_name)
+                .unwrap_or_else(|| "".to_string()),
+        )
         .build()
 }
 

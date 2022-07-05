@@ -23,7 +23,7 @@ impl IbmqQcProvider {
             let code = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "./python/ibmq.py"));
             let module = PyModule::from_code(py, code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Ibmq")?.into();
-            qiskit.call1(py, (&args.account_id,))
+            qiskit.call1(py, (&args.account_id, &args.machine_name))
         })?;
 
         Self {
@@ -41,6 +41,13 @@ impl QcProvider for IbmqQcProvider {
                 reason: "Account ID needed".to_string(),
             }
             .fail()?;
+        }
+
+        if args.provider.machine_name.is_empty() {
+            Constraint {
+                reason: "Machine name needed".to_string(),
+            }
+                .fail()?;
         }
         Ok(())
     }

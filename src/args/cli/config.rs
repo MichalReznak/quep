@@ -40,6 +40,7 @@ pub struct CliArgsProviderConfig {
     pub python_dir: Option<String>,
 
     pub account_id: Option<String>,
+    pub machine_name: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Default, Clone)]

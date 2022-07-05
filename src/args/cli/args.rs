@@ -19,6 +19,9 @@ pub struct CliArgsProvider {
 
     /// IBMQ: Account ID
     pub account_id: String,
+
+    /// IBMQ: Machine name
+    pub machine_name: String,
 }
 
 #[pyclass]

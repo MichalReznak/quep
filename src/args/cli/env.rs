@@ -27,6 +27,9 @@ pub struct CliArgsEnv {
     #[clap(long, env = "QUEP_PROVIDER_PATH", parse(try_from_os_str = parse_from_os_str))]
     pub provider_path: Option<String>,
 
+    #[clap(long, env = "QUEP_PROVIDER_MACHINE_NAME")]
+    pub provider_machine_name: Option<String>,
+
     #[clap(long, env = "QUEP_OUTPUT")]
     pub output: Option<OutputType>,
 

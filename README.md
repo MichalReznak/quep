@@ -32,6 +32,8 @@ grcov . `
 
 
 ##### Skipped (Future work):
+* Improve time estimates: time_per_step()
+
 * NO: Allow to define custom layer size? (Nah, just write it in future work)
 
 * NO: Extend with toffoli gate? (This is complex gate on a circuit)

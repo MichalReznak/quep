@@ -32,6 +32,8 @@ grcov . `
 
 
 ##### Skipped (Future work):
+* Future work: Allow lang_schema in custom circuit generator
+
 * Improve time estimates: time_per_step()
 
 * NO: Allow to define custom layer size? (Nah, just write it in future work)

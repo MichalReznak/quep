@@ -46,7 +46,7 @@ impl CircuitGenerator for BaseCircuitGenerator {
         depth: i32,
         iter: i32,
     ) -> Result<Option<LangCircuit>, Error> {
-        let oqs_gates = lang_schema.parse_file(&self.args.source).await?;
+        let oqs_gates = lang_schema.parse_file(&self.args.source)?;
 
         let (mut oqs_gates, mut inv_gates) = oqs_parse_circuit(oqs_gates, depth, width, iter)?;
 

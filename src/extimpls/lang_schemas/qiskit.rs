@@ -1,11 +1,11 @@
 use std::fmt::Write;
+use std::io::BufRead;
 use std::path::Path;
 
 use async_trait::async_trait;
 use fehler::throws;
+use pyo3::{pyclass, pymethods, PyResult};
 use regex::Regex;
-use tokio::fs::File;
-use tokio::io::{AsyncBufReadExt, BufReader};
 use unwrap_infallible::UnwrapInfallible;
 
 use crate::args::types::LangSchemaType;
@@ -78,7 +78,8 @@ fn string_to_gate(str: &str) -> Option<LangGateType> {
     }
 }
 
-#[derive(Default)]
+#[pyclass]
+#[derive(Default, Clone)]
 pub struct QiskitSchema {
     pub gates: Vec<LangGate>,
 }
@@ -90,20 +91,33 @@ impl QiskitSchema {
     }
 }
 
+#[pymethods]
+impl QiskitSchema {
+    #[pyo3(name = "parse_file")]
+    fn parse_file_py(&self, path: &str) -> PyResult<Vec<LangGate>> {
+        Ok(self.parse_file(path).unwrap())
+    }
+
+    #[pyo3(name = "as_string")]
+    fn as_string_py(&mut self, circ: LangCircuit) -> PyResult<GenCircuit> {
+        Ok(self.as_string(circ).unwrap())
+    }
+}
+
 #[async_trait]
 impl LangSchema for QiskitSchema {
-    async fn parse_file(&self, path: &str) -> Result<Vec<LangGate>, Error> {
+    fn parse_file(&self, path: &str) -> Result<Vec<LangGate>, Error> {
         let re =
             Regex::new(r"circ\.(?P<name>[a-zA-Z0-9]+)\((?P<index>\d+)(,\s*(?P<other>\d+))*\)")?;
 
-        let file = File::open(Path::new(&path)).await?;
+        let file = std::fs::File::open(Path::new(&path))?;
 
-        let reader = BufReader::new(file);
-        let mut lines = reader.lines();
+        let reader = std::io::BufReader::new(file);
 
         let mut gates = vec![];
 
-        while let Some(l) = lines.next_line().await? {
+        for l in reader.lines() {
+            let l = l?;
             let c = re.captures(&l);
             if c.is_none() {
                 continue;
@@ -134,7 +148,7 @@ impl LangSchema for QiskitSchema {
         Ok(gates)
     }
 
-    async fn as_string(&mut self, circ: LangCircuit) -> Result<GenCircuit, Error> {
+    fn as_string(&mut self, circ: LangCircuit) -> Result<GenCircuit, Error> {
         // Add width
         let res = CIRCUIT_TEMPLATE.replace("%WIDTH%", &circ.width.to_string());
 

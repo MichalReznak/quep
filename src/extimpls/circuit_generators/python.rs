@@ -6,7 +6,7 @@
 //!     def check_constraints(self, config) -> dict[str, any]:
 //!         return {'correct: False, 'reason': 'Some reason'}
 //!
-//!     def generate(i: int, j: int, it: int) -> dict[str, any]:
+//!     def generate(self, lang_schema: any, i: int, j: int, it: int) -> dict[str, any]:
 //!         return {'width': 4, 'gates': [{'t': 'X', 'i': 0, 'other': 0}]}
 
 use async_trait::async_trait;

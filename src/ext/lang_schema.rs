@@ -26,8 +26,8 @@ pub trait LangSchema {
     }
 
     /// Parse file from the fs path
-    async fn parse_file(&self, path: &str) -> Result<Vec<LangGate>, Error>;
+    fn parse_file(&self, path: &str) -> Result<Vec<LangGate>, Error>;
 
     /// Outputs circuit as string
-    async fn as_string(&mut self, circ: LangCircuit) -> Result<GenCircuit, Error>;
+    fn as_string(&mut self, circ: LangCircuit) -> Result<GenCircuit, Error>;
 }

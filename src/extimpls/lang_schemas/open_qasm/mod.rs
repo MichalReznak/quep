@@ -4,6 +4,7 @@ use std::path::Path;
 use async_trait::async_trait;
 use fehler::{throw, throws};
 use openqasm::{Errors, GenericError, Parser, ProgramVisitor, SourceCache};
+use pyo3::{pyclass, pymethods, PyResult};
 
 use crate::args::types::LangSchemaType;
 use crate::args::CliArgsLangSchema;
@@ -58,7 +59,8 @@ fn gate_to_string(gate: &LangGate) -> String {
     }
 }
 
-#[derive(Default)]
+#[pyclass]
+#[derive(Default, Clone)]
 pub struct OpenQasmSchema {
     pub gates: Vec<LangGate>,
 }
@@ -70,11 +72,24 @@ impl OpenQasmSchema {
     }
 }
 
+#[pymethods]
+impl OpenQasmSchema {
+    #[pyo3(name = "parse_file")]
+    fn parse_file_py(&self, path: &str) -> PyResult<Vec<LangGate>> {
+        Ok(self.parse_file(path).unwrap())
+    }
+
+    #[pyo3(name = "as_string")]
+    fn as_string_py(&mut self, circ: LangCircuit) -> PyResult<GenCircuit> {
+        Ok(self.as_string(circ).unwrap())
+    }
+}
+
 #[async_trait]
 impl LangSchema for OpenQasmSchema {
-    async fn parse_file(&self, path: &str) -> Result<Vec<LangGate>, Error> {
+    fn parse_file(&self, path: &str) -> Result<Vec<LangGate>, Error> {
         // Type check
-        let mut circuit = tokio::fs::read_to_string(path).await?;
+        let mut circuit = std::fs::read_to_string(path)?;
         circuit.remove_matches("\r");
 
         let mut cache = SourceCache::new();
@@ -101,7 +116,7 @@ impl LangSchema for OpenQasmSchema {
         Ok(pp.gates)
     }
 
-    async fn as_string(&mut self, circ: LangCircuit) -> Result<GenCircuit, Error> {
+    fn as_string(&mut self, circ: LangCircuit) -> Result<GenCircuit, Error> {
         // Add width
         let res = CIRCUIT_TEMPLATE.replace("%WIDTH%", &circ.width.to_string());
 

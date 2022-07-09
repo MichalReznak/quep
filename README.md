@@ -36,7 +36,6 @@ grcov . `
 
 * Improve time estimates: time_per_step()
 
-
 ##### Skipped (Future work):
 * NO: Allow to define custom layer size? (Nah, just write it in future work)
 

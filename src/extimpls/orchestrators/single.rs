@@ -59,7 +59,7 @@ impl Orchestrator for SingleOrchestrator {
 
         // It runs dummy circuit to make the speed measurement more precise
         if self.args.preheat && let Some(circuit) = generator.generate(&lang_schema, 1, 1, 0).await? {
-            let circuit = lang_schema.as_string(circuit.clone()).await?;
+            let circuit = lang_schema.as_string(circuit.clone())?;
             provider.append_circuit(circuit.clone()).await?;
             provider.run().await?;
 
@@ -71,7 +71,7 @@ impl Orchestrator for SingleOrchestrator {
         if self.args.collect {
             for ii in 0..iter {
                 if let Some(c) = generator.generate(&lang_schema, i, j, ii).await? {
-                    let c = lang_schema.as_string(c.clone()).await?;
+                    let c = lang_schema.as_string(c.clone())?;
                     provider.append_circuit(c.clone()).await?;
 
                     if !mirror {
@@ -131,7 +131,7 @@ impl Orchestrator for SingleOrchestrator {
 
             for ii in 0..iter {
                 if let Some(circuit) = generator.generate(&lang_schema, i, j, ii).await? {
-                    let circuit = lang_schema.as_string(circuit.clone()).await?;
+                    let circuit = lang_schema.as_string(circuit.clone())?;
                     provider.append_circuit(circuit.clone()).await?;
 
                     let res = provider.run().await?.get(0).unwrap().to_string();

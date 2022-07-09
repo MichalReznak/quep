@@ -6,7 +6,7 @@
 //!     def check_constraints(self, config) -> dict[str, any]:
 //!         return {'correct: False, 'reason': 'Some reason'}
 //!
-//!     def generate(i: int, j: int, it: int) -> dict[str, any]:
+//!     def generate(self, lang_schema: any, i: int, j: int, it: int) -> dict[str, any]:
 //!         return {'width': 4, 'gates': [{'t': 'X', 'i': 0, 'other': 0}]}
 
 use async_trait::async_trait;
@@ -66,13 +66,25 @@ impl CircuitGenerator for PythonCircuitGenerator {
 
     async fn generate(
         &mut self,
-        _lang_schema: &LangSchemaDyn,
+        lang_schema: &LangSchemaDyn,
         i: i32,
         j: i32,
         iter: i32,
     ) -> Result<Option<LangCircuit>, Error> {
         Python::with_gil(|py| {
-            let res = self.py_instance.call_method1(py, "generate", (i, j, iter))?;
+            use LangSchemaDyn::*;
+            let res = match lang_schema {
+                OpenQasmSchema(a) => {
+                    self.py_instance.call_method1(py, "generate", (a.clone(), i, j, iter))
+                }
+                QiskitSchema(a) => {
+                    self.py_instance.call_method1(py, "generate", (a.clone(), i, j, iter))
+                }
+                PythonSchema(a) => {
+                    self.py_instance.call_method1(py, "generate", (a.clone(), i, j, iter))
+                }
+            }?;
+
             if res.is_none(py) {
                 Ok(None)
             }

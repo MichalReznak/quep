@@ -84,7 +84,6 @@ fn get_cir(t: CircuitType) -> CliArgsCircuit {
         .path(get_dir("./python/ext/circuit_generator.py")?)
         .init_one(false)
         .rand(true)
-        .parse(false)
         .source(get_dir("./templates/example.qasm")?)
         .inverse_gates(collection! { HashMap<String, String>; })
         .build()

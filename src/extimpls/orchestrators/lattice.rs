@@ -61,7 +61,7 @@ impl Orchestrator for LatticeOrchestrator {
 
         // It runs dummy circuit to make the speed measurement more precise
         if self.args.preheat && let Some(circuit) = generator.generate(&lang_schema, 1, 1, 0).await? {
-            provider.append_circuit(lang_schema.as_string(circuit.clone()).await?).await?;
+            provider.append_circuit(lang_schema.as_string(circuit.clone())?).await?;
             provider.run().await?;
 
             println!("Pre-heat run done");
@@ -74,15 +74,13 @@ impl Orchestrator for LatticeOrchestrator {
                 for j in 1..=j {
                     for ii in 0..iter {
                         if let Some(c) = generator.generate(&lang_schema, i, j, ii).await? {
-                            provider
-                                .append_circuit(lang_schema.as_string(c.clone()).await?)
-                                .await?;
+                            provider.append_circuit(lang_schema.as_string(c.clone())?).await?;
 
                             if !mirror {
                                 simulator
                                     .as_mut()
                                     .unwrap()
-                                    .append_circuit(lang_schema.as_string(c.clone()).await?)
+                                    .append_circuit(lang_schema.as_string(c.clone())?)
                                     .await?;
                             }
                         }
@@ -178,7 +176,7 @@ impl Orchestrator for LatticeOrchestrator {
                     for ii in 0..iter {
                         if let Some(circuit) = generator.generate(&lang_schema, i, j, ii).await? {
                             provider
-                                .append_circuit(lang_schema.as_string(circuit.clone()).await?)
+                                .append_circuit(lang_schema.as_string(circuit.clone())?)
                                 .await?;
 
                             let res = provider.run().await?.get(0).unwrap().to_string();
@@ -194,7 +192,7 @@ impl Orchestrator for LatticeOrchestrator {
 
                             if !mirror {
                                 provider
-                                    .append_circuit(lang_schema.as_string(circuit.clone()).await?)
+                                    .append_circuit(lang_schema.as_string(circuit.clone())?)
                                     .await?;
 
                                 let res = provider.run().await?.get(0).unwrap().to_string();

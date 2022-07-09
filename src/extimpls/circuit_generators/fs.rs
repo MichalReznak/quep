@@ -73,8 +73,7 @@ impl CircuitGenerator for FsCircuitGenerator {
         }
         else {
             let oqs_gates = lang_schema
-                .parse_file(self.entries[(j - 1) as usize].path().to_str().context(OutOfBounds)?)
-                .await?;
+                .parse_file(self.entries[(j - 1) as usize].path().to_str().context(OutOfBounds)?)?;
 
             let (mut oqs_gates, mut inv_gates) =
                 oqs_parse_circuit(oqs_gates, i32::MAX, width, iter)?;

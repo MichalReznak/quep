@@ -27,13 +27,17 @@ grcov . `
     --ignore "target/debug/*"
 ```
 
-# TODOs:
+##### TODOs:
 * Skip zero values in output so fromSize is not written as 0
+
+* Quantum volume should use only two qubit gates
+  (or allow to choose? Number is too low, so for teh start single qubit gates could be better)
+  https://medium.com/qiskit/what-is-quantum-volume-anyway-a4dff801c36f
+
+* Improve time estimates: time_per_step()
 
 
 ##### Skipped (Future work):
-* Improve time estimates: time_per_step()
-
 * NO: Allow to define custom layer size? (Nah, just write it in future work)
 
 * NO: Extend with toffoli gate? (This is complex gate on a circuit)

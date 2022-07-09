@@ -4,10 +4,11 @@
 //!         pass
 //!
 //!     def check_constraints(self, config) -> bool:
+//!         # If correct return {'correct': True}, otherwise:
 //!         return {'correct': False, 'reason': 'Some reason'}
 //!
 //!     def get_meta_info(self):
-//!         return {'time': 42}
+//!         return {'time': 42}  # Time in ms
 //!
 //!     def auth(self):
 //!         # Any authorization necessary
@@ -22,10 +23,10 @@
 //!         # These are the circuits that will be executed
 //!         pass
 //!
-//!     def run_all(self: 'QcProvider') -> str:
+//!     def run_all(self: 'QcProvider') -> dict[str, int]:
 //!         # Execute on provider and return the result
-//!         # in a form of Dict[str, int]
-//!         return ''
+//!         # in a form of string dict[str, int]
+//!         return {'0000': 1024}
 
 use async_trait::async_trait;
 use fehler::throws;

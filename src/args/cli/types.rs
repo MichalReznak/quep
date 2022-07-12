@@ -27,6 +27,7 @@ pub enum CircuitType {
     Basic,
     Fs,
     Volume,
+    Volume2,
     Struct,
     Rand,
     Base,

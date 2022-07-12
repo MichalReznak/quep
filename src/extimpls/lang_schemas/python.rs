@@ -55,8 +55,8 @@ impl PythonSchema {
 #[pymethods]
 impl PythonSchema {
     #[pyo3(name = "parse_file")]
-    fn parse_file_py(&self, path: &str) -> PyResult<Vec<LangGate>> {
-        Ok(self.parse_file(path).unwrap())
+    fn parse_file_py(&self, path: String) -> PyResult<Vec<LangGate>> {
+        Ok(self.parse_file(&path).unwrap())
     }
 
     #[pyo3(name = "as_string")]

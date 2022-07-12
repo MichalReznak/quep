@@ -72,7 +72,7 @@ impl Chooser {
                 CircuitGeneratorDyn::from(BasicCircuitGenerator::from_args(&self.args.circuit)?)
             }
             Fs => CircuitGeneratorDyn::from(FsCircuitGenerator::from_args(&self.args.circuit)?),
-            Volume => {
+            Volume | Volume2 => {
                 CircuitGeneratorDyn::from(VolumeCircuitGenerator::from_args(&self.args.circuit)?)
             }
             Struct => {

@@ -44,7 +44,7 @@ impl ProgramVisitor for ProgramParser {
 
     #[throws(Self::Error)]
     fn visit_gate(&mut self, name: &Span<Symbol>, _params: &[Span<Expr>], args: &[Span<Reg>]) {
-        let name = (&**name).to_string();
+        let name = (**name).to_string();
         let args: Vec<_> = (*args).iter().map(|e| &**e).collect();
 
         use LangGateType::*;

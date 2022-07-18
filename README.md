@@ -30,10 +30,6 @@ grcov . `
 ##### TODOs:
 * Skip zero values in output so fromSize is not written as 0
 
-* Quantum volume should use only two qubit gates
-  (or allow to choose? Number is too low, so for teh start single qubit gates could be better)
-  https://medium.com/qiskit/what-is-quantum-volume-anyway-a4dff801c36f
-
 * Improve time estimates: time_per_step()
 
 ##### Skipped (Future work):
@@ -55,6 +51,10 @@ grcov . `
 
 
 #### Changes after image inserted:
+X Quantum volume should can use only two qubit gates
+(Number is too low, so for the start single qubit gates could be better)
+https://medium.com/qiskit/what-is-quantum-volume-anyway-a4dff801c36f
+
 X Add arg to say whether circuits should be mirrored or computed on a simulator
 X implement cycle benchmarking (inverse gate is inserted directly behind the correct gate, otherwise it is the same as mirror)
 X allow to define initial state (does not need to be all zeros)

@@ -1,7 +1,7 @@
 import time
 from qiskit import *
 from qiskit.providers.aer import AerSimulator
-from qiskit.providers.aer.noise import NoiseModel, pauli_error, depolarizing_error, thermal_relaxation_error
+from qiskit.providers.aer.noise import NoiseModel, pauli_error,
 
 # # Loose mode
 # p_reset = 0.002

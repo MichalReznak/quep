@@ -120,10 +120,12 @@ impl Outputer for SerialOutputer {
             vec![Duration::from_millis(0)].into_iter().cycle().take(values.len()).collect()
         });
 
-        let len = values.len();
         let mut table = vec![];
+        let mut correct_i = 0;
 
         for (i, (val, dur)) in values.into_iter().zip(durations).enumerate() {
+            let i = i + 1;
+
             let time_ms = if include_durs {
                 Some(dur.as_millis() as i32)
             }
@@ -131,9 +133,13 @@ impl Outputer for SerialOutputer {
                 None
             };
 
+            if val.is_correct {
+                correct_i = i;
+            }
+
             let record = Record::builder()
-                .width(cast(i + 1).context(OutOfBounds)?)
-                .depth(cast(i + 1).context(OutOfBounds)?)
+                .width(cast(i).context(OutOfBounds)?)
+                .depth(cast(i).context(OutOfBounds)?)
                 .result(val.correct)
                 .output(&val.result)
                 .correct(val.is_correct)
@@ -145,7 +151,7 @@ impl Outputer for SerialOutputer {
         let table = Output::builder()
             .records(table)
             .runtime_ms(runtime.as_millis() as i32)
-            .quantum_volume(len.try_into()?)
+            .quantum_volume((correct_i).try_into()?)
             .build();
         Ok(Some(serialize(self.args.ser, &table, self.args.pretty)?))
     }

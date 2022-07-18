@@ -115,17 +115,16 @@ impl Outputer for TextOutputer {
             vec![Duration::from_millis(0)].into_iter().cycle().take(values.len()).collect()
         });
 
-        let len = values.len();
         let mut table = vec![];
-        let mut last_correct = false;
+        let mut last_correct = 0;
 
         for (i, (val, dur)) in values.into_iter().zip(durations).enumerate() {
             let mut row = vec![];
             let i = i + 1;
 
             let val_res = val.result.cell();
-            last_correct = val.is_correct;
             let color = if val.is_correct {
+                last_correct = i;
                 Color::Green
             }
             else {
@@ -144,10 +143,9 @@ impl Outputer for TextOutputer {
         }
 
         println!("\nResult:");
-        let qv = if last_correct { len } else { len - 1 };
         print_stdout(table.table())?;
 
-        println!("\nQuantum Volume (log): {}", qv);
+        println!("\nQuantum Volume (log): {}", last_correct);
 
         println!("\nApplication Runtime: {} ms", runtime.as_millis());
         Ok(None)

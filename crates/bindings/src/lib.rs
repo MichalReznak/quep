@@ -20,6 +20,7 @@ struct QuepyConfig {
     pub provider_path: Option<String>,
     pub provider_python_dir: Option<String>,
     pub provider_account_id: Option<String>,
+    pub provider_machine_name: Option<String>,
 
     pub output: Option<OutputType>,
     pub output_path: Option<String>,
@@ -31,7 +32,6 @@ struct QuepyConfig {
     pub circuit_bench: Option<CircuitBenchType>,
     pub circuit_init_one: Option<bool>,
     pub circuit_rand: Option<bool>,
-    pub circuit_parse: Option<bool>,
     pub circuit_source: Option<String>,
 
     pub lang_schema: Option<LangSchemaType>,
@@ -56,6 +56,7 @@ impl QuepyConfig {
         provider_path: Option<String>,
         provider_python_dir: Option<String>,
         provider_account_id: Option<String>,
+        provider_machine_name: Option<String>,
 
         output: Option<String>,
         output_path: Option<String>,
@@ -67,7 +68,6 @@ impl QuepyConfig {
         circuit_bench: Option<String>,
         circuit_init_one: Option<bool>,
         circuit_rand: Option<bool>,
-        circuit_parse: Option<bool>,
         circuit_source: Option<String>,
 
         lang_schema: Option<String>,
@@ -88,6 +88,7 @@ impl QuepyConfig {
             provider_path,
             provider_python_dir,
             provider_account_id,
+            provider_machine_name,
 
             output: output.map(|e| OutputType::from_str(&e).unwrap()),
             output_path,
@@ -99,7 +100,6 @@ impl QuepyConfig {
             circuit_bench: circuit_bench.map(|e| CircuitBenchType::from_str(&e).unwrap()),
             circuit_init_one,
             circuit_rand,
-            circuit_parse,
             circuit_source,
 
             lang_schema: lang_schema.map(|e| LangSchemaType::from_str(&e).unwrap()),
@@ -126,6 +126,7 @@ impl From<QuepyConfig> for CliArgsConfig {
                 path: qc.provider_path,
                 python_dir: qc.provider_python_dir,
                 account_id: qc.provider_account_id,
+                machine_name: qc.provider_machine_name,
             },
             circuit: CliArgsCircuitConfig {
                 t: qc.circuit,
@@ -133,7 +134,6 @@ impl From<QuepyConfig> for CliArgsConfig {
                 bench: qc.circuit_bench,
                 init_one: qc.circuit_init_one,
                 rand: qc.circuit_rand,
-                parse: qc.circuit_parse,
                 source: qc.circuit_source,
                 inverse_gates: None,
             },

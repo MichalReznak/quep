@@ -13,8 +13,8 @@
         initOne: false, // Set state to one or zero
         rand: false, // Outputs different circuits for each iteration
         source: './templates/example.qasm', // Base circuit source
-        inverseGates: { // Custom defined inverse gates
-            's': 'sdg',
+        gates: { // Custom defined additional gates
+            'f': 'fdg',
         },
     },
     output: {

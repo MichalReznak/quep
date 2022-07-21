@@ -59,8 +59,8 @@ pub struct CliArgsCircuit {
     /// Base: Source file
     pub source: String,
 
-    /// Base: Inverse gates
-    pub inverse_gates: HashMap<String, String>,
+    /// Base: Custom additional gates
+    pub gates: HashMap<String, String>,
 }
 
 #[pyclass]

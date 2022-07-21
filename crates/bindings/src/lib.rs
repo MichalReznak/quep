@@ -135,7 +135,7 @@ impl From<QuepyConfig> for CliArgsConfig {
                 init_one: qc.circuit_init_one,
                 rand: qc.circuit_rand,
                 source: qc.circuit_source,
-                inverse_gates: None,
+                gates: None,
             },
             lang_schema: CliArgsLangSchemaConfig {
                 t: qc.lang_schema,

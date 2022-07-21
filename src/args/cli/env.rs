@@ -61,7 +61,7 @@ pub struct CliArgsEnv {
     pub circuit_source: Option<String>,
 
     #[clap(long, env = "QUEP_CIRCUIT_INVERSE_GATES", parse(try_from_str = parse_to_map))]
-    pub circuit_inverse_gates: Option<HashMap<String, String>>,
+    pub circuit_gates: Option<HashMap<String, String>>,
 
     #[clap(long, env = "QUEP_LANG_SCHEMA")]
     pub lang_schema: Option<LangSchemaType>,

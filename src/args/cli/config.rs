@@ -56,7 +56,7 @@ pub struct CliArgsCircuitConfig {
     pub init_one: Option<bool>,
     pub rand: Option<bool>,
     pub source: Option<String>,
-    pub inverse_gates: Option<HashMap<String, String>>,
+    pub gates: Option<HashMap<String, String>>,
 }
 
 #[derive(Serialize, Deserialize, Default, Clone)]

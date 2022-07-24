@@ -146,10 +146,11 @@ impl Orchestrator for SingleOrchestrator {
                     );
 
                     if !mirror {
-                        provider.append_circuit(circuit.clone()).await?;
+                        let simulator = simulator.as_mut().unwrap();
+                        simulator.append_circuit(circuit.clone()).await?;
 
-                        let res = provider.run().await?.get(0).unwrap().to_string();
-                        time += provider.meta_info().await?.time;
+                        let res = simulator.run().await?.get(0).unwrap().to_string();
+                        time += simulator.meta_info().await?.time;
 
                         let c = re.captures(&res).context(RegexCapture)?;
                         sim_vals.push(

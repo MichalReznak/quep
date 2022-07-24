@@ -30,7 +30,7 @@ impl LinearOrchestrator {
 
 #[async_trait]
 impl Orchestrator for LinearOrchestrator {
-    async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<Option<String>, crate::Error> {
+    async fn run(&self, chooser: &Chooser, mirror: bool) -> Result<Option<String>, Error> {
         let from_i = self.args.from_size;
         let i = self.args.size;
         let depth = self.args.size_2;
@@ -181,10 +181,11 @@ impl Orchestrator for LinearOrchestrator {
                         );
 
                         if !mirror {
-                            provider.append_circuit(circuit.clone()).await?;
+                            let simulator = simulator.as_mut().unwrap();
+                            simulator.append_circuit(circuit.clone()).await?;
 
-                            let res = provider.run().await?.get(0).unwrap().to_string();
-                            time += provider.meta_info().await?.time;
+                            let res = simulator.run().await?.get(0).unwrap().to_string();
+                            time += simulator.meta_info().await?.time;
 
                             let c = re.captures(&res).context(RegexCapture)?;
                             sim_vals.push(

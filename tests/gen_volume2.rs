@@ -1,6 +1,8 @@
 use anyhow::Error;
 use fehler::throws;
-use quep_core::args::types::{CircuitBenchType, CircuitType, LangSchemaType, OrchestratorType, OutputType, ProviderType};
+use quep_core::args::types::{
+    CircuitBenchType, CircuitType, LangSchemaType, OrchestratorType, OutputType, ProviderType,
+};
 
 use crate::common::Config;
 
@@ -19,7 +21,8 @@ async fn volume2_a() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -35,7 +38,8 @@ async fn volume2_b() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -51,7 +55,8 @@ async fn volume2_c() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -67,7 +72,8 @@ async fn volume2_d() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -83,7 +89,8 @@ async fn volume2_e() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -99,7 +106,8 @@ async fn volume2_f() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -115,7 +123,8 @@ async fn volume2_a_serial() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -131,7 +140,8 @@ async fn volume2_b_serial() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -147,7 +157,8 @@ async fn volume2_c_serial() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -163,7 +174,8 @@ async fn volume2_d_serial() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -179,7 +191,8 @@ async fn volume2_e_serial() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -195,9 +208,9 @@ async fn volume2_f_serial() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 #[throws]
 #[tokio::test]
@@ -212,7 +225,8 @@ async fn volume2_a_qiskit() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -228,7 +242,8 @@ async fn volume2_b_qiskit() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -244,7 +259,8 @@ async fn volume2_c_qiskit() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -260,7 +276,8 @@ async fn volume2_d_qiskit() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -276,7 +293,8 @@ async fn volume2_e_qiskit() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -292,7 +310,8 @@ async fn volume2_f_qiskit() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -308,7 +327,8 @@ async fn volume2_a_serial_qiskit() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -324,7 +344,8 @@ async fn volume2_b_serial_qiskit() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -340,7 +361,8 @@ async fn volume2_c_serial_qiskit() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -356,7 +378,8 @@ async fn volume2_d_serial_qiskit() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -372,7 +395,8 @@ async fn volume2_e_serial_qiskit() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -388,9 +412,9 @@ async fn volume2_f_serial_qiskit() {
         .orch(OrchestratorType::Volume)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 #[throws]
 #[tokio::test]
@@ -405,7 +429,8 @@ async fn volume2_a_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -421,7 +446,8 @@ async fn volume2_b_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -437,7 +463,8 @@ async fn volume2_c_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -453,7 +480,8 @@ async fn volume2_d_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -469,7 +497,8 @@ async fn volume2_e_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -485,7 +514,8 @@ async fn volume2_f_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -501,7 +531,8 @@ async fn volume2_a_serial_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -517,7 +548,8 @@ async fn volume2_b_serial_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -533,7 +565,8 @@ async fn volume2_c_serial_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -549,7 +582,8 @@ async fn volume2_d_serial_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -565,7 +599,8 @@ async fn volume2_e_serial_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -581,9 +616,9 @@ async fn volume2_f_serial_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 #[throws]
 #[tokio::test]
@@ -598,7 +633,8 @@ async fn volume2_a_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -614,7 +650,8 @@ async fn volume2_b_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -630,7 +667,8 @@ async fn volume2_c_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -646,7 +684,8 @@ async fn volume2_d_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -662,7 +701,8 @@ async fn volume2_e_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -678,7 +718,8 @@ async fn volume2_f_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -694,7 +735,8 @@ async fn volume2_a_serial_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -710,7 +752,8 @@ async fn volume2_b_serial_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -726,7 +769,8 @@ async fn volume2_c_serial_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -742,7 +786,8 @@ async fn volume2_d_serial_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -758,7 +803,8 @@ async fn volume2_e_serial_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -774,9 +820,9 @@ async fn volume2_f_serial_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 #[throws]
 #[tokio::test]
@@ -791,7 +837,8 @@ async fn volume2_a_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -807,7 +854,8 @@ async fn volume2_b_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -823,7 +871,8 @@ async fn volume2_c_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -839,7 +888,8 @@ async fn volume2_d_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -855,7 +905,8 @@ async fn volume2_e_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -871,7 +922,8 @@ async fn volume2_f_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -887,7 +939,8 @@ async fn volume2_a_serial_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -903,7 +956,8 @@ async fn volume2_b_serial_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -919,7 +973,8 @@ async fn volume2_c_serial_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -935,7 +990,8 @@ async fn volume2_d_serial_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -951,7 +1007,8 @@ async fn volume2_e_serial_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -967,9 +1024,9 @@ async fn volume2_f_serial_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 #[throws]
 #[tokio::test]
@@ -984,7 +1041,8 @@ async fn volume2_a_qiskit_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1000,7 +1058,8 @@ async fn volume2_b_qiskit_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1016,7 +1075,8 @@ async fn volume2_c_qiskit_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1032,7 +1092,8 @@ async fn volume2_d_qiskit_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1048,7 +1109,8 @@ async fn volume2_e_qiskit_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1064,7 +1126,8 @@ async fn volume2_f_qiskit_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1080,7 +1143,8 @@ async fn volume2_a_serial_qiskit_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1096,7 +1160,8 @@ async fn volume2_b_serial_qiskit_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1112,7 +1177,8 @@ async fn volume2_c_serial_qiskit_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1128,7 +1194,8 @@ async fn volume2_d_serial_qiskit_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1144,7 +1211,8 @@ async fn volume2_e_serial_qiskit_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1160,9 +1228,9 @@ async fn volume2_f_serial_qiskit_collect() {
         .orch(OrchestratorType::Volume)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 #[throws]
 #[tokio::test]
@@ -1177,7 +1245,8 @@ async fn volume2_a_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1193,7 +1262,8 @@ async fn volume2_b_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1209,7 +1279,8 @@ async fn volume2_c_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1225,7 +1296,8 @@ async fn volume2_d_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1241,7 +1313,8 @@ async fn volume2_e_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1257,7 +1330,8 @@ async fn volume2_f_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1273,7 +1347,8 @@ async fn volume2_a_serial_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1289,7 +1364,8 @@ async fn volume2_b_serial_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1305,7 +1381,8 @@ async fn volume2_c_serial_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1321,7 +1398,8 @@ async fn volume2_d_serial_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1337,7 +1415,8 @@ async fn volume2_e_serial_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1353,9 +1432,9 @@ async fn volume2_f_serial_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 #[throws]
 #[tokio::test]
@@ -1370,7 +1449,8 @@ async fn volume2_a_qiskit_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1386,7 +1466,8 @@ async fn volume2_b_qiskit_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1402,7 +1483,8 @@ async fn volume2_c_qiskit_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1418,7 +1500,8 @@ async fn volume2_d_qiskit_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1434,7 +1517,8 @@ async fn volume2_e_qiskit_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1450,7 +1534,8 @@ async fn volume2_f_qiskit_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1466,7 +1551,8 @@ async fn volume2_a_serial_qiskit_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1482,7 +1568,8 @@ async fn volume2_b_serial_qiskit_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1498,7 +1585,8 @@ async fn volume2_c_serial_qiskit_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1514,7 +1602,8 @@ async fn volume2_d_serial_qiskit_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1530,7 +1619,8 @@ async fn volume2_e_serial_qiskit_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1546,5 +1636,6 @@ async fn volume2_f_serial_qiskit_single_collect() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }

@@ -1,6 +1,8 @@
 use anyhow::Error;
 use fehler::throws;
-use quep_core::args::types::{CircuitBenchType, CircuitType, LangSchemaType, OrchestratorType, OutputType, ProviderType};
+use quep_core::args::types::{
+    CircuitBenchType, CircuitType, LangSchemaType, OrchestratorType, OutputType, ProviderType,
+};
 
 use crate::common::Config;
 
@@ -19,7 +21,8 @@ async fn rand_a() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -35,7 +38,8 @@ async fn rand_b() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -51,7 +55,8 @@ async fn rand_c() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -67,7 +72,8 @@ async fn rand_d() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -83,7 +89,8 @@ async fn rand_e() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -99,7 +106,8 @@ async fn rand_f() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 //***************** Init one *****************//
@@ -116,7 +124,8 @@ async fn rand_a_one() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -132,7 +141,8 @@ async fn rand_b_one() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -148,7 +158,8 @@ async fn rand_c_one() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -164,7 +175,8 @@ async fn rand_d_one() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -180,7 +192,8 @@ async fn rand_e_one() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -196,7 +209,8 @@ async fn rand_f_one() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 //***************** Serial *****************//
@@ -213,7 +227,8 @@ async fn rand_a_serial() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -229,7 +244,8 @@ async fn rand_b_serial() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -245,7 +261,8 @@ async fn rand_c_serial() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -261,7 +278,8 @@ async fn rand_d_serial() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -277,7 +295,8 @@ async fn rand_e_serial() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -293,9 +312,9 @@ async fn rand_f_serial() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 #[throws]
 #[tokio::test]
@@ -310,7 +329,8 @@ async fn rand_a_one_serial() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -326,7 +346,8 @@ async fn rand_b_one_serial() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -342,7 +363,8 @@ async fn rand_c_one_serial() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -358,7 +380,8 @@ async fn rand_d_one_serial() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -374,7 +397,8 @@ async fn rand_e_one_serial() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -390,9 +414,9 @@ async fn rand_f_one_serial() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 //***************** Qiskit *****************//
 #[throws]
@@ -408,7 +432,8 @@ async fn rand_a_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -424,7 +449,8 @@ async fn rand_b_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -440,7 +466,8 @@ async fn rand_c_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -456,7 +483,8 @@ async fn rand_d_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -472,7 +500,8 @@ async fn rand_e_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -488,7 +517,8 @@ async fn rand_f_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -504,7 +534,8 @@ async fn rand_a_one_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -520,7 +551,8 @@ async fn rand_b_one_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -536,7 +568,8 @@ async fn rand_c_one_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -552,7 +585,8 @@ async fn rand_d_one_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -568,7 +602,8 @@ async fn rand_e_one_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -584,7 +619,8 @@ async fn rand_f_one_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -600,7 +636,8 @@ async fn rand_a_serial_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -616,7 +653,8 @@ async fn rand_b_serial_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -632,7 +670,8 @@ async fn rand_c_serial_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -648,7 +687,8 @@ async fn rand_d_serial_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -664,7 +704,8 @@ async fn rand_e_serial_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -680,9 +721,9 @@ async fn rand_f_serial_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 #[throws]
 #[tokio::test]
@@ -697,7 +738,8 @@ async fn rand_a_one_serial_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -713,7 +755,8 @@ async fn rand_b_one_serial_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -729,7 +772,8 @@ async fn rand_c_one_serial_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -745,7 +789,8 @@ async fn rand_d_one_serial_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -761,7 +806,8 @@ async fn rand_e_one_serial_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -777,7 +823,8 @@ async fn rand_f_one_serial_qiskit() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 //***************** Collect *****************//
@@ -794,7 +841,8 @@ async fn rand_a_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -810,7 +858,8 @@ async fn rand_b_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -826,7 +875,8 @@ async fn rand_c_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -842,7 +892,8 @@ async fn rand_d_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -858,7 +909,8 @@ async fn rand_e_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -874,7 +926,8 @@ async fn rand_f_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -890,7 +943,8 @@ async fn rand_a_one_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -906,7 +960,8 @@ async fn rand_b_one_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -922,7 +977,8 @@ async fn rand_c_one_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -938,7 +994,8 @@ async fn rand_d_one_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -954,7 +1011,8 @@ async fn rand_e_one_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -970,7 +1028,8 @@ async fn rand_f_one_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -986,7 +1045,8 @@ async fn rand_a_serial_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1002,7 +1062,8 @@ async fn rand_b_serial_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1018,7 +1079,8 @@ async fn rand_c_serial_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1034,7 +1096,8 @@ async fn rand_d_serial_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1050,7 +1113,8 @@ async fn rand_e_serial_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1066,9 +1130,9 @@ async fn rand_f_serial_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 #[throws]
 #[tokio::test]
@@ -1083,7 +1147,8 @@ async fn rand_a_one_serial_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1099,7 +1164,8 @@ async fn rand_b_one_serial_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1115,7 +1181,8 @@ async fn rand_c_one_serial_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1131,7 +1198,8 @@ async fn rand_d_one_serial_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1147,7 +1215,8 @@ async fn rand_e_one_serial_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1163,7 +1232,8 @@ async fn rand_f_one_serial_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1179,7 +1249,8 @@ async fn rand_a_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1195,7 +1266,8 @@ async fn rand_b_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1211,7 +1283,8 @@ async fn rand_c_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1227,7 +1300,8 @@ async fn rand_d_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1243,7 +1317,8 @@ async fn rand_e_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1259,7 +1334,8 @@ async fn rand_f_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1275,7 +1351,8 @@ async fn rand_a_one_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1291,7 +1368,8 @@ async fn rand_b_one_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1307,7 +1385,8 @@ async fn rand_c_one_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1323,7 +1402,8 @@ async fn rand_d_one_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1339,7 +1419,8 @@ async fn rand_e_one_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1355,7 +1436,8 @@ async fn rand_f_one_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1371,7 +1453,8 @@ async fn rand_a_serial_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1387,7 +1470,8 @@ async fn rand_b_serial_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1403,7 +1487,8 @@ async fn rand_c_serial_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1419,7 +1504,8 @@ async fn rand_d_serial_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1435,7 +1521,8 @@ async fn rand_e_serial_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1451,9 +1538,9 @@ async fn rand_f_serial_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 #[throws]
 #[tokio::test]
@@ -1468,7 +1555,8 @@ async fn rand_a_one_serial_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1484,7 +1572,8 @@ async fn rand_b_one_serial_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1500,7 +1589,8 @@ async fn rand_c_one_serial_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1516,7 +1606,8 @@ async fn rand_d_one_serial_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1532,7 +1623,8 @@ async fn rand_e_one_serial_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1548,7 +1640,8 @@ async fn rand_f_one_serial_qiskit_collect() {
         .orch(OrchestratorType::Lattice)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 //************************ Linear *************************//
@@ -1565,7 +1658,8 @@ async fn rand_a_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1581,7 +1675,8 @@ async fn rand_b_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1597,7 +1692,8 @@ async fn rand_c_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1613,7 +1709,8 @@ async fn rand_d_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1629,7 +1726,8 @@ async fn rand_e_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1645,7 +1743,8 @@ async fn rand_f_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1661,7 +1760,8 @@ async fn rand_a_one_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1677,7 +1777,8 @@ async fn rand_b_one_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1693,7 +1794,8 @@ async fn rand_c_one_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1709,7 +1811,8 @@ async fn rand_d_one_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1725,7 +1828,8 @@ async fn rand_e_one_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1741,7 +1845,8 @@ async fn rand_f_one_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1757,7 +1862,8 @@ async fn rand_a_serial_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1773,7 +1879,8 @@ async fn rand_b_serial_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1789,7 +1896,8 @@ async fn rand_c_serial_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1805,7 +1913,8 @@ async fn rand_d_serial_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1821,7 +1930,8 @@ async fn rand_e_serial_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1837,9 +1947,9 @@ async fn rand_f_serial_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 #[throws]
 #[tokio::test]
@@ -1854,7 +1964,8 @@ async fn rand_a_one_serial_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1870,7 +1981,8 @@ async fn rand_b_one_serial_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1886,7 +1998,8 @@ async fn rand_c_one_serial_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1902,7 +2015,8 @@ async fn rand_d_one_serial_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1918,7 +2032,8 @@ async fn rand_e_one_serial_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1934,7 +2049,8 @@ async fn rand_f_one_serial_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1950,7 +2066,8 @@ async fn rand_a_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1966,7 +2083,8 @@ async fn rand_b_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1982,7 +2100,8 @@ async fn rand_c_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -1998,7 +2117,8 @@ async fn rand_d_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2014,7 +2134,8 @@ async fn rand_e_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2030,7 +2151,8 @@ async fn rand_f_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2046,7 +2168,8 @@ async fn rand_a_one_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2062,7 +2185,8 @@ async fn rand_b_one_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2078,7 +2202,8 @@ async fn rand_c_one_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2094,7 +2219,8 @@ async fn rand_d_one_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2110,7 +2236,8 @@ async fn rand_e_one_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2126,7 +2253,8 @@ async fn rand_f_one_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2142,7 +2270,8 @@ async fn rand_a_serial_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2158,7 +2287,8 @@ async fn rand_b_serial_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2174,7 +2304,8 @@ async fn rand_c_serial_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2190,7 +2321,8 @@ async fn rand_d_serial_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2206,7 +2338,8 @@ async fn rand_e_serial_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2222,9 +2355,9 @@ async fn rand_f_serial_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 #[throws]
 #[tokio::test]
@@ -2239,7 +2372,8 @@ async fn rand_a_one_serial_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2255,7 +2389,8 @@ async fn rand_b_one_serial_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2271,7 +2406,8 @@ async fn rand_c_one_serial_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2287,7 +2423,8 @@ async fn rand_d_one_serial_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2303,7 +2440,8 @@ async fn rand_e_one_serial_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2319,7 +2457,8 @@ async fn rand_f_one_serial_qiskit_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2335,7 +2474,8 @@ async fn rand_a_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2351,7 +2491,8 @@ async fn rand_b_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2367,7 +2508,8 @@ async fn rand_c_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2383,7 +2525,8 @@ async fn rand_d_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2399,7 +2542,8 @@ async fn rand_e_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2415,7 +2559,8 @@ async fn rand_f_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2431,7 +2576,8 @@ async fn rand_a_one_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2447,7 +2593,8 @@ async fn rand_b_one_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2463,7 +2610,8 @@ async fn rand_c_one_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2479,7 +2627,8 @@ async fn rand_d_one_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2495,7 +2644,8 @@ async fn rand_e_one_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2511,7 +2661,8 @@ async fn rand_f_one_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2527,7 +2678,8 @@ async fn rand_a_serial_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2543,7 +2695,8 @@ async fn rand_b_serial_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2559,7 +2712,8 @@ async fn rand_c_serial_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2575,7 +2729,8 @@ async fn rand_d_serial_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2591,7 +2746,8 @@ async fn rand_e_serial_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2607,9 +2763,9 @@ async fn rand_f_serial_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 #[throws]
 #[tokio::test]
@@ -2624,7 +2780,8 @@ async fn rand_a_one_serial_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2640,7 +2797,8 @@ async fn rand_b_one_serial_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2656,7 +2814,8 @@ async fn rand_c_one_serial_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2672,7 +2831,8 @@ async fn rand_d_one_serial_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2688,7 +2848,8 @@ async fn rand_e_one_serial_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2704,7 +2865,8 @@ async fn rand_f_one_serial_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2720,7 +2882,8 @@ async fn rand_a_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2736,7 +2899,8 @@ async fn rand_b_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2752,7 +2916,8 @@ async fn rand_c_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2768,7 +2933,8 @@ async fn rand_d_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2784,7 +2950,8 @@ async fn rand_e_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2800,7 +2967,8 @@ async fn rand_f_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2816,7 +2984,8 @@ async fn rand_a_one_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2832,7 +3001,8 @@ async fn rand_b_one_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2848,7 +3018,8 @@ async fn rand_c_one_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2864,7 +3035,8 @@ async fn rand_d_one_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2880,7 +3052,8 @@ async fn rand_e_one_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2896,7 +3069,8 @@ async fn rand_f_one_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2912,7 +3086,8 @@ async fn rand_a_serial_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2928,7 +3103,8 @@ async fn rand_b_serial_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2944,7 +3120,8 @@ async fn rand_c_serial_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2960,7 +3137,8 @@ async fn rand_d_serial_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2976,7 +3154,8 @@ async fn rand_e_serial_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -2992,9 +3171,9 @@ async fn rand_f_serial_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 #[throws]
 #[tokio::test]
@@ -3009,7 +3188,8 @@ async fn rand_a_one_serial_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3025,7 +3205,8 @@ async fn rand_b_one_serial_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3041,7 +3222,8 @@ async fn rand_c_one_serial_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3057,7 +3239,8 @@ async fn rand_d_one_serial_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3073,7 +3256,8 @@ async fn rand_e_one_serial_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3089,7 +3273,8 @@ async fn rand_f_one_serial_qiskit_collect_linear() {
         .orch(OrchestratorType::Linear)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 //************************* Single *****************************//
@@ -3106,7 +3291,8 @@ async fn rand_a_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3122,7 +3308,8 @@ async fn rand_b_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3138,7 +3325,8 @@ async fn rand_c_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3154,7 +3342,8 @@ async fn rand_d_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3170,7 +3359,8 @@ async fn rand_e_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3186,7 +3376,8 @@ async fn rand_f_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 //***************** Init one *****************//
@@ -3203,7 +3394,8 @@ async fn rand_a_one_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3219,7 +3411,8 @@ async fn rand_b_one_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3235,7 +3428,8 @@ async fn rand_c_one_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3251,7 +3445,8 @@ async fn rand_d_one_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3267,7 +3462,8 @@ async fn rand_e_one_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3283,7 +3479,8 @@ async fn rand_f_one_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 //***************** Serial *****************//
@@ -3300,7 +3497,8 @@ async fn rand_a_serial_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3316,7 +3514,8 @@ async fn rand_b_serial_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3332,7 +3531,8 @@ async fn rand_c_serial_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3348,7 +3548,8 @@ async fn rand_d_serial_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3364,7 +3565,8 @@ async fn rand_e_serial_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3380,9 +3582,9 @@ async fn rand_f_serial_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 #[throws]
 #[tokio::test]
@@ -3397,7 +3599,8 @@ async fn rand_a_one_serial_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3413,7 +3616,8 @@ async fn rand_b_one_serial_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3429,7 +3633,8 @@ async fn rand_c_one_serial_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3445,7 +3650,8 @@ async fn rand_d_one_serial_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3461,7 +3667,8 @@ async fn rand_e_one_serial_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3477,9 +3684,9 @@ async fn rand_f_one_serial_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 //***************** Qiskit *****************//
 #[throws]
@@ -3495,7 +3702,8 @@ async fn rand_a_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3511,7 +3719,8 @@ async fn rand_b_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3527,7 +3736,8 @@ async fn rand_c_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3543,7 +3753,8 @@ async fn rand_d_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3559,7 +3770,8 @@ async fn rand_e_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3575,7 +3787,8 @@ async fn rand_f_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3591,7 +3804,8 @@ async fn rand_a_one_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3607,7 +3821,8 @@ async fn rand_b_one_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3623,7 +3838,8 @@ async fn rand_c_one_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3639,7 +3855,8 @@ async fn rand_d_one_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3655,7 +3872,8 @@ async fn rand_e_one_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3671,7 +3889,8 @@ async fn rand_f_one_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3687,7 +3906,8 @@ async fn rand_a_serial_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3703,7 +3923,8 @@ async fn rand_b_serial_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3719,7 +3940,8 @@ async fn rand_c_serial_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3735,7 +3957,8 @@ async fn rand_d_serial_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3751,7 +3974,8 @@ async fn rand_e_serial_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3767,9 +3991,9 @@ async fn rand_f_serial_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 #[throws]
 #[tokio::test]
@@ -3784,7 +4008,8 @@ async fn rand_a_one_serial_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3800,7 +4025,8 @@ async fn rand_b_one_serial_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3816,7 +4042,8 @@ async fn rand_c_one_serial_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3832,7 +4059,8 @@ async fn rand_d_one_serial_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3848,7 +4076,8 @@ async fn rand_e_one_serial_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3864,7 +4093,8 @@ async fn rand_f_one_serial_qiskit_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(false)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 //***************** Collect *****************//
@@ -3881,7 +4111,8 @@ async fn rand_a_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3897,7 +4128,8 @@ async fn rand_b_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3913,7 +4145,8 @@ async fn rand_c_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3929,7 +4162,8 @@ async fn rand_d_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3945,7 +4179,8 @@ async fn rand_e_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3961,7 +4196,8 @@ async fn rand_f_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3977,7 +4213,8 @@ async fn rand_a_one_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -3993,7 +4230,8 @@ async fn rand_b_one_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4009,7 +4247,8 @@ async fn rand_c_one_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4025,7 +4264,8 @@ async fn rand_d_one_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4041,7 +4281,8 @@ async fn rand_e_one_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4057,7 +4298,8 @@ async fn rand_f_one_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4073,7 +4315,8 @@ async fn rand_a_serial_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4089,7 +4332,8 @@ async fn rand_b_serial_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4105,7 +4349,8 @@ async fn rand_c_serial_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4121,7 +4366,8 @@ async fn rand_d_serial_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4137,7 +4383,8 @@ async fn rand_e_serial_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4153,9 +4400,9 @@ async fn rand_f_serial_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 #[throws]
 #[tokio::test]
@@ -4170,7 +4417,8 @@ async fn rand_a_one_serial_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4186,7 +4434,8 @@ async fn rand_b_one_serial_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4202,7 +4451,8 @@ async fn rand_c_one_serial_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4218,7 +4468,8 @@ async fn rand_d_one_serial_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4234,7 +4485,8 @@ async fn rand_e_one_serial_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4250,7 +4502,8 @@ async fn rand_f_one_serial_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4266,7 +4519,8 @@ async fn rand_a_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4282,7 +4536,8 @@ async fn rand_b_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4298,7 +4553,8 @@ async fn rand_c_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4314,7 +4570,8 @@ async fn rand_d_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4330,7 +4587,8 @@ async fn rand_e_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4346,7 +4604,8 @@ async fn rand_f_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4362,7 +4621,8 @@ async fn rand_a_one_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4378,7 +4638,8 @@ async fn rand_b_one_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4394,7 +4655,8 @@ async fn rand_c_one_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4410,7 +4672,8 @@ async fn rand_d_one_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4426,7 +4689,8 @@ async fn rand_e_one_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4442,7 +4706,8 @@ async fn rand_f_one_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4458,7 +4723,8 @@ async fn rand_a_serial_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4474,7 +4740,8 @@ async fn rand_b_serial_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4490,7 +4757,8 @@ async fn rand_c_serial_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4506,7 +4774,8 @@ async fn rand_d_serial_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4522,7 +4791,8 @@ async fn rand_e_serial_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4538,9 +4808,9 @@ async fn rand_f_serial_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
-
 
 #[throws]
 #[tokio::test]
@@ -4555,7 +4825,8 @@ async fn rand_a_one_serial_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4571,7 +4842,8 @@ async fn rand_b_one_serial_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4587,7 +4859,8 @@ async fn rand_c_one_serial_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4603,7 +4876,8 @@ async fn rand_d_one_serial_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4619,7 +4893,8 @@ async fn rand_e_one_serial_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }
 
 #[throws]
@@ -4635,5 +4910,6 @@ async fn rand_f_one_serial_qiskit_collect_single() {
         .orch(OrchestratorType::Single)
         .orch_collect(true)
         .build()
-        .run().await?;
+        .run()
+        .await?;
 }

@@ -1,25 +1,25 @@
-//! # Outputer interface:
-//! class Outputer:
-//!     def __init__(self, args):
-//!         pass
-//!
-//!     def check_constraints(self, config) -> bool:
-//!         return {'correct': False, 'reason': 'Some reason'}
-//!
-//!     def output_table(self, values: [[dict[str, any]]],
-//!         durations: [int], runtime: int) -> str:
-//!         # Format table in any way
-//!         return ''
-//!
-//!     def output_volume(self, values: [dict[str, any]],
-//!         durations: [int], runtime: int) -> str:
-//!         # Format volume in any way
-//!         return ''
-//!
-//!     def output_linear(self, values: [dict[str, any]],
-//!     durations: [int], runtime: int, width: int) -> str:
-//!         # Format linear in any way
-//!         return ''
+// # Outputer interface:
+// class Outputer:
+//     def __init__(self, args):
+//         pass
+//
+//     def check_constraints(self, config) -> bool:
+//         return {'correct': False, 'reason': 'Some reason'}
+//
+//     def output_table(self, values: [[dict[str, any]]],
+//         durations: [int], runtime: int) -> str:
+//         # Format table in any way
+//         return ''
+//
+//     def output_volume(self, values: [dict[str, any]],
+//         durations: [int], runtime: int) -> str:
+//         # Format volume in any way
+//         return ''
+//
+//     def output_linear(self, values: [dict[str, any]],
+//     durations: [int], runtime: int, width: int) -> str:
+//         # Format linear in any way
+//         return ''
 
 use async_trait::async_trait;
 use fehler::throws;

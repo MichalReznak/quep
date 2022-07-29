@@ -1,16 +1,16 @@
-//! # LangSchema interface:
-//! class LangSchema:
-//!     def __init__(self, args):
-//!         pass
-//!
-//!     def check_constraints(self, config) -> bool:
-//!         return {'correct': False, 'reason': 'Some reason'}
-//!
-//!     def parse_file(path: str) -> [dict[str, any]]:
-//!         return [{'t': 'X', 'i': 0, 'other': 0}]
-//!
-//!     def as_string(circ: dict[str, any]) -> dict[str, any]:
-//!         return {'circuit': '', 't': 'OpenQasm'}
+// # LangSchema interface:
+// class LangSchema:
+//     def __init__(self, args):
+//         pass
+//
+//     def check_constraints(self, config) -> bool:
+//         return {'correct': False, 'reason': 'Some reason'}
+//
+//     def parse_file(path: str) -> [dict[str, any]]:
+//         return [{'t': 'X', 'i': 0, 'other': 0}]
+//
+//     def as_string(circ: dict[str, any]) -> dict[str, any]:
+//         return {'circuit': '', 't': 'OpenQasm'}
 
 use async_trait::async_trait;
 use fehler::throws;

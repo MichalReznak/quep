@@ -7,7 +7,7 @@
         machineName: '', // IbmQ only
     },
     circuit: {
-        t: 'Struct', // Base, Struct, Rand, Fs, Volume, Basic, Python
+        t: 'Struct', // Base, Struct, Rand, Fs, Volume, Volume2, Basic, Python
         path: './circuit_generator.py', // Path to Custom Circuit Generator
         bench: 'Mirror', // Mirror, Cycle, None
         initOne: false, // Set state to one or zero

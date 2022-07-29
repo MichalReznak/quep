@@ -10,89 +10,103 @@ use quep_core::args::types::{
 use quep_core::args::{
     CliArgsCircuit, CliArgsLangSchema, CliArgsOrch, CliArgsOutput, CliArgsProvider,
 };
-use quep_core::CliArgs;
+use quep_core::{CliArgs, Quep};
 use typed_builder::TypedBuilder;
+
+
 const ACCOUNT_ID: &str = "9ee04b444ed1c767fcd01b66027a391d8df5938df51dd27e6eaaed0a45f5da67c19dcfb2f2f46dcff893c3a54d054b4b392e1a54618d8cfea9d70d9f3378ea51";
 const MACHINE_NAME: &str = "ibmq_quito";
-
-#[derive(TypedBuilder)]
-pub struct Config {
-    pub orch: OrchestratorType,
-    pub prov: ProviderType,
-    pub out: OutputType,
-    pub cir: CircuitType,
-    pub ls: LangSchemaType,
-}
-
-#[throws]
-pub fn get_args(config: Config) -> CliArgs {
-    CliArgs::builder()
-        .orch(get_orch(config.orch)?)
-        .provider(get_prov(config.prov)?)
-        .output(get_out(config.out)?)
-        .circuit(get_cir(config.cir)?)
-        .lang_schema(get_ls(config.ls)?)
-        .build()
-}
 
 #[throws]
 fn get_dir(s: &str) -> String {
     dunce::canonicalize(s)?.to_str().context("Cannot to string")?.to_owned()
 }
 
-#[throws]
-fn get_orch(t: OrchestratorType) -> CliArgsOrch {
-    CliArgsOrch::builder()
-        .t(t)
-        .size(4)
-        .size_2(4)
-        .from_size(1)
-        .from_size_2(1)
-        .iter(4)
-        .data(get_dir("./data")?)
-        .collect(false)
-        .preheat(true)
-        .build()
+#[derive(TypedBuilder)]
+pub struct Config {
+    pub prov: ProviderType,
+
+    pub cir: CircuitType,
+    pub cir_bench: CircuitBenchType,
+    #[builder(default, setter(strip_option))]
+    pub cir_one: Option<bool>,
+    #[builder(default, setter(strip_option))]
+    pub cir_rand: Option<bool>,
+
+    pub out: OutputType,
+
+    pub ls: LangSchemaType,
+
+    pub orch: OrchestratorType,
+    #[builder(default, setter(strip_option))]
+    pub orch_from: Option<i32>,
+    #[builder(default, setter(strip_option))]
+    pub orch_from2: Option<i32>,
+    #[builder(default, setter(strip_option))]
+    pub orch_size: Option<i32>,
+    #[builder(default, setter(strip_option))]
+    pub orch_size2: Option<i32>,
+    #[builder(default, setter(strip_option))]
+    pub orch_collect: Option<bool>,
+    #[builder(default, setter(strip_option))]
+    pub orch_preheat: Option<bool>,
 }
 
-#[throws]
-fn get_prov(t: ProviderType) -> CliArgsProvider {
-    CliArgsProvider::builder()
-        .t(t)
-        .python_dir(get_dir(".")?)
-        .path(get_dir("./python/ext/qc_provider.py")?)
-        .account_id(ACCOUNT_ID.to_string())
-        .machine_name(MACHINE_NAME.to_string())
-        .build()
-}
+impl Config {
+    #[throws]
+    pub async fn run(self) {
+        let c = self;
 
-#[throws]
-fn get_out(t: OutputType) -> CliArgsOutput {
-    CliArgsOutput::builder()
-        .t(t)
-        .ser(OutputSerType::Json)
-        .pretty(true)
-        .path(get_dir("./python/ext/outputer.py")?)
-        .build()
-}
+        let prov = CliArgsProvider::builder()
+            .t(c.prov)
+            .python_dir(get_dir(".")?)
+            .path(get_dir("./python_ext/qc_provider.py")?)
+            .account_id(ACCOUNT_ID.to_string())
+            .machine_name(MACHINE_NAME.to_string())
+            .build();
 
-#[throws]
-fn get_cir(t: CircuitType) -> CliArgsCircuit {
-    CliArgsCircuit::builder()
-        .t(t)
-        .bench(CircuitBenchType::Mirror)
-        .path(get_dir("./python/ext/circuit_generator.py")?)
-        .init_one(false)
-        .rand(true)
-        .source(get_dir("./templates/example.qasm")?)
-        .gates(collection! { HashMap<String, String>; })
-        .build()
-}
+        let circ = CliArgsCircuit::builder()
+            .t(c.cir)
+            .bench(c.cir_bench)
+            .path(get_dir("./python_ext/circuit_generator.py")?)
+            .init_one(c.cir_one.unwrap_or(false))
+            .rand(c.cir_rand.unwrap_or(true))
+            .source(get_dir("./templates/example.qasm")?)
+            .gates(collection! { HashMap<String, String>; })
+            .build();
 
-#[throws]
-fn get_ls(t: LangSchemaType) -> CliArgsLangSchema {
-    CliArgsLangSchema::builder()
-        .t(t)
-        .path(get_dir("./python/ext/lang_schema.py")?)
-        .build()
+        let out = CliArgsOutput::builder()
+            .t(c.out)
+            .ser(OutputSerType::Json)
+            .pretty(true)
+            .path(get_dir("./python_ext/outputer.py")?)
+            .build();
+
+        let ls = CliArgsLangSchema::builder()
+            .t(c.ls)
+            .path(get_dir("./python_ext/lang_schema.py")?)
+            .build();
+
+        let orch = CliArgsOrch::builder()
+            .t(c.orch)
+            .from_size(c.orch_from.unwrap_or(1))
+            .from_size_2(c.orch_from2.unwrap_or(1))
+            .size(c.orch_size.unwrap_or(4))
+            .size_2(c.orch_size2.unwrap_or(4))
+            .iter(4)
+            .data(get_dir("./data")?)
+            .collect(c.orch_collect.unwrap_or(false))
+            .preheat(c.orch_preheat.unwrap_or(false))
+            .build();
+
+        let args = CliArgs::builder()
+            .provider(prov)
+            .circuit(circ)
+            .output(out)
+            .lang_schema(ls)
+            .orch(orch)
+            .build();
+
+        Quep::new(args).await?.run().await?;
+    }
 }

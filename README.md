@@ -28,26 +28,32 @@ grcov . `
 ```
 
 ##### TODOs:
-* Skip zero values in output so fromSize is not written as 0
+* Quantum Volumes should pseudo randomize neighboring qubits (maybe also struct and rand too) [config option?]
 
-* Improve time estimates: time_per_step()
+* Second layer in struct and rand algorithms should be two qubit gates only (to have some qubits coherence)
+
+X Improve time estimates for Ibmq: time_per_step()
+
+X Wrong index for Serial output with single orchestrator
+
+X Skip zero values in output so fromSize is not written as 0
 
 ##### Skipped (Future work):
-* NO: Allow to define custom layer size? (Nah, just write it in future work)
+X NO: Allow to define custom layer size? (Nah, just write it in future work)
 
-* NO: Extend with toffoli gate? (This is complex gate on a circuit)
+X NO: Extend with toffoli gate? (This is complex gate on a circuit)
 
-* NO: Add option to increase mirror/cycle circuit size only by one with inverted result?
+X NO: Add option to increase mirror/cycle circuit size only by one with inverted result?
   (Only good for layers of size 1, but then it's just a plain Volume benchmark that is already implemented)
 
-* NO: Add C API? (Is it needed? I don't think so)
+X NO: Add C API? (Is it needed? I don't think so)
 
-* NO: Extend supported gates with custom defined and their inverse
+X NO: Extend supported gates with custom defined and their inverse
   (Will not be base gate anymore, no point of doing that)
 
-* NO: From Lang Schema allow to define custom registers (Extension)
+X NO: From Lang Schema allow to define custom registers (Extension)
 
-* NO: Allow to ext define custom arguments? (Nah, just write it in future work)
+X NO: Allow to ext define custom arguments? (Nah, just write it in future work)
 
 
 #### Changes after image inserted:

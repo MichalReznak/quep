@@ -80,21 +80,27 @@ impl Outputer for SerialOutputer {
         values: Vec<Vec<OutValue>>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
+        from: i32,
+        from2: i32,
     ) -> Result<Option<String>, Error> {
         let mut table = Vec::new();
+        let val_len = values.get(0).context(OutOfBounds)?.len();
 
         for (i, value) in values.iter().enumerate() {
             for (j, col) in value.iter().enumerate() {
+                let i = i + from as usize;
+                let j = j + from2 as usize;
                 let time_ms = if let Some(durations) = &durations {
-                    Some(durations.get(j).context(OutOfBounds)?.as_millis() as i32)
+                    let dur_i = ((i - from as usize) * val_len) +  (j - from2 as usize);
+                    Some(durations.get(dur_i).context(OutOfBounds)?.as_millis() as i32)
                 }
                 else {
                     None
                 };
 
                 let record = Record::builder()
-                    .width(cast(i + 1).context(OutOfBounds)?)
-                    .depth(cast(j + 1).context(OutOfBounds)?)
+                    .width(cast(i).context(OutOfBounds)?)
+                    .depth(cast(j).context(OutOfBounds)?)
                     .output(&col.result)
                     .result(col.correct)
                     .correct(col.is_correct)
@@ -114,6 +120,7 @@ impl Outputer for SerialOutputer {
         values: Vec<OutValue>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
+        from: i32,
     ) -> Result<Option<String>, Error> {
         let include_durs = matches!(durations, Some(_));
         let durations = durations.unwrap_or_else(|| {
@@ -124,7 +131,7 @@ impl Outputer for SerialOutputer {
         let mut correct_i = 0;
 
         for (i, (val, dur)) in values.into_iter().zip(durations).enumerate() {
-            let i = i + 1;
+            let i = i + from as usize;
 
             let time_ms = if include_durs {
                 Some(dur.as_millis() as i32)
@@ -162,6 +169,7 @@ impl Outputer for SerialOutputer {
         durations: Option<Vec<Duration>>,
         width: i32,
         runtime: Duration,
+        from: i32,
     ) -> Result<Option<String>, Error> {
         let include_durs = matches!(durations, Some(_));
         let durations = durations.unwrap_or_else(|| {
@@ -171,6 +179,7 @@ impl Outputer for SerialOutputer {
         let mut table = vec![];
 
         for (i, (val, dur)) in values.into_iter().zip(durations).enumerate() {
+            let i = i + from as usize;
             let time_ms = if include_durs {
                 Some(dur.as_millis() as i32)
             }
@@ -179,7 +188,7 @@ impl Outputer for SerialOutputer {
             };
 
             let record = Record::builder()
-                .width(cast(i + 1).context(OutOfBounds)?)
+                .width(cast(i).context(OutOfBounds)?)
                 .depth(cast(width).context(OutOfBounds)?)
                 .result(val.correct)
                 .output(&val.result)

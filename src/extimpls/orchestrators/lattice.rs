@@ -111,7 +111,6 @@ impl Orchestrator for LatticeOrchestrator {
 
                     // Skip first N iterations if defined
                     if ii < from_i - 1 || jj < from_j - 1 {
-                        sr.push(OutValue::default());
                         continue;
                     }
 
@@ -152,10 +151,12 @@ impl Orchestrator for LatticeOrchestrator {
                     sr.push(val);
                 }
 
-                result.push(sr);
+                if !sr.is_empty() {
+                    result.push(sr);
+                }
             }
 
-            outputer.output_table(result, None, Instant::now() - runtime).await
+            outputer.output_table(result, None, Instant::now() - runtime, from_i, from_j).await
         }
         else {
             'main2: for i in 1..=i {
@@ -168,8 +169,6 @@ impl Orchestrator for LatticeOrchestrator {
 
                     // Skip first N iterations if defined
                     if i < from_i || j < from_j {
-                        durations.push(Duration::from_millis(0));
-                        sr.push(OutValue::default());
                         continue;
                     }
 
@@ -234,14 +233,17 @@ impl Orchestrator for LatticeOrchestrator {
                     }
                 }
 
-                result.push(sr.clone());
-                let c = sr.get(0).context(OutOfBounds)?.is_correct;
-                if c && sr.len() == 1 {
-                    break;
+                if !sr.is_empty() {
+                    result.push(sr.clone());
+                    if let Some(c) = sr.get(0) {
+                        if c.is_correct && sr.len() == 1 {
+                            break;
+                        }
+                    }
                 }
             }
 
-            outputer.output_table(result, Some(durations), Instant::now() - runtime).await
+            outputer.output_table(result, Some(durations), Instant::now() - runtime, from_i, from_j).await
         }
     }
 }

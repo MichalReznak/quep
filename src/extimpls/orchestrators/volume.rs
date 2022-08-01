@@ -81,7 +81,7 @@ impl Orchestrator for VolumeOrchestrator {
         let runtime = Instant::now();
 
         if self.args.collect {
-            'main: for i in 1..=width {
+            'main: for i in from_i..=width {
                 for ii in 0..iter {
                     if let Some(c) = generator.generate(&lang_schema, i, i, ii).await? {
                         let c = lang_schema.as_string(c.clone())?;
@@ -115,51 +115,48 @@ impl Orchestrator for VolumeOrchestrator {
                     let mut vals = vec![];
                     let mut val = OutValue::default();
 
-                    // Skip first N iterations if defined
-                    if i >= (from_i - 1) as usize {
-                        for r in res {
-                            let c = re.captures(&r).context(RegexCapture).unwrap();
-                            vals.push(
+                    for r in res {
+                        let c = re.captures(&r).context(RegexCapture).unwrap();
+                        vals.push(
+                            OutValue::builder()
+                                .result(c["result"].parse::<String>().unwrap_infallible())
+                                .correct(c["val"].parse::<i32>().unwrap())
+                                .build(),
+                        );
+                    }
+                    val = filter_incorrect_values(vals).unwrap();
+
+                    val.is_correct = if !mirror {
+                        let ci = i * (iter as usize);
+                        let res = sim_res
+                            .get((ci as usize)..(ci as usize + (iter as usize)))
+                            .unwrap();
+
+                        let mut sim_vals = vec![];
+                        for r in res.iter() {
+                            let c = re.captures(r).context(RegexCapture).unwrap();
+                            sim_vals.push(
                                 OutValue::builder()
                                     .result(c["result"].parse::<String>().unwrap_infallible())
                                     .correct(c["val"].parse::<i32>().unwrap())
                                     .build(),
                             );
                         }
-                        val = filter_incorrect_values(vals).unwrap();
+                        let sim_val = filter_incorrect_values(sim_vals).unwrap();
 
-                        val.is_correct = if !mirror {
-                            let ci = i * (iter as usize);
-                            let res = sim_res
-                                .get((ci as usize)..(ci as usize + (iter as usize)))
-                                .unwrap();
-
-                            let mut sim_vals = vec![];
-                            for r in res.iter() {
-                                let c = re.captures(r).context(RegexCapture).unwrap();
-                                sim_vals.push(
-                                    OutValue::builder()
-                                        .result(c["result"].parse::<String>().unwrap_infallible())
-                                        .correct(c["val"].parse::<i32>().unwrap())
-                                        .build(),
-                                );
-                            }
-                            let sim_val = filter_incorrect_values(sim_vals).unwrap();
-
-                            let d = (sim_val.correct as f64) * (1.0 / 3.0);
-                            sim_val.result == val.result
-                                && (sim_val.correct - val.correct) as f64 <= d
-                        }
-                        else {
-                            (val.correct as f64) > 1024.0 * (2.0 / 3.0)
-                        };
+                        let d = (sim_val.correct as f64) * (1.0 / 3.0);
+                        sim_val.result == val.result
+                            && (sim_val.correct - val.correct) as f64 <= d
                     }
+                    else {
+                        (val.correct as f64) > 1024.0 * (2.0 / 3.0)
+                    };
 
                     val
                 })
                 .collect();
 
-            outputer.output_volume(result, None, Instant::now() - runtime).await
+            outputer.output_volume(result, None, Instant::now() - runtime, from_i).await
         }
         else {
             'main2: for i in 1..=width {
@@ -169,8 +166,6 @@ impl Orchestrator for VolumeOrchestrator {
 
                 // Skip first N iterations if defined
                 if i < from_i {
-                    durations.push(Duration::from_millis(0));
-                    result.push(OutValue::default());
                     continue;
                 }
 
@@ -229,7 +224,7 @@ impl Orchestrator for VolumeOrchestrator {
                 }
             }
 
-            outputer.output_volume(result, Some(durations), Instant::now() - runtime).await
+            outputer.output_volume(result, Some(durations), Instant::now() - runtime, from_i).await
         }
     }
 }

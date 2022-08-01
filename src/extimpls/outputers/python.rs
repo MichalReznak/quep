@@ -75,6 +75,8 @@ impl Outputer for PythonOutputer {
         values: Vec<Vec<OutValue>>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
+        from: i32,
+        from2: i32,
     ) -> Result<Option<String>, Error> {
         Python::with_gil(|py| {
             let durations =
@@ -82,7 +84,7 @@ impl Outputer for PythonOutputer {
             let res = self.py_instance.call_method1(
                 py,
                 "output_table",
-                (values, durations, runtime.as_millis()),
+                (values, durations, runtime.as_millis(), from, from2),
             )?;
 
             Ok(if res.is_none(py) {
@@ -99,6 +101,7 @@ impl Outputer for PythonOutputer {
         values: Vec<OutValue>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
+        from: i32,
     ) -> Result<Option<String>, Error> {
         Python::with_gil(|py| {
             let durations =
@@ -106,7 +109,7 @@ impl Outputer for PythonOutputer {
             let res = self.py_instance.call_method1(
                 py,
                 "output_volume",
-                (values, durations, runtime.as_millis()),
+                (values, durations, runtime.as_millis(), from),
             )?;
 
             Ok(if res.is_none(py) {
@@ -124,6 +127,7 @@ impl Outputer for PythonOutputer {
         durations: Option<Vec<Duration>>,
         width: i32,
         runtime: Duration,
+        from: i32,
     ) -> Result<Option<String>, Error> {
         Python::with_gil(|py| {
             let durations =
@@ -131,7 +135,7 @@ impl Outputer for PythonOutputer {
             let res = self.py_instance.call_method1(
                 py,
                 "output_linear",
-                (values, durations, runtime.as_millis(), width),
+                (values, durations, width, runtime.as_millis(), from),
             )?;
 
             Ok(if res.is_none(py) {

@@ -31,13 +31,16 @@ impl Outputer for TextOutputer {
         values: Vec<Vec<OutValue>>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
+        from: i32,
+        from2: i32,
     ) -> Result<Option<String>, Error> {
         let mut table_dur = vec![];
         let mut table = vec![];
 
-        let mut row = vec![];
-        let mut row_dur = vec![];
-        for i in 0..=values.get(0).context(OutOfBounds)?.len() {
+        let mut row = vec![0.cell().justify(Justify::Center).bold(true).background_color(Some(Color::Cyan))];
+        let mut row_dur = vec![0.cell().justify(Justify::Center).bold(true).background_color(Some(Color::Cyan))];
+        for i in 0..values.get(0).context(OutOfBounds)?.len() {
+            let i = i + from2 as usize;
             row.push(
                 i.cell().justify(Justify::Center).bold(true).background_color(Some(Color::Cyan)),
             );
@@ -48,18 +51,21 @@ impl Outputer for TextOutputer {
         table.push(row);
         table_dur.push(row_dur);
 
+        let val_len = values.get(0).context(OutOfBounds)?.len();
+
         for (i, value) in values.iter().enumerate() {
+            let i = i + from as usize;
             let mut row = vec![];
             let mut row_dur = vec![];
             row.push(
-                (i + 1)
+                i
                     .cell()
                     .justify(Justify::Center)
                     .bold(true)
                     .background_color(Some(Color::Cyan)),
             );
             row_dur.push(
-                (i + 1)
+                i
                     .cell()
                     .justify(Justify::Center)
                     .bold(true)
@@ -67,6 +73,7 @@ impl Outputer for TextOutputer {
             );
 
             for (j, col) in value.iter().enumerate() {
+                let j = j + from2 as usize;
                 let res = if col.is_correct {
                     format!("{}: {}", col.result, col.correct)
                         .cell()
@@ -79,8 +86,9 @@ impl Outputer for TextOutputer {
                 };
 
                 if let Some(durations) = &durations {
+                    let dur_i = ((i - from as usize) * val_len) +  (j - from2 as usize);
                     row_dur.push(
-                        format!("{} ms", durations.get(i + j).context(OutOfBounds)?.as_millis())
+                        format!("{} ms", durations.get(dur_i).context(OutOfBounds)?.as_millis())
                             .cell()
                             .justify(Justify::Right),
                     );
@@ -109,6 +117,7 @@ impl Outputer for TextOutputer {
         values: Vec<OutValue>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
+        from: i32,
     ) -> Result<Option<String>, Error> {
         let include_durs = matches!(durations, Some(_));
         let durations = durations.unwrap_or_else(|| {
@@ -119,8 +128,8 @@ impl Outputer for TextOutputer {
         let mut last_correct = 0;
 
         for (i, (val, dur)) in values.into_iter().zip(durations).enumerate() {
+            let i = i + from as usize;
             let mut row = vec![];
-            let i = i + 1;
 
             let val_res = val.result.cell();
             let color = if val.is_correct {
@@ -157,6 +166,7 @@ impl Outputer for TextOutputer {
         durations: Option<Vec<Duration>>,
         width: i32,
         runtime: Duration,
+        from: i32,
     ) -> Result<Option<String>, Error> {
         let include_durs = matches!(durations, Some(_));
         let durations = durations.unwrap_or_else(|| {
@@ -165,6 +175,7 @@ impl Outputer for TextOutputer {
 
         let mut table = vec![];
         for (i, (val, dur)) in values.into_iter().zip(durations).enumerate() {
+            let i = i + from as usize;
             let mut row = vec![];
 
             let val_res = val.result.cell();
@@ -175,7 +186,7 @@ impl Outputer for TextOutputer {
                 Color::Red
             }));
 
-            row.push(format!("{} x {width}", i + 1).cell().background_color(Some(Color::Cyan)));
+            row.push(format!("{i} x {width}").cell().background_color(Some(Color::Cyan)));
             row.push(val_res);
             row.push(val);
             if include_durs {

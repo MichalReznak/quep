@@ -48,6 +48,8 @@ pub trait Outputer {
         value: Vec<Vec<OutValue>>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
+        from: i32,
+        from2: i32,
     ) -> Result<Option<String>, Error>;
 
     /// Output with increasing width and depth always by one
@@ -56,6 +58,7 @@ pub trait Outputer {
         values: Vec<OutValue>,
         durations: Option<Vec<Duration>>,
         runtime: Duration,
+        from: i32,
     ) -> Result<Option<String>, Error>;
 
     /// Output as a linear list of values
@@ -65,5 +68,6 @@ pub trait Outputer {
         durations: Option<Vec<Duration>>,
         width: i32,
         runtime: Duration,
+        from: i32,
     ) -> Result<Option<String>, Error>;
 }

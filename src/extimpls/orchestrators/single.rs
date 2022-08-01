@@ -121,7 +121,7 @@ impl Orchestrator for SingleOrchestrator {
 
             // get measured results
             // output -> Outputer
-            outputer.output_table(vec![vec![val]], None, Instant::now() - runtime).await
+            outputer.output_table(vec![vec![val]], None, Instant::now() - runtime, i, j).await
         }
         else {
             let mut sr = vec![];
@@ -176,11 +176,13 @@ impl Orchestrator for SingleOrchestrator {
             durations.push(Duration::from_millis((time.as_millis() as u64) / (iter as u64)));
             sr.push(val.clone());
 
-            result.push(sr.clone());
+            if !sr.is_empty() {
+                result.push(sr.clone());
+            }
 
             // get measured results
             // output -> Outputer
-            outputer.output_table(result, Some(durations), Instant::now() - runtime).await
+            outputer.output_table(result, Some(durations), Instant::now() - runtime, i, j).await
         }
     }
 }

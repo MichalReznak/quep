@@ -6,6 +6,7 @@ import quepy
 # Then Just execute this script which will run Quep tool
 # and output the result
 
+# Needs to be in the cwd
 
 async def main():
     c = quepy.QuepyConfig(

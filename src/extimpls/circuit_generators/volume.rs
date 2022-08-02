@@ -8,7 +8,7 @@ use crate::ext::types::lang_schema::{LangGate, LangGateType};
 use crate::ext::{CircuitGenerator, LangSchemaDyn};
 use crate::lang_schemas::LangCircuit;
 use crate::utils::{cycle, init_one, inverse};
-use crate::{CircuitType, CliArgs, Error, CLIFFORD_GATES, CLIFFORD_GATES_2, CLIFFORD_GATES_INV};
+use crate::{CircuitType, CliArgs, Error, CLIFFORD_GATES_2};
 
 #[allow(dead_code)]
 pub struct VolumeCircuitGenerator {
@@ -99,15 +99,12 @@ impl VolumeCircuitGenerator {
         let mut oqs_gates = vec![];
         let mut oqs_inv_gates = vec![];
 
-        let c_len = CLIFFORD_GATES.len();
         let c_len2 = CLIFFORD_GATES_2.len();
 
         let mut a = iter;
-        let mut b = iter;
         let mut skip = false;
         for _ in 1..=j {
             for ii in 0..i {
-                let c_gate_index = b as usize % c_len;
                 let c2_gate_index = a as usize % c_len2;
 
                 if skip {
@@ -115,12 +112,7 @@ impl VolumeCircuitGenerator {
                 }
                 // NO space for double gate
                 else if ii == i - 1 {
-                    oqs_gates
-                        .push(LangGate::builder().t(CLIFFORD_GATES[c_gate_index]).i(ii).build());
-                    oqs_inv_gates.push(
-                        LangGate::builder().t(CLIFFORD_GATES_INV[c_gate_index]).i(ii).build(),
-                    );
-                    b += 1;
+                    skip = true;
                 }
                 else {
                     let gate = LangGate::builder()

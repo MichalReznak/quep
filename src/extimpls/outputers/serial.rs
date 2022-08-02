@@ -91,7 +91,7 @@ impl Outputer for SerialOutputer {
                 let i = i + from as usize;
                 let j = j + from2 as usize;
                 let time_ms = if let Some(durations) = &durations {
-                    let dur_i = ((i - from as usize) * val_len) +  (j - from2 as usize);
+                    let dur_i = ((i - from as usize) * val_len) + (j - from2 as usize);
                     Some(durations.get(dur_i).context(OutOfBounds)?.as_millis() as i32)
                 }
                 else {

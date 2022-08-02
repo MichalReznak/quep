@@ -9,7 +9,7 @@ use unwrap_infallible::UnwrapInfallible;
 
 use crate::args::CliArgsOrch;
 use crate::chooser::Chooser;
-use crate::error::{OutOfBounds, RegexCapture};
+use crate::error::RegexCapture;
 use crate::ext::outputer::OutValue;
 use crate::ext::{CircuitGenerator, LangSchema, Orchestrator, Outputer, QcProvider};
 use crate::utils::filter_incorrect_values;
@@ -156,7 +156,9 @@ impl Orchestrator for LatticeOrchestrator {
                 }
             }
 
-            outputer.output_table(result, None, Instant::now() - runtime, from_i, from_j).await
+            outputer
+                .output_table(result, None, Instant::now() - runtime, from_i, from_j)
+                .await
         }
         else {
             'main2: for i in 1..=i {
@@ -243,7 +245,9 @@ impl Orchestrator for LatticeOrchestrator {
                 }
             }
 
-            outputer.output_table(result, Some(durations), Instant::now() - runtime, from_i, from_j).await
+            outputer
+                .output_table(result, Some(durations), Instant::now() - runtime, from_i, from_j)
+                .await
         }
     }
 }

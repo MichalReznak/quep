@@ -103,7 +103,6 @@ impl Orchestrator for LinearOrchestrator {
                 .enumerate()
                 .map(|(i, res)| {
                     let mut vals = vec![];
-                    let mut val = OutValue::default();
 
                     for r in res {
                         let c = re.captures(&r).context(RegexCapture).unwrap();
@@ -114,13 +113,12 @@ impl Orchestrator for LinearOrchestrator {
                                 .build(),
                         );
                     }
-                    val = filter_incorrect_values(vals).unwrap();
+                    let mut val = filter_incorrect_values(vals).unwrap();
 
                     val.is_correct = if !mirror {
                         let ci = i * (iter as usize);
-                        let res = sim_res
-                            .get((ci as usize)..(ci as usize + (iter as usize)))
-                            .unwrap();
+                        let res =
+                            sim_res.get((ci as usize)..(ci as usize + (iter as usize))).unwrap();
 
                         let mut sim_vals = vec![];
                         for r in res.iter() {
@@ -135,8 +133,7 @@ impl Orchestrator for LinearOrchestrator {
                         let sim_val = filter_incorrect_values(sim_vals).unwrap();
 
                         let d = (sim_val.correct as f64) * (1.0 / 3.0);
-                        sim_val.result == val.result
-                            && (sim_val.correct - val.correct) as f64 <= d
+                        sim_val.result == val.result && (sim_val.correct - val.correct) as f64 <= d
                     }
                     else {
                         (val.correct as f64) > 1024.0 * (2.0 / 3.0)
@@ -146,7 +143,9 @@ impl Orchestrator for LinearOrchestrator {
                 })
                 .collect();
 
-            outputer.output_linear(result, None, depth, Instant::now() - runtime, from_i).await
+            outputer
+                .output_linear(result, None, depth, Instant::now() - runtime, from_i)
+                .await
         }
         else {
             'main2: for j in 1..=i {

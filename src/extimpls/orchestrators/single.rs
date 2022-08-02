@@ -121,7 +121,9 @@ impl Orchestrator for SingleOrchestrator {
 
             // get measured results
             // output -> Outputer
-            outputer.output_table(vec![vec![val]], None, Instant::now() - runtime, i, j).await
+            outputer
+                .output_table(vec![vec![val]], None, Instant::now() - runtime, i, j)
+                .await
         }
         else {
             let mut sr = vec![];
@@ -182,7 +184,9 @@ impl Orchestrator for SingleOrchestrator {
 
             // get measured results
             // output -> Outputer
-            outputer.output_table(result, Some(durations), Instant::now() - runtime, i, j).await
+            outputer
+                .output_table(result, Some(durations), Instant::now() - runtime, i, j)
+                .await
         }
     }
 }

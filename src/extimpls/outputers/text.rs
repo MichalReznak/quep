@@ -37,8 +37,10 @@ impl Outputer for TextOutputer {
         let mut table_dur = vec![];
         let mut table = vec![];
 
-        let mut row = vec![0.cell().justify(Justify::Center).bold(true).background_color(Some(Color::Cyan))];
-        let mut row_dur = vec![0.cell().justify(Justify::Center).bold(true).background_color(Some(Color::Cyan))];
+        let mut row =
+            vec![0.cell().justify(Justify::Center).bold(true).background_color(Some(Color::Cyan))];
+        let mut row_dur =
+            vec![0.cell().justify(Justify::Center).bold(true).background_color(Some(Color::Cyan))];
         for i in 0..values.get(0).context(OutOfBounds)?.len() {
             let i = i + from2 as usize;
             row.push(
@@ -58,18 +60,10 @@ impl Outputer for TextOutputer {
             let mut row = vec![];
             let mut row_dur = vec![];
             row.push(
-                i
-                    .cell()
-                    .justify(Justify::Center)
-                    .bold(true)
-                    .background_color(Some(Color::Cyan)),
+                i.cell().justify(Justify::Center).bold(true).background_color(Some(Color::Cyan)),
             );
             row_dur.push(
-                i
-                    .cell()
-                    .justify(Justify::Center)
-                    .bold(true)
-                    .background_color(Some(Color::Cyan)),
+                i.cell().justify(Justify::Center).bold(true).background_color(Some(Color::Cyan)),
             );
 
             for (j, col) in value.iter().enumerate() {
@@ -86,7 +80,7 @@ impl Outputer for TextOutputer {
                 };
 
                 if let Some(durations) = &durations {
-                    let dur_i = ((i - from as usize) * val_len) +  (j - from2 as usize);
+                    let dur_i = ((i - from as usize) * val_len) + (j - from2 as usize);
                     row_dur.push(
                         format!("{} ms", durations.get(dur_i).context(OutOfBounds)?.as_millis())
                             .cell()

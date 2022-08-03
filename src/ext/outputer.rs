@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 use tokio::time::Duration;
 use typed_builder::TypedBuilder;
 
-use crate::outputers::{PythonOutputer, SerialOutputer, TextOutputer};
+use crate::outputers::{ColorOutputer, PythonOutputer, SerialOutputer, TextOutputer};
 use crate::{CliArgs, Error};
 
 #[pyclass]
@@ -32,6 +32,7 @@ pub enum OutputerDyn {
     TextOutputer,
     SerialOutputer,
     PythonOutputer,
+    ColorOutputer,
 }
 
 #[async_trait]

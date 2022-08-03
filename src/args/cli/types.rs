@@ -17,6 +17,7 @@ pub enum ProviderType {
 pub enum OutputType {
     Text,
     Serial,
+    Color,
     Python,
 }
 

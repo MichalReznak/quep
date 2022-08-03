@@ -19,7 +19,7 @@
         },
     },
     output: {
-        t: 'Text', // Serial, Text, Python
+        t: 'Text', // Serial, Text, Color, Python
         path: './outputer.py', // Path to Custom Outputer
         ser: 'Json', // Json, Xml, Yaml, Toml, Ron, ...
         pretty: true, // Pretty format

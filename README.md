@@ -28,7 +28,7 @@ grcov . `
 ```
 
 ##### TODOs:
-* Color output only
+X Color output only
 
 X Include generating runtime for cycle
 

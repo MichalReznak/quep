@@ -13,7 +13,7 @@ use crate::lang_schemas::{OpenQasmSchema, PythonSchema, QiskitSchema};
 use crate::orchestrators::{
     LatticeOrchestrator, LinearOrchestrator, SingleOrchestrator, VolumeOrchestrator,
 };
-use crate::outputers::{PythonOutputer, SerialOutputer, TextOutputer};
+use crate::outputers::{ColorOutputer, PythonOutputer, SerialOutputer, TextOutputer};
 use crate::qc_providers::{IbmqQcProvider, NoisyQcProvider, PythonQcProvider, SimpleQcProvider};
 use crate::{CliArgs, Error};
 
@@ -57,6 +57,7 @@ impl Chooser {
         use OutputType::*;
         let res = match self.args.output.t {
             Text => OutputerDyn::from(TextOutputer::from_args(&self.args.output)?),
+            Color => OutputerDyn::from(ColorOutputer::from_args(&self.args.output)?),
             Serial => OutputerDyn::from(SerialOutputer::from_args(&self.args.output)?),
             Python => OutputerDyn::from(PythonOutputer::from_args(&self.args.output)?),
         };

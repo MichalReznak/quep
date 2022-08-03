@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 use cli_table::format::Justify;
-use cli_table::{print_stdout, Cell, Style, Table, CellStruct};
+use cli_table::{print_stdout, Cell, CellStruct, Style, Table};
 use fehler::throws;
 use snafu::OptionExt;
 use termcolor::Color;

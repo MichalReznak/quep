@@ -182,7 +182,7 @@ impl Orchestrator for LatticeOrchestrator {
                                 .await?;
 
                             let res = provider.run().await?.get(0).unwrap().to_string();
-                            time += provider.meta_info().await?.time + dbg!(time_start.elapsed());
+                            time += provider.meta_info().await?.time + time_start.elapsed();
 
                             let c = re.captures(&res).context(RegexCapture)?;
                             vals.push(

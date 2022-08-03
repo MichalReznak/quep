@@ -40,7 +40,7 @@ impl CircuitGenerator for StructCircuitGenerator {
         let mut oqs_inv_gates = vec![];
 
         let c_len = CLIFFORD_GATES.len();
-        let c_len2 = c_len + CLIFFORD_GATES_2.len();
+        let c_len2 = CLIFFORD_GATES_2.len();
 
         let mut a = iter;
         let mut b = iter;
@@ -54,37 +54,39 @@ impl CircuitGenerator for StructCircuitGenerator {
                 if skip {
                     skip = false;
                 }
-                else if c_gate_index < c_len {
-                    oqs_gates
-                        .push(LangGate::builder().t(CLIFFORD_GATES[c_gate_index]).i(ii).build());
-                    oqs_inv_gates.push(
-                        LangGate::builder().t(CLIFFORD_GATES_INV[c_gate_index]).i(ii).build(),
-                    );
-                    a += 1;
-                }
                 // NO space for double gate
                 else if ii == i - 1 {
+                    oqs_gates.push(LangGate::builder().t(PAULI_GATES[p_gate_index]).i(ii).build());
+                    oqs_inv_gates.push(LangGate::builder().t(PAULI_GATES[p_gate_index]).i(ii).build());
+
                     oqs_gates.push(
-                        LangGate::builder().t(CLIFFORD_GATES[c_gate_index - c_len]).i(ii).build(),
+                        LangGate::builder().t(CLIFFORD_GATES[c_gate_index]).i(ii).build(),
                     );
                     oqs_inv_gates.push(
                         LangGate::builder()
-                            .t(CLIFFORD_GATES_INV[c_gate_index - c_len])
+                            .t(CLIFFORD_GATES_INV[c_gate_index])
                             .i(ii)
                             .build(),
                     );
                 }
                 else {
+                    oqs_gates.push(LangGate::builder().t(PAULI_GATES[p_gate_index]).i(ii).build());
+                    oqs_inv_gates.push(LangGate::builder().t(PAULI_GATES[p_gate_index]).i(ii).build());
+
+                    oqs_gates.push(LangGate::builder().t(PAULI_GATES[p_gate_index]).i(ii + 1).build());
+                    oqs_inv_gates.push(LangGate::builder().t(PAULI_GATES[p_gate_index]).i(ii + 1).build());
+
+
                     oqs_gates.push(
                         LangGate::builder()
-                            .t(CLIFFORD_GATES_2[c_gate_index - c_len])
+                            .t(CLIFFORD_GATES_2[c_gate_index])
                             .i(ii)
                             .other(ii + 1)
                             .build(),
                     );
                     oqs_inv_gates.push(
                         LangGate::builder()
-                            .t(CLIFFORD_GATES_2[c_gate_index - c_len])
+                            .t(CLIFFORD_GATES_2[c_gate_index])
                             .i(ii)
                             .other(ii + 1)
                             .build(),
@@ -93,9 +95,6 @@ impl CircuitGenerator for StructCircuitGenerator {
                     a += 1;
                     skip = true;
                 }
-
-                oqs_gates.push(LangGate::builder().t(PAULI_GATES[p_gate_index]).i(ii).build());
-                oqs_inv_gates.push(LangGate::builder().t(PAULI_GATES[p_gate_index]).i(ii).build());
             }
         }
 

@@ -54,6 +54,9 @@ pub struct CliArgsEnv {
     #[clap(long, env = "QUEP_CIRCUIT_INIT_ONE")]
     pub circuit_init_one: Option<bool>,
 
+    #[clap(long, env = "QUEP_CIRCUIT_SHUFFLE")]
+    pub circuit_shuffle: Option<bool>,
+
     #[clap(long, env = "QUEP_CIRCUIT_RAND")]
     pub circuit_rand: Option<bool>,
 

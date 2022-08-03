@@ -31,6 +31,7 @@ struct QuepyConfig {
     pub circuit_path: Option<String>,
     pub circuit_bench: Option<CircuitBenchType>,
     pub circuit_init_one: Option<bool>,
+    pub circuit_shuffle: Option<bool>,
     pub circuit_rand: Option<bool>,
     pub circuit_source: Option<String>,
 
@@ -67,6 +68,7 @@ impl QuepyConfig {
         circuit_path: Option<String>,
         circuit_bench: Option<String>,
         circuit_init_one: Option<bool>,
+        circuit_shuffle: Option<bool>,
         circuit_rand: Option<bool>,
         circuit_source: Option<String>,
 
@@ -99,6 +101,7 @@ impl QuepyConfig {
             circuit_path,
             circuit_bench: circuit_bench.map(|e| CircuitBenchType::from_str(&e).unwrap()),
             circuit_init_one,
+            circuit_shuffle,
             circuit_rand,
             circuit_source,
 
@@ -133,6 +136,7 @@ impl From<QuepyConfig> for CliArgsConfig {
                 path: qc.circuit_path,
                 bench: qc.circuit_bench,
                 init_one: qc.circuit_init_one,
+                shuffle: qc.circuit_shuffle,
                 rand: qc.circuit_rand,
                 source: qc.circuit_source,
                 gates: None,

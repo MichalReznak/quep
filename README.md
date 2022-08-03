@@ -28,9 +28,9 @@ grcov . `
 ```
 
 ##### TODOs:
-* Quantum Volumes, Struct and Rand should pseudo randomize neighboring qubits [config option 'shuffle'?]
+X Quantum Volumes, Struct and Rand should pseudo randomize neighboring qubits [config option 'shuffle'?]
 
-* Second layer in struct and rand algorithms should be two qubit gates only (to have some qubits coherence)
+X Second layer in struct and rand algorithms should be two qubit gates only (to have some qubits coherence)
 
 X Improve time estimates for Ibmq: time_per_step()
 

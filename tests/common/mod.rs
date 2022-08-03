@@ -69,6 +69,7 @@ impl Config {
             .bench(c.cir_bench)
             .path(get_dir("./python_ext/circuit_generator.py")?)
             .init_one(c.cir_one.unwrap_or(false))
+            .shuffle(true)
             .rand(c.cir_rand.unwrap_or(true))
             .source(get_dir("./templates/example.qasm")?)
             .gates(collection! { HashMap<String, String>; })

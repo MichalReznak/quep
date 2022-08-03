@@ -1,5 +1,8 @@
 use async_trait::async_trait;
 use fehler::throws;
+use itertools::Itertools;
+use rand::prelude::SliceRandom;
+use rand::SeedableRng;
 
 use crate::args::types::{CircuitBenchType, OrchestratorType};
 use crate::args::CliArgsCircuit;
@@ -100,32 +103,25 @@ impl VolumeCircuitGenerator {
         let mut oqs_inv_gates = vec![];
 
         let c_len2 = CLIFFORD_GATES_2.len();
+        let mut rng = rand_chacha::ChaCha8Rng::seed_from_u64(42);
 
         let mut a = iter;
-        let mut skip = false;
         for _ in 1..=j {
-            for ii in 0..i {
+            let mut v: Vec<i32> = (0..i).collect();
+            if self.args.shuffle {
+                v.shuffle(&mut rng);
+            }
+            let v = v.into_iter().tuples();
+
+            for (i1, i2) in v {
                 let c2_gate_index = a as usize % c_len2;
 
-                if skip {
-                    skip = false;
-                }
-                // NO space for double gate
-                else if ii == i - 1 {
-                    skip = true;
-                }
-                else {
-                    let gate = LangGate::builder()
-                        .t(CLIFFORD_GATES_2[c2_gate_index])
-                        .i(ii)
-                        .other(ii + 1)
-                        .build();
-                    oqs_gates.push(gate.clone());
-                    oqs_inv_gates.push(gate);
+                let gate =
+                    LangGate::builder().t(CLIFFORD_GATES_2[c2_gate_index]).i(i1).other(i2).build();
+                oqs_gates.push(gate.clone());
+                oqs_inv_gates.push(gate);
 
-                    a += 1;
-                    skip = true;
-                }
+                a += 1;
             }
         }
 

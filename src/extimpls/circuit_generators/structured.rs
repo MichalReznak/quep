@@ -1,5 +1,8 @@
 use async_trait::async_trait;
 use fehler::throws;
+use itertools::Itertools;
+use rand::seq::SliceRandom;
+use rand::SeedableRng;
 
 use crate::args::CliArgsCircuit;
 use crate::ext::types::lang_schema::LangGate;
@@ -39,61 +42,57 @@ impl CircuitGenerator for StructCircuitGenerator {
         let mut oqs_gates = vec![];
         let mut oqs_inv_gates = vec![];
 
-        let c_len = CLIFFORD_GATES.len();
         let c_len2 = CLIFFORD_GATES_2.len();
+
+        let mut rng = rand_chacha::ChaCha8Rng::seed_from_u64(42);
 
         let mut a = iter;
         let mut b = iter;
-        let mut skip = false;
         for _ in 1..=j {
-            for ii in 0..i {
+            let mut v: Vec<i32> = (0..i).collect();
+            if self.args.shuffle {
+                v.shuffle(&mut rng);
+            }
+            let v = v.into_iter().chunks(2);
+
+            for mut ii in &v {
+                let i1 = ii.next().unwrap(); // cannot fail
                 let p_gate_index = b as usize % PAULI_GATES.len();
                 let c_gate_index = a as usize % c_len2;
                 b += 1;
 
-                if skip {
-                    skip = false;
-                }
-                // NO space for double gate
-                else if ii == i - 1 {
-                    oqs_gates.push(LangGate::builder().t(PAULI_GATES[p_gate_index]).i(ii).build());
-                    oqs_inv_gates.push(LangGate::builder().t(PAULI_GATES[p_gate_index]).i(ii).build());
+                oqs_gates.push(LangGate::builder().t(PAULI_GATES[p_gate_index]).i(i1).build());
+                oqs_inv_gates.push(LangGate::builder().t(PAULI_GATES[p_gate_index]).i(i1).build());
 
-                    oqs_gates.push(
-                        LangGate::builder().t(CLIFFORD_GATES[c_gate_index]).i(ii).build(),
-                    );
-                    oqs_inv_gates.push(
-                        LangGate::builder()
-                            .t(CLIFFORD_GATES_INV[c_gate_index])
-                            .i(ii)
-                            .build(),
-                    );
-                }
-                else {
-                    oqs_gates.push(LangGate::builder().t(PAULI_GATES[p_gate_index]).i(ii).build());
-                    oqs_inv_gates.push(LangGate::builder().t(PAULI_GATES[p_gate_index]).i(ii).build());
-
-                    oqs_gates.push(LangGate::builder().t(PAULI_GATES[p_gate_index]).i(ii + 1).build());
-                    oqs_inv_gates.push(LangGate::builder().t(PAULI_GATES[p_gate_index]).i(ii + 1).build());
-
+                if let Some(i2) = ii.next() {
+                    oqs_gates.push(LangGate::builder().t(PAULI_GATES[p_gate_index]).i(i2).build());
+                    oqs_inv_gates
+                        .push(LangGate::builder().t(PAULI_GATES[p_gate_index]).i(i2).build());
 
                     oqs_gates.push(
                         LangGate::builder()
                             .t(CLIFFORD_GATES_2[c_gate_index])
-                            .i(ii)
-                            .other(ii + 1)
+                            .i(i1)
+                            .other(i2)
                             .build(),
                     );
                     oqs_inv_gates.push(
                         LangGate::builder()
                             .t(CLIFFORD_GATES_2[c_gate_index])
-                            .i(ii)
-                            .other(ii + 1)
+                            .i(i1)
+                            .other(i2)
                             .build(),
                     );
 
                     a += 1;
-                    skip = true;
+                }
+                // NO space for double gate
+                else {
+                    oqs_gates
+                        .push(LangGate::builder().t(CLIFFORD_GATES[c_gate_index]).i(i1).build());
+                    oqs_inv_gates.push(
+                        LangGate::builder().t(CLIFFORD_GATES_INV[c_gate_index]).i(i1).build(),
+                    );
                 }
             }
         }

@@ -84,6 +84,7 @@ pub fn parse_circuit(clap: &CliArgsEnv, config: CliArgsCircuitConfig) -> CliArgs
         .path(clap.circuit_path.clone().or(config.path).unwrap_or_else(path))
         .bench(clap.circuit_bench.or(config.bench).unwrap_or(CircuitBenchType::Mirror))
         .init_one(clap.circuit_init_one.or(config.init_one).unwrap_or(false))
+        .shuffle(clap.circuit_shuffle.or(config.shuffle).unwrap_or(true))
         .rand(clap.circuit_rand.or(config.rand).unwrap_or(false))
         .source(clap.circuit_source.clone().or(config.source).unwrap_or_else(source))
         .gates(clap.circuit_gates.clone().or(config.gates).unwrap_or(collection! {

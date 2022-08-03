@@ -57,6 +57,7 @@ collection_literals = "1.0.1"
 itertools = "0.10.3"
 serde_with = "1.13.0"
 pythonize = "0.16.0"
+rand_chacha = "0.3.1"
 
 [dev-dependencies]
 pretty_assertions = "1.2.1"

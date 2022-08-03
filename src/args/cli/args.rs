@@ -53,6 +53,9 @@ pub struct CliArgsCircuit {
     /// Initializes all qubits to |1>
     pub init_one: bool,
 
+    /// Randomized qubits for two qubit gates
+    pub shuffle: bool,
+
     /// Randomize circuit generation of the same size
     pub rand: bool,
 

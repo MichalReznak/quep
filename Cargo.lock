@@ -1235,6 +1235,7 @@ dependencies = [
  "quep_utils",
  "quick-xml",
  "rand",
+ "rand_chacha",
  "regex",
  "ron",
  "serde",

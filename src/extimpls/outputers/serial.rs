@@ -84,15 +84,16 @@ impl Outputer for SerialOutputer {
         from2: i32,
     ) -> Result<Option<String>, Error> {
         let mut table = Vec::new();
-        let val_len = values.get(0).context(OutOfBounds)?.len();
 
+        let mut dur_i = 0;
         for (i, value) in values.iter().enumerate() {
             for (j, col) in value.iter().enumerate() {
                 let i = i + from as usize;
                 let j = j + from2 as usize;
                 let time_ms = if let Some(durations) = &durations {
-                    let dur_i = ((i - from as usize) * val_len) + (j - from2 as usize);
-                    Some(durations.get(dur_i).context(OutOfBounds)?.as_millis() as i32)
+                    let dur = Some(durations.get(dur_i).context(OutOfBounds)?.as_millis() as i32);
+                    dur_i += 1;
+                    dur
                 }
                 else {
                     None

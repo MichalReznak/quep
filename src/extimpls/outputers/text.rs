@@ -53,8 +53,7 @@ impl Outputer for TextOutputer {
         table.push(row);
         table_dur.push(row_dur);
 
-        let val_len = values.get(0).context(OutOfBounds)?.len();
-
+        let mut dur_i = 0;
         for (i, value) in values.iter().enumerate() {
             let i = i + from as usize;
             let mut row = vec![];
@@ -66,8 +65,7 @@ impl Outputer for TextOutputer {
                 i.cell().justify(Justify::Center).bold(true).background_color(Some(Color::Cyan)),
             );
 
-            for (j, col) in value.iter().enumerate() {
-                let j = j + from2 as usize;
+            for col in value {
                 let res = if col.is_correct {
                     format!("{}: {}", col.result, col.correct)
                         .cell()
@@ -80,12 +78,12 @@ impl Outputer for TextOutputer {
                 };
 
                 if let Some(durations) = &durations {
-                    let dur_i = ((i - from as usize) * val_len) + (j - from2 as usize);
                     row_dur.push(
                         format!("{} ms", durations.get(dur_i).context(OutOfBounds)?.as_millis())
                             .cell()
                             .justify(Justify::Right),
                     );
+                    dur_i += 1;
                 }
                 row.push(res);
             }

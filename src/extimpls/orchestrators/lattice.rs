@@ -175,13 +175,14 @@ impl Orchestrator for LatticeOrchestrator {
                     }
 
                     for ii in 0..iter {
+                        let time_start = Instant::now();
                         if let Some(circuit) = generator.generate(&lang_schema, i, j, ii).await? {
                             provider
                                 .append_circuit(lang_schema.as_string(circuit.clone())?)
                                 .await?;
 
                             let res = provider.run().await?.get(0).unwrap().to_string();
-                            time += provider.meta_info().await?.time;
+                            time += provider.meta_info().await?.time + dbg!(time_start.elapsed());
 
                             let c = re.captures(&res).context(RegexCapture)?;
                             vals.push(

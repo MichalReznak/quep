@@ -11,6 +11,7 @@
         path: './circuit_generator.py', // Path to Custom Circuit Generator
         bench: 'Mirror', // Mirror, Cycle, None
         initOne: false, // Set state to one or zero
+	    shuffle: true, // Shuffle qubit indices before gate creation
         rand: false, // Outputs different circuits for each iteration
         source: './templates/example.qasm', // Base circuit source
         gates: { // Custom defined additional gates

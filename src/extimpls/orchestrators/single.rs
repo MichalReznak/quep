@@ -132,6 +132,7 @@ impl Orchestrator for SingleOrchestrator {
             let mut sim_vals = vec![];
 
             for ii in 0..iter {
+                let time_start = Instant::now();
                 if let Some(circuit) = generator.generate(&lang_schema, i, j, ii).await? {
                     let circuit = lang_schema.as_string(circuit.clone())?;
                     provider.append_circuit(circuit.clone()).await?;
@@ -152,7 +153,7 @@ impl Orchestrator for SingleOrchestrator {
                         simulator.append_circuit(circuit.clone()).await?;
 
                         let res = simulator.run().await?.get(0).unwrap().to_string();
-                        time += simulator.meta_info().await?.time;
+                        time += simulator.meta_info().await?.time + time_start.elapsed();
 
                         let c = re.captures(&res).context(RegexCapture)?;
                         sim_vals.push(

@@ -28,6 +28,10 @@ grcov . `
 ```
 
 ##### TODOs:
+* Color output only
+
+X Include generating runtime for cycle
+
 X Quantum Volumes, Struct and Rand should pseudo randomize neighboring qubits [config option 'shuffle'?]
 
 X Second layer in struct and rand algorithms should be two qubit gates only (to have some qubits coherence)

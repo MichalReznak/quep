@@ -53,9 +53,7 @@ impl CircuitGenerator for RandCircuitGenerator {
                 v.shuffle(&mut rng);
             }
 
-            let v = v.into_iter().chunks(2);
-
-            for mut ii in &v {
+            for mut ii in &v.into_iter().chunks(2) {
                 let i1 = ii.next().unwrap(); // cannot fail
                 let p_gate_index = p_rand.sample(&mut rng);
                 let c_gate_index = c_rand.sample(&mut rng);

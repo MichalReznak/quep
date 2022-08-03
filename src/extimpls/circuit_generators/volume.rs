@@ -111,9 +111,8 @@ impl VolumeCircuitGenerator {
             if self.args.shuffle {
                 v.shuffle(&mut rng);
             }
-            let v = v.into_iter().tuples();
 
-            for (i1, i2) in v {
+            for (i1, i2) in v.into_iter().tuples() {
                 let c2_gate_index = a as usize % c_len2;
 
                 let gate =

@@ -53,9 +53,8 @@ impl CircuitGenerator for StructCircuitGenerator {
             if self.args.shuffle {
                 v.shuffle(&mut rng);
             }
-            let v = v.into_iter().chunks(2);
 
-            for mut ii in &v {
+            for mut ii in &v.into_iter().chunks(2) {
                 let i1 = ii.next().unwrap(); // cannot fail
                 let p_gate_index = b as usize % PAULI_GATES.len();
                 let c_gate_index = a as usize % c_len2;

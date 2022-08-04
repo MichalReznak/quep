@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 use cli_table::format::Justify;
-use cli_table::{print_stdout, Cell, CellStruct, Style, Table};
+use cli_table::{print_stdout, Cell, CellStruct, Style, Table, TableStruct};
 use fehler::throws;
 use snafu::OptionExt;
 use termcolor::Color;
@@ -48,6 +48,40 @@ fn to_color_cell(val: i32) -> CellStruct {
     };
 
     "   ".cell().background_color(Some(res))
+}
+
+fn color_table() -> TableStruct {
+    let a = (1024 - (1024 * 2 / 3)) / 4;
+    let b = 1024 - a;
+    let c = b - a;
+    let d = c - a;
+    let e = d - a;
+
+    vec![
+        vec![
+            "   ".cell().background_color(Some(Color::Rgb(105, 179, 76))),
+            format!(">= {b}").cell(),
+        ],
+        vec![
+            "   ".cell().background_color(Some(Color::Rgb(172, 179, 52))),
+            format!(">= {c}").cell(),
+        ],
+        vec![
+            "   ".cell().background_color(Some(Color::Rgb(255, 142, 21))),
+            format!(">= {d}").cell(),
+        ],
+        vec![
+            "   ".cell().background_color(Some(Color::Rgb(255, 78, 17))),
+            format!(">= {e}").cell(),
+        ],
+        vec![
+            "   ".cell().background_color(Some(Color::Rgb(255, 13, 13))),
+            format!("<  {e}").cell(),
+        ], // TODO not 'e'
+    ]
+    .table()
+    .title(vec!["Color".cell().bold(true), "Range".cell().bold(true)])
+    .bold(true)
 }
 
 #[async_trait]
@@ -106,6 +140,9 @@ impl Outputer for ColorOutputer {
             table_dur.push(row_dur);
             table.push(row);
         }
+
+        println!("\nAgenda:"); // TODO rename?
+        print_stdout(color_table())?;
 
         println!("\nResult:");
         print_stdout(table.table())?;

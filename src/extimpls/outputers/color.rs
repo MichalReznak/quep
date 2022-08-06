@@ -25,29 +25,7 @@ impl ColorOutputer {
 }
 
 fn to_color_cell(val: i32) -> CellStruct {
-    let a = (1024 - (1024 * 2 / 3)) / 4;
-    let b = 1024 - a;
-    let c = b - a;
-    let d = c - a;
-    let e = d - a;
-
-    let res = if val >= b {
-        Color::Rgb(105, 179, 76)
-    }
-    else if val >= c {
-        Color::Rgb(172, 179, 52)
-    }
-    else if val >= d {
-        Color::Rgb(255, 142, 21)
-    }
-    else if val >= e {
-        Color::Rgb(255, 78, 17)
-    }
-    else {
-        Color::Rgb(255, 13, 13)
-    };
-
-    "   ".cell().background_color(Some(res))
+    "   ".cell().background_color(Some(super::res_to_color(val)))
 }
 
 fn color_table() -> TableStruct {

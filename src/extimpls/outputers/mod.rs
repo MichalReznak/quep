@@ -6,10 +6,8 @@ mod text;
 pub use color::ColorOutputer;
 pub use python::PythonOutputer;
 pub use serial::SerialOutputer;
-pub use text::TextOutputer;
-
-use cli_table::{Cell, CellStruct, Style};
 use termcolor::Color;
+pub use text::TextOutputer;
 
 pub(self) fn res_to_color(val: i32) -> Color {
     let a = (1024 - (1024 * 2 / 3)) / 4;

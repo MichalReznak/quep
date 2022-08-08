@@ -66,10 +66,14 @@ impl Outputer for TextOutputer {
             );
 
             for col in value {
+                let color = if col.is_correct {
+                    Color::Green
+                }
+                else {
+                    Color::Red
+                };
                 let res =
-                    format!("{}: {}", col.result, col.correct)
-                        .cell()
-                        .foreground_color(Some(super::res_to_color(col.correct)));
+                    format!("{}: {}", col.result, col.correct).cell().foreground_color(Some(color));
 
                 if let Some(durations) = &durations {
                     row_dur.push(
@@ -122,7 +126,12 @@ impl Outputer for TextOutputer {
                 last_correct = i;
             }
 
-            let color = super::res_to_color(val.correct);
+            let color = if val.is_correct {
+                Color::Green
+            }
+            else {
+                Color::Red
+            };
             let val = val.correct.cell().foreground_color(Some(color));
 
             row.push(format!("{i} x {i}").cell().background_color(Some(Color::Cyan)));
@@ -162,7 +171,13 @@ impl Outputer for TextOutputer {
             let mut row = vec![];
 
             let val_res = val.result.cell();
-            let val = val.correct.cell().foreground_color(Some(super::res_to_color(val.correct)));
+            let color = if val.is_correct {
+                Color::Green
+            }
+            else {
+                Color::Red
+            };
+            let val = val.correct.cell().foreground_color(Some(color));
 
             row.push(format!("{i} x {width}").cell().background_color(Some(Color::Cyan)));
             row.push(val_res);

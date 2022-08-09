@@ -28,6 +28,8 @@ grcov . `
 ```
 
 ##### TODOs:
+X Define size of the quantum and classical register
+
 X Color output only
 
 X Include generating runtime for cycle

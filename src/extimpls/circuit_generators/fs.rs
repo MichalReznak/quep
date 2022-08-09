@@ -103,13 +103,7 @@ impl CircuitGenerator for FsCircuitGenerator {
                 oqs_gates = gates;
             }
 
-            Ok(Some(
-                LangCircuit::builder()
-                    .creg(ls.creg)
-                    .qreg(ls.qreg)
-                    .gates(oqs_gates)
-                    .build(),
-            ))
+            Ok(Some(LangCircuit::builder().creg(ls.creg).qreg(ls.qreg).gates(oqs_gates).build()))
         }
     }
 }

@@ -103,12 +103,6 @@ impl CircuitGenerator for StructCircuitGenerator {
             oqs_gates = init_one(oqs_gates, i);
         }
 
-        Ok(Some(
-            LangCircuit::builder()
-                .creg(oqs_i)
-                .qreg(oqs_i)
-                .gates(oqs_gates)
-                .build(),
-        ))
+        Ok(Some(LangCircuit::builder().creg(oqs_i).qreg(oqs_i).gates(oqs_gates).build()))
     }
 }

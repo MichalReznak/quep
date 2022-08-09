@@ -131,13 +131,7 @@ impl VolumeCircuitGenerator {
             oqs_gates = init_one(oqs_gates, i);
         }
 
-        Some(
-            LangCircuit::builder()
-                .creg(oqs_i)
-                .qreg(oqs_i)
-                .gates(oqs_gates)
-                .build(),
-        )
+        Some(LangCircuit::builder().creg(oqs_i).qreg(oqs_i).gates(oqs_gates).build())
     }
 }
 

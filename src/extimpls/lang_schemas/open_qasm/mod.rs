@@ -148,7 +148,6 @@ impl LangSchema for OpenQasmSchema {
         }
         let res = res.replace("%MEASURES%", &measures);
 
-
         Ok(GenCircuit::builder().circuit(res).t(LangSchemaType::OpenQasm).build())
     }
 }

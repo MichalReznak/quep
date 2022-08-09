@@ -75,12 +75,6 @@ impl CircuitGenerator for BaseCircuitGenerator {
             oqs_gates = gates;
         }
 
-        Ok(Some(
-            LangCircuit::builder()
-                .creg(width)
-                .qreg(width)
-                .gates(oqs_gates)
-                .build(),
-        ))
+        Ok(Some(LangCircuit::builder().creg(width).qreg(width).gates(oqs_gates).build()))
     }
 }

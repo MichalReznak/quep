@@ -48,5 +48,4 @@ class Simple:
             'time': end - start
         }
 
-        print(job.result().get_counts())
         return job.result().get_counts()

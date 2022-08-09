@@ -6,7 +6,7 @@ use async_trait::async_trait;
 use enum_dispatch::enum_dispatch;
 
 use crate::ext::types::circuit_generator::GenCircuit;
-use crate::ext::types::lang_schema::LangGate;
+use crate::ext::types::lang_schema::ParsedLangCircuit;
 use crate::lang_schemas::{LangCircuit, OpenQasmSchema, PythonSchema, QiskitSchema};
 use crate::{CliArgs, Error};
 
@@ -26,7 +26,7 @@ pub trait LangSchema {
     }
 
     /// Parse file from the fs path
-    fn parse_file(&self, path: &str) -> Result<Vec<LangGate>, Error>;
+    fn parse_file(&self, path: &str) -> Result<ParsedLangCircuit, Error>;
 
     /// Outputs circuit as string
     fn as_string(&mut self, circ: LangCircuit) -> Result<GenCircuit, Error>;

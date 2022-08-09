@@ -68,7 +68,25 @@ impl LangGate {
 #[derive(TypedBuilder, Clone, Serialize, Deserialize)]
 pub struct LangCircuit {
     #[pyo3(get, set)]
-    pub width: i32,
+    pub creg: i32,
+
+    #[pyo3(get, set)]
+    pub qreg: i32,
+
+    #[pyo3(get, set)]
+    pub gates: Vec<LangGate>,
+}
+
+#[pyclass]
+#[derive(TypedBuilder, Clone, Serialize, Deserialize)]
+pub struct ParsedLangCircuit {
+    #[builder(default=i32::MAX)]
+    #[pyo3(get, set)]
+    pub creg: i32,
+
+    #[builder(default=i32::MAX)]
+    #[pyo3(get, set)]
+    pub qreg: i32,
 
     #[pyo3(get, set)]
     pub gates: Vec<LangGate>,

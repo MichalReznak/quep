@@ -11,7 +11,7 @@ use unwrap_infallible::UnwrapInfallible;
 use crate::args::types::LangSchemaType;
 use crate::args::CliArgsLangSchema;
 use crate::ext::types::circuit_generator::GenCircuit;
-use crate::ext::types::lang_schema::{LangGate, LangGateType};
+use crate::ext::types::lang_schema::{LangGate, LangGateType, ParsedLangCircuit};
 use crate::ext::LangSchema;
 use crate::lang_schemas::LangCircuit;
 use crate::Error;
@@ -19,7 +19,7 @@ use crate::Error;
 const CIRCUIT_TEMPLATE: &str = r#"
 from qiskit import *
 
-circ = QuantumCircuit(%WIDTH%, %WIDTH%)
+circ = QuantumCircuit(%WIDTH_Q%, %WIDTH_C%)
 
 %RESET%
 
@@ -29,7 +29,7 @@ circ.barrier()
 
 circ.barrier()
 
-%MEASURE%
+%MEASURES%
 "#;
 
 fn gate_to_string(gate: &LangGate) -> String {
@@ -95,7 +95,7 @@ impl QiskitSchema {
 impl QiskitSchema {
     #[pyo3(name = "parse_file")]
     fn parse_file_py(&self, path: String) -> PyResult<Vec<LangGate>> {
-        Ok(self.parse_file(&path).unwrap())
+        Ok(self.parse_file(&path).unwrap().gates)
     }
 
     #[pyo3(name = "as_string")]
@@ -106,7 +106,7 @@ impl QiskitSchema {
 
 #[async_trait]
 impl LangSchema for QiskitSchema {
-    fn parse_file(&self, path: &str) -> Result<Vec<LangGate>, Error> {
+    fn parse_file(&self, path: &str) -> Result<ParsedLangCircuit, Error> {
         let re =
             Regex::new(r"circ\.(?P<name>[a-zA-Z0-9]+)\((?P<index>\d+)(,\s*(?P<other>\d+))*\)")?;
 
@@ -145,16 +145,17 @@ impl LangSchema for QiskitSchema {
             }
         }
 
-        Ok(gates)
+        Ok(ParsedLangCircuit::builder().gates(gates).build())
     }
 
     fn as_string(&mut self, circ: LangCircuit) -> Result<GenCircuit, Error> {
         // Add width
-        let res = CIRCUIT_TEMPLATE.replace("%WIDTH%", &circ.width.to_string());
+        let res = CIRCUIT_TEMPLATE.replace("%WIDTH_Q%", &circ.qreg.to_string());
+        let res = res.replace("%WIDTH_C%", &circ.creg.to_string());
 
         // Add resets
         let mut resets = String::new();
-        for i in 0..circ.width {
+        for i in 0..circ.qreg {
             writeln!(&mut resets, "circ.reset({})", i)?;
         }
         let res = res.replace("%RESET%", &resets);
@@ -168,12 +169,10 @@ impl LangSchema for QiskitSchema {
 
         // Add measurements
         let mut measures = String::new();
-        for i in 0..circ.width {
+        for i in 0..circ.creg {
             writeln!(&mut measures, "circ.measure({}, {})", i, i)?;
         }
-        let res = res.replace("%MEASURE%", &measures);
-
-        println!("{res}");
+        let res = res.replace("%MEASURES%", &measures);
 
         Ok(GenCircuit::builder().circuit(res).t(LangSchemaType::Qiskit).build())
     }

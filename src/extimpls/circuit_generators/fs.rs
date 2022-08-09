@@ -72,11 +72,11 @@ impl CircuitGenerator for FsCircuitGenerator {
             Ok(None)
         }
         else {
-            let oqs_gates = lang_schema
+            let ls = lang_schema
                 .parse_file(self.entries[(j - 1) as usize].path().to_str().context(OutOfBounds)?)?;
 
             let (mut oqs_gates, mut inv_gates) =
-                oqs_parse_circuit(oqs_gates, i32::MAX, width, iter)?;
+                oqs_parse_circuit(ls.gates, i32::MAX, width, iter)?;
 
             use CircuitBenchType::*;
 
@@ -103,7 +103,13 @@ impl CircuitGenerator for FsCircuitGenerator {
                 oqs_gates = gates;
             }
 
-            Ok(Some(LangCircuit::builder().width(width).gates(oqs_gates).build()))
+            Ok(Some(
+                LangCircuit::builder()
+                    .creg(ls.creg)
+                    .qreg(ls.qreg)
+                    .gates(oqs_gates)
+                    .build(),
+            ))
         }
     }
 }

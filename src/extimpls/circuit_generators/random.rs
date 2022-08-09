@@ -100,6 +100,12 @@ impl CircuitGenerator for RandCircuitGenerator {
             oqs_gates = init_one(oqs_gates, i);
         }
 
-        Ok(Some(LangCircuit::builder().width(oqs_width).gates(oqs_gates).build()))
+        Ok(Some(
+            LangCircuit::builder()
+                .creg(oqs_width)
+                .qreg(oqs_width)
+                .gates(oqs_gates)
+                .build(),
+        ))
     }
 }

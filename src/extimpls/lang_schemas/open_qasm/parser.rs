@@ -7,11 +7,17 @@ use crate::ext::types::lang_schema::{LangGate, LangGateType};
 #[derive(Default)]
 pub struct ProgramParser {
     pub gates: Vec<LangGate>,
+    pub qreg: i32,
+    pub creg: i32,
 }
 
 impl ProgramParser {
     pub fn new() -> Self {
-        Self { gates: vec![] }
+        Self {
+            gates: vec![],
+            qreg: 0,
+            creg: 0,
+        }
     }
 }
 
@@ -27,6 +33,20 @@ impl ProgramVisitor for ProgramParser {
         _body: &[Span<Stmt>],
     ) {
         // ignore definitions
+    }
+
+    #[throws(Self::Error)]
+    fn visit_creg(&mut self, reg: &Span<Reg>) {
+        if reg.name.as_str() == "c" {
+            self.creg = reg.index.unwrap_or(0) as i32;
+        }
+    }
+
+    #[throws(Self::Error)]
+    fn visit_qreg(&mut self, reg: &Span<Reg>) {
+        if reg.name.as_str() == "q" {
+            self.qreg = reg.index.unwrap_or(0) as i32;
+        }
     }
 
     #[throws(Self::Error)]

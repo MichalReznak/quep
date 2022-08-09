@@ -22,7 +22,7 @@ use pythonize::depythonize;
 use crate::args::CliArgsLangSchema;
 use crate::error::Constraint;
 use crate::ext::types::circuit_generator::GenCircuit;
-use crate::ext::types::lang_schema::LangGate;
+use crate::ext::types::lang_schema::{LangGate, ParsedLangCircuit};
 use crate::ext::LangSchema;
 use crate::lang_schemas::LangCircuit;
 use crate::Error::PyDowncastError;
@@ -56,7 +56,7 @@ impl PythonSchema {
 impl PythonSchema {
     #[pyo3(name = "parse_file")]
     fn parse_file_py(&self, path: String) -> PyResult<Vec<LangGate>> {
-        Ok(self.parse_file(&path).unwrap())
+        Ok(self.parse_file(&path).unwrap().gates)
     }
 
     #[pyo3(name = "as_string")]
@@ -83,7 +83,7 @@ impl LangSchema for PythonSchema {
         })
     }
 
-    fn parse_file(&self, path: &str) -> Result<Vec<LangGate>, Error> {
+    fn parse_file(&self, path: &str) -> Result<ParsedLangCircuit, Error> {
         Python::with_gil(|py| {
             let res = self.py_instance.call_method1(py, "parse_file", (path,))?;
             if res.is_none(py) {
@@ -93,7 +93,8 @@ impl LangSchema for PythonSchema {
                 .fail()?;
             }
 
-            Ok(depythonize::<Vec<LangGate>>(res.as_ref(py))?)
+            let gates = depythonize::<Vec<LangGate>>(res.as_ref(py))?;
+            Ok(ParsedLangCircuit::builder().gates(gates).build())
         })
     }
 

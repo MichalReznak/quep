@@ -46,7 +46,7 @@ impl CircuitGenerator for BaseCircuitGenerator {
         depth: i32,
         iter: i32,
     ) -> Result<Option<LangCircuit>, Error> {
-        let oqs_gates = lang_schema.parse_file(&self.args.source)?;
+        let oqs_gates = lang_schema.parse_file(&self.args.source)?.gates;
 
         let (mut oqs_gates, mut inv_gates) = oqs_parse_circuit(oqs_gates, depth, width, iter)?;
 
@@ -75,6 +75,12 @@ impl CircuitGenerator for BaseCircuitGenerator {
             oqs_gates = gates;
         }
 
-        Ok(Some(LangCircuit::builder().width(width).gates(oqs_gates).build()))
+        Ok(Some(
+            LangCircuit::builder()
+                .creg(width)
+                .qreg(width)
+                .gates(oqs_gates)
+                .build(),
+        ))
     }
 }

@@ -56,6 +56,6 @@ impl CircuitGenerator for BasicCircuitGenerator {
             gates = tmp_gates;
         }
 
-        Ok(Some(LangCircuit::builder().gates(gates).width(2).build()))
+        Ok(Some(LangCircuit::builder().creg(2).qreg(2).gates(gates).build()))
     }
 }

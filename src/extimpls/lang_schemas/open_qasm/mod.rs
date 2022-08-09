@@ -9,7 +9,7 @@ use pyo3::{pyclass, pymethods, PyResult};
 use crate::args::types::LangSchemaType;
 use crate::args::CliArgsLangSchema;
 use crate::ext::types::circuit_generator::GenCircuit;
-use crate::ext::types::lang_schema::{LangGate, LangGateType};
+use crate::ext::types::lang_schema::{LangGate, LangGateType, ParsedLangCircuit};
 use crate::ext::LangSchema;
 use crate::lang_schemas::LangCircuit;
 use crate::Error;
@@ -20,8 +20,8 @@ const CIRCUIT_TEMPLATE: &str = r#"
 OPENQASM 2.0;
 include "qelib1.inc";
 
-qreg q[%WIDTH%];
-creg c[%WIDTH%];
+qreg q[%WIDTH_Q%];
+creg c[%WIDTH_C%];
 
 %RESET%
 
@@ -31,7 +31,7 @@ barrier q;
 
 barrier q;
 
-measure q -> c;
+%MEASURES%
 "#;
 
 fn gate_to_string(gate: &LangGate) -> String {
@@ -76,7 +76,7 @@ impl OpenQasmSchema {
 impl OpenQasmSchema {
     #[pyo3(name = "parse_file")]
     fn parse_file_py(&self, path: String) -> PyResult<Vec<LangGate>> {
-        Ok(self.parse_file(&path).unwrap())
+        Ok(self.parse_file(&path).unwrap().gates)
     }
 
     #[pyo3(name = "as_string")]
@@ -87,7 +87,7 @@ impl OpenQasmSchema {
 
 #[async_trait]
 impl LangSchema for OpenQasmSchema {
-    fn parse_file(&self, path: &str) -> Result<Vec<LangGate>, Error> {
+    fn parse_file(&self, path: &str) -> Result<ParsedLangCircuit, Error> {
         // Type check
         let mut circuit = std::fs::read_to_string(path)?;
         circuit.remove_matches("\r");
@@ -113,16 +113,17 @@ impl LangSchema for OpenQasmSchema {
 
         let mut pp = parser::ProgramParser::new();
         pp.visit_program(&program)?;
-        Ok(pp.gates)
+        Ok(ParsedLangCircuit::builder().qreg(pp.qreg).creg(pp.creg).gates(pp.gates).build())
     }
 
     fn as_string(&mut self, circ: LangCircuit) -> Result<GenCircuit, Error> {
         // Add width
-        let res = CIRCUIT_TEMPLATE.replace("%WIDTH%", &circ.width.to_string());
+        let res = CIRCUIT_TEMPLATE.replace("%WIDTH_Q%", &circ.qreg.to_string());
+        let res = res.replace("%WIDTH_C%", &circ.creg.to_string());
 
         // Add resets
         let mut resets = String::new();
-        for i in 0..circ.width {
+        for i in 0..circ.qreg {
             writeln!(&mut resets, "reset q[{}];", i)?;
         }
         let res = res.replace("%RESET%", &resets);
@@ -133,6 +134,20 @@ impl LangSchema for OpenQasmSchema {
             writeln!(&mut gates, "{}", gate_to_string(&gate))?;
         }
         let res = res.replace("%GATES%", &gates);
+
+        // Add gates
+        let c = if circ.creg < circ.qreg {
+            circ.creg
+        }
+        else {
+            circ.qreg
+        };
+        let mut measures = String::new();
+        for i in 0..c {
+            writeln!(&mut measures, "measure q[{i}] -> c[{i}];")?;
+        }
+        let res = res.replace("%MEASURES%", &measures);
+
 
         Ok(GenCircuit::builder().circuit(res).t(LangSchemaType::OpenQasm).build())
     }

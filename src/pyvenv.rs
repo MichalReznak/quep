@@ -52,8 +52,8 @@ impl PyVenv {
                 &unindent::unindent(&format!(
                     r#"
                         import sys
-                        sys.path.append('{}/.venv/lib/site-packages')
-                        sys.path.append('{}/.venv')
+                        sys.path.append(r'{}/.venv/lib/site-packages')
+                        sys.path.append(r'{}/.venv')
                     "#,
                     &dir, &dir
                 )),

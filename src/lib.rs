@@ -12,6 +12,7 @@
 #![feature(string_remove_matches)]
 #![feature(new_uninit)]
 #![feature(iter_intersperse)]
+#![feature(let_chains)]
 
 use chooser::Chooser;
 use ext::Orchestrator;

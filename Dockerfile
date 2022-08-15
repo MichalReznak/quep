@@ -8,7 +8,7 @@ ENV RUSTUP_HOME="/usr/local/rustup" \
 RUN dnf -y update && \
     dnf install -y gcc gcc-c++ openssl-devel python3 python3-devel \
     && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
-    sh -s -- --default-toolchain nightly-2022-05-01 --no-modify-path -y && \
+    sh -s -- --default-toolchain nightly-2022-06-02 --no-modify-path -y && \
     dnf clean all && \
     python3 -m venv /app/python/.venv && \
     /app/python/.venv/bin/pip install --no-cache --upgrade pip setuptools
@@ -31,4 +31,4 @@ COPY --from=build /build/.env                /app/.env
 COPY --from=build /build/python              /app/python
 COPY --from=build /app/python/.venv          /app/python/.venv
 
-#ENTRYPOINT "./quep"
+ENTRYPOINT "./quep"

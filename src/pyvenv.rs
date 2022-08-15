@@ -15,7 +15,7 @@ impl PyVenv {
         let venv_dir = format!("{}/.venv", dir);
         let pip = format!("{}/.venv/Scripts/pip", dir);
         let req_str =
-            include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "./python/requirements.txt"))
+            include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/python/requirements.txt"))
                 .to_string();
 
         // Extend with custom requirements

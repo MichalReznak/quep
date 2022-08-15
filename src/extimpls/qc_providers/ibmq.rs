@@ -20,7 +20,7 @@ impl IbmqQcProvider {
     #[throws]
     pub fn from_args(args: &CliArgsProvider) -> Self {
         let py_instance = Python::with_gil(|py| {
-            let code = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "./python/ibmq.py"));
+            let code = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/python/ibmq.py"));
             let module = PyModule::from_code(py, code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Ibmq")?.into();
             qiskit.call1(py, (&args.account_id, &args.machine_name))

@@ -18,7 +18,7 @@ impl SimpleQcProvider {
     #[throws]
     pub fn from_args(_: &CliArgsProvider) -> Self {
         let py_instance = Python::with_gil(|py| {
-            let code = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "./python/simple.py"));
+            let code = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/python/simple.py"));
             let module = PyModule::from_code(py, code, "", "")?;
             let qiskit: Py<PyAny> = module.getattr("Simple")?.into();
             qiskit.call0(py)
